@@ -135,7 +135,8 @@
         <button class="w-11 h-11 rounded-xl bg-gray-800 text-sleeper-teal hover:bg-gray-700 transition-all duration-200 font-bold text-sm shadow-lg shadow-black/20" id="btnTabTeams" title="Current Rosters">R</button>
         <button class="w-11 h-11 rounded-xl bg-gray-800/60 text-gray-400 hover:bg-gray-700 hover:text-white transition-all duration-200 font-bold text-sm" id="btnTabHistory" title="Historical Rosters (Actual)">H</button>
         <button class="w-11 h-11 rounded-xl bg-gray-800/60 text-gray-400 hover:bg-gray-700 hover:text-white transition-all duration-200 font-bold text-sm" id="btnTabOptimal" title="Optimal Lineups">O</button>
-      </div>
+              <button class="w-11 h-11 rounded-xl bg-gray-800/60 text-gray-400 hover:bg-gray-700 hover:text-white transition-all duration-200 font-bold text-sm" id="btnTabSettings" title="Settings">S</button>
+</div>
 
       <div class="w-10 h-px bg-gradient-to-r from-transparent via-gray-700 to-transparent my-2"></div>
 <!-- Analysis Group -->
@@ -521,6 +522,75 @@
         </div>
       </section>
 
+      <!-- Settings -->
+      <section id="viewSettings" class="hidden h-full overflow-y-auto p-6">
+        <div class="max-w-4xl mx-auto">
+          <div class="flex items-center justify-between mb-5">
+            <div>
+              <div class="text-2xl font-bold text-white">Settings</div>
+              <div class="text-sm text-gray-400 mt-1">Toggle auto-setup (uses /state/nfl + league metadata) or manually override league/year/weeks for debugging.</div>
+            </div>
+          </div>
+
+          <div class="rounded-2xl bg-gray-900/60 border border-gray-800 p-5 shadow-lg">
+            <div class="flex items-center justify-between gap-4 flex-wrap">
+              <label class="flex items-center gap-3 text-gray-200">
+                <input id="settingsAutoSetup" type="checkbox" class="accent-indigo-500 w-4 h-4" checked />
+                <span class="font-semibold">Auto setup</span>
+                <span class="text-xs text-gray-500">(recommended)</span>
+              </label>
+
+              <div class="text-xs text-gray-400">Saved locally in your browser.</div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
+              <div>
+                <label class="block text-xs text-gray-400 mb-1">League ID (override)</label>
+                <input id="settingsLeagueId" type="text" placeholder="e.g., 1312656463549726720" class="w-full rounded-xl bg-gray-950/60 border border-gray-800 px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-600/40" />
+                <div class="text-xs text-gray-500 mt-1">Leave blank to use the Year → League mapping.</div>
+              </div>
+
+              <div>
+                <label class="block text-xs text-gray-400 mb-1">Season (year) used for weekly stats/projections</label>
+                <select id="settingsSeason" class="w-full rounded-xl bg-gray-950/60 border border-gray-800 px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-600/40"></select>
+                <div class="text-xs text-gray-500 mt-1">In auto mode, league.season is preferred. In manual mode, this forces the stats/projections season.</div>
+              </div>
+
+              <div>
+                <label class="block text-xs text-gray-400 mb-1">Season type</label>
+                <select id="settingsSeasonType" class="w-full rounded-xl bg-gray-950/60 border border-gray-800 px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-600/40">
+                  <option value="regular">regular</option>
+                  <option value="post">post</option>
+                </select>
+                <div class="text-xs text-gray-500 mt-1">Used for stats/projections endpoints.</div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs text-gray-400 mb-1">Current week</label>
+                  <input id="settingsCurrentWeek" type="number" min="1" max="25" class="w-full rounded-xl bg-gray-950/60 border border-gray-800 px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-600/40" />
+                </div>
+                <div>
+                  <label class="block text-xs text-gray-400 mb-1">Max week</label>
+                  <input id="settingsMaxWeek" type="number" min="1" max="25" class="w-full rounded-xl bg-gray-950/60 border border-gray-800 px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-600/40" />
+                </div>
+                <div class="col-span-2 text-xs text-gray-500">Only applied when Auto setup is off.</div>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3 mt-5 flex-wrap">
+              <button id="settingsApply" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold shadow">Apply & reload</button>
+              <button id="settingsReset" class="px-4 py-2 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-100 font-semibold">Reset saved settings</button>
+            </div>
+
+            <div class="mt-5 rounded-xl bg-gray-950/50 border border-gray-800 p-4">
+              <div class="text-xs text-gray-400 mb-2">Effective config</div>
+              <pre id="settingsEffective" class="text-xs text-gray-200 whitespace-pre-wrap"></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- Player modal -->
       <div id="playerModal" class="fixed inset-0 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4 z-50">
         <div class="w-full max-w-5xl max-h-[95vh] bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden flex flex-col">
@@ -661,6 +731,10 @@ var APP = {
     selectedSeasonChoice: INITIAL_SEASON_CHOICE,
     leagueId: SEASON_LEAGUES[INITIAL_SEASON_CHOICE],
     seasonType: "regular",
+
+      // Auto setup uses /state/nfl + league metadata. Manual overrides are stored in localStorage.
+      autoSetup: true,
+      manual: { leagueId: "", season: "", seasonType: "regular", currentWeek: 1, maxWeek: 18 },
     boomPct: 1.20,
     bustPct: 0.80
   },
@@ -726,7 +800,7 @@ playersById: {},
                'defRoleSelect',
                'defRoleModeMost',
                'defRoleModeLeast',
-               'defRoleTableBody'];
+               'defRoleTableBody', 'viewSettings', 'btnTabSettings', 'settingsAutoSetup', 'settingsLeagueId', 'settingsSeason', 'settingsSeasonType', 'settingsCurrentWeek', 'settingsMaxWeek', 'settingsApply', 'settingsReset', 'settingsEffective'];
     var self = this;
     ids.forEach(function(id) { self.dom[id] = document.getElementById(id); });
   },
@@ -2427,13 +2501,12 @@ var roleTopN = function(role) {
     if (!isFinite(target) || target < 0) target = 0;
 
     var season = this.getSeason();
-    var st = this.cfg.seasonType || "regular";
 
     if (!self.data.weekLoadPromises) self.data.weekLoadPromises = {};
 
     // Collect missing weeks (include week 0; if the endpoint returns empty, it becomes a harmless no-op).
     var missing = [];
-    for (var w = 0; w <= target; w++) {
+    for (var w = 1; w <= target; w++) {
       var wk = String(w);
       var stData = self.data.weekStats[wk];
       var prData = self.data.weekProj[wk];
@@ -2454,10 +2527,19 @@ var roleTopN = function(role) {
       var wk = String(w);
       if (self.data.weekLoadPromises[wk]) return self.data.weekLoadPromises[wk];
 
-      var p = Promise.all([
-        safeFetch("https://api.sleeper.app/v1/stats/nfl/" + st + "/" + season + "/" + w, {}),
-        safeFetch("https://api.sleeper.app/v1/projections/nfl/" + st + "/" + season + "/" + w, {})
-      ]).then(function(res) {
+      var p = (function(){
+            var posQ = "&position[]=QB&position[]=RB&position[]=WR&position[]=TE&position[]=K&position[]=DEF&position[]=DL&position[]=LB&position[]=DB";
+            var seasonType = (self.cfg && self.cfg.seasonType) ? self.cfg.seasonType : "regular";
+            var stA = "https://api.sleeper.app/stats/nfl/" + season + "/" + w + "?season_type=" + seasonType + posQ;
+            var stB = "https://api.sleeper.com/stats/nfl/" + season + "/" + w + "?season_type=" + seasonType + posQ;
+            var prA = "https://api.sleeper.app/projections/nfl/" + season + "/" + w + "?season_type=" + seasonType + posQ;
+            var prB = "https://api.sleeper.com/projections/nfl/" + season + "/" + w + "?season_type=" + seasonType + posQ;
+
+            var statsP = self.fetchJson(stA).catch(function(){ return self.fetchJson(stB); }).catch(function(){ return {}; });
+            var projP  = self.fetchJson(prA).catch(function(){ return self.fetchJson(prB); }).catch(function(){ return {}; });
+
+            return Promise.all([statsP, projP]);
+          })().then(function(res) {
         self.data.weekStats[wk] = self.arrToMap(res[0]);
         self.data.weekProj[wk] = self.arrToMap(res[1]);
       }).finally(function() {
@@ -2838,7 +2920,7 @@ if (!isFinite(posPts)) continue;
   // Endpoint: GET https://api.sleeper.com/schedule/nfl/regular/{year}
   loadNFLSchedule: function() {
     var self = this;
-    var season = this.getSeason();
+    var season = "2025";
     // Use api.sleeper.com (NOT api.sleeper.app) for undocumented endpoints
     var url = "https://api.sleeper.com/schedule/nfl/regular/" + season;
     
@@ -4316,63 +4398,84 @@ getPlayerDeltaRank: function(pid) {
 
   init: function() {
     var self = this;
+
+    // Apply saved settings (if any)
+    try { if (self.loadAppSettings) self.loadAppSettings(); } catch(e) {}
+    try { if (self.cfg && self.cfg.manual && self.cfg.manual.seasonType) self.cfg.seasonType = self.cfg.manual.seasonType; } catch(e) {}
+    try { if (self.resolveLeagueId) self.cfg.leagueId = self.resolveLeagueId(); } catch(e) {}
     this.cacheDom();
     
     this.setProgress("Loading NFL state…", 8);
     this.fetchJson("https://api.sleeper.app/v1/state/nfl")
       .then(function(nflState) {
-        self.data.nflState = nflState;
-        var season = nflState.season;
-        var currentWeek = nflState.week;
+        self.data.nflState = nflState || {};
+
+        var liveSeason = String((nflState && nflState.season) || "");
+        var liveWeek = Number((nflState && nflState.week) || 1);
+        if (!isFinite(liveWeek) || liveWeek < 1) liveWeek = 1;
+
+        // Default to live NFL state; league metadata + settings can override below.
+        var currentWeek = liveWeek;
+        var season = liveSeason || String(self.getSeason ? self.getSeason() : "") || "2025";
         self.ui.selectedWeek = currentWeek;
 
         self.setProgress("Loading league…", 18);
         return self.fetchJson("https://api.sleeper.app/v1/league/" + self.cfg.leagueId)
           .catch(function(e) {
             console.error("League fetch failed:", e);
-            throw new Error("League not found or not accessible. This season's league may not exist yet.");
+            throw new Error("League not found or not accessible.");
           })
           .then(function(league) {
-          if (!league) {
-            throw new Error("League data is empty. This season's league may not exist yet.");
-          }
-          self.data.league = league;
+            if (!league) throw new Error("League data is empty.");
+            self.data.league = league;
 
-          // Prefer the league's season (important in offseason when /state/nfl advances to next season)
-          var leagueSeason = String((league && league.season) || season);
-          self.data.appSeason = leagueSeason;
+            // Prefer the league's season (important in offseason when /state/nfl may reset to week 1).
+            var leagueSeason = String((league && league.season) || season);
 
-          // If nflState season differs from league season, infer the last week that has matchup data
-          var startGuess = 18;
-          try {
-            if (league && league.settings && league.settings.playoff_week_start) {
-              startGuess = Math.min(18, Number(league.settings.playoff_week_start) + 2);
+            // Season used for stats/projections
+            var statsSeason = leagueSeason;
+            if (self.cfg && self.cfg.autoSetup === false && self.cfg.manual && self.cfg.manual.season) {
+              statsSeason = String(self.cfg.manual.season);
             }
-          } catch(e) {}
+            self.data.appSeason = statsSeason;
 
-          var weekPromise = (String(nflState.season) !== leagueSeason)
-            ? self.findLastWeekWithMatchups(startGuess)
-            : Promise.resolve(currentWeek);
+            // Determine current/max week
+            var lastScored = self.getLastScoredWeek(league);
+            var maxWeek = 18;
+            var effWeek = currentWeek;
 
-          return weekPromise.then(function(effWeek) {
-            currentWeek = Number(effWeek) || Number(currentWeek) || 1;
-            self.data.maxWeek = currentWeek;
-            self.ui.selectedWeek = currentWeek;
+            if (self.cfg && self.cfg.autoSetup === false) {
+              var mw = Number(self.cfg.manual && self.cfg.manual.maxWeek) || lastScored || 18;
+              var cw = Number(self.cfg.manual && self.cfg.manual.currentWeek) || mw;
+              maxWeek = Math.max(1, mw);
+              effWeek = Math.min(Math.max(1, cw), maxWeek);
+            } else {
+              // If league is complete or live season differs, lock to last scored week
+              if ((league && league.status === "complete") || (liveSeason && liveSeason !== leagueSeason)) {
+                maxWeek = lastScored || Math.max(1, currentWeek);
+                effWeek = maxWeek;
+              } else {
+                maxWeek = Math.max(Math.max(1, currentWeek), lastScored || 0);
+                effWeek = Math.min(Math.max(1, currentWeek), maxWeek);
+              }
+            }
+
+            self.data.maxWeek = maxWeek;
+            self.ui.selectedWeek = effWeek;
 
             if (self.dom.hdrLeague) self.dom.hdrLeague.textContent = (league && league.name) || "Sleeper League";
-            if (self.dom.hdrMeta) self.dom.hdrMeta.textContent = "Season " + leagueSeason + " | Week " + currentWeek;
+            if (self.dom.hdrMeta) self.dom.hdrMeta.textContent = "Season " + leagueSeason + " | Week " + effWeek;
 
             self.setProgress("Loading users/rosters…", 28);
             return Promise.all([
               self.fetchJson("https://api.sleeper.app/v1/league/" + self.cfg.leagueId + "/users").catch(function() { return []; }),
               self.fetchJson("https://api.sleeper.app/v1/league/" + self.cfg.leagueId + "/rosters").catch(function() { return []; }),
-              self.fetchJson("https://api.sleeper.app/v1/league/" + self.cfg.leagueId + "/matchups/" + currentWeek).catch(function() { return []; }),
-              self.fetchJson("https://api.sleeper.app/v1/league/" + self.cfg.leagueId + "/transactions/" + currentWeek).catch(function() { return []; }),
+              self.fetchJson("https://api.sleeper.app/v1/league/" + self.cfg.leagueId + "/matchups/" + effWeek).catch(function() { return []; }),
+              self.fetchJson("https://api.sleeper.app/v1/league/" + self.cfg.leagueId + "/transactions/" + effWeek).catch(function() { return []; }),
               self.fetchJson("https://api.sleeper.app/v1/league/" + self.cfg.leagueId + "/winners_bracket").catch(function() { return []; }),
               self.fetchJson("https://api.sleeper.app/v1/league/" + self.cfg.leagueId + "/losers_bracket").catch(function() { return []; })
             ]);
           });
-      });
       })
       .then(function(results) {
         var users = results[0];
@@ -4581,8 +4684,20 @@ getPlayerDeltaRank: function(pid) {
 
     return Promise.all([
       safeFetch("https://api.sleeper.app/v1/league/" + this.cfg.leagueId + "/matchups/" + week, []),
-      safeFetch("https://api.sleeper.app/v1/stats/nfl/" + st + "/" + season + "/" + week, {}),
-      safeFetch("https://api.sleeper.app/v1/projections/nfl/" + st + "/" + season + "/" + week, {}),
+      (function(_self){
+        var posQ = "&position[]=QB&position[]=RB&position[]=WR&position[]=TE&position[]=K&position[]=DEF&position[]=DL&position[]=LB&position[]=DB";
+        var seasonType = (_self.cfg && _self.cfg.seasonType) ? _self.cfg.seasonType : "regular";
+        var stA = "https://api.sleeper.app/stats/nfl/" + season + "/" + week + "?season_type=" + seasonType + posQ;
+        var stB = "https://api.sleeper.com/stats/nfl/" + season + "/" + week + "?season_type=" + seasonType + posQ;
+        return _self.fetchJson(stA).catch(function(){ return _self.fetchJson(stB); }).catch(function(){ return {}; });
+      })(this),
+      (function(_self){
+        var posQ = "&position[]=QB&position[]=RB&position[]=WR&position[]=TE&position[]=K&position[]=DEF&position[]=DL&position[]=LB&position[]=DB";
+        var seasonType = (_self.cfg && _self.cfg.seasonType) ? _self.cfg.seasonType : "regular";
+        var prA = "https://api.sleeper.app/projections/nfl/" + season + "/" + week + "?season_type=" + seasonType + posQ;
+        var prB = "https://api.sleeper.com/projections/nfl/" + season + "/" + week + "?season_type=" + seasonType + posQ;
+        return _self.fetchJson(prA).catch(function(){ return _self.fetchJson(prB); }).catch(function(){ return {}; });
+      })(this),
       safeFetch("https://api.sleeper.app/v1/league/" + this.cfg.leagueId + "/transactions/" + week, [])
     ]).then(function(results) {
       // Store matchups by week to avoid overwriting current week's data
@@ -4606,12 +4721,25 @@ getPlayerDeltaRank: function(pid) {
       try { this.dom.seasonSelect.value = String(this.cfg.selectedSeasonChoice || this.getSeason() || "2025"); } catch(e) {}
       this.dom.seasonSelect.onchange = function() {
         var yr = String(self.dom.seasonSelect.value || "");
+        if (self.cfg && self.cfg.autoSetup === false) {
+          self.cfg.manual = self.cfg.manual || {};
+          self.cfg.manual.season = yr;
+          self.cfg.selectedSeasonChoice = yr;
+          try { localStorage.setItem("sleeper_app_season_choice", yr); } catch(e) {}
+          try { if (self.saveAppSettings) self.saveAppSettings(); } catch(e) {}
+          // Prefer manual leagueId override; otherwise, use the mapping if available
+          if (!(self.cfg.manual && self.cfg.manual.leagueId) && self.cfg.seasonLeagues && self.cfg.seasonLeagues[yr]) {
+            self.cfg.leagueId = self.cfg.seasonLeagues[yr];
+          }
+          self.init();
+          return;
+        }
+
         if (self.cfg.seasonLeagues && self.cfg.seasonLeagues[yr]) {
           try { localStorage.setItem("sleeper_app_season_choice", yr); } catch(e) {}
           self.switchSeason(yr);
         }
-      };
-    }
+      };    }
 
     var btns = [
       ["teams", this.dom.btnTabTeams],
@@ -4620,6 +4748,7 @@ getPlayerDeltaRank: function(pid) {
       ["def", this.dom.btnTabDef],
       ["trades", this.dom.btnTabTrades],
       ["insights", this.dom.btnTabInsights],
+        ["settings", this.dom.btnTabSettings],
       ["history", this.dom.btnTabHistory],
       ["optimal", this.dom.btnTabOptimal]
     ];
@@ -4643,6 +4772,13 @@ getPlayerDeltaRank: function(pid) {
     if (this.dom.btnTabDef) this.dom.btnTabDef.onclick = function() { self.ui.currentView = "def"; self.renderAll(); setActiveBtn("def"); };
     if (this.dom.btnTabTrades) this.dom.btnTabTrades.onclick = function() { self.ui.currentView = "trades"; self.renderAll(); setActiveBtn("trades"); };
     if (this.dom.btnTabInsights) this.dom.btnTabInsights.onclick = function() { self.ui.currentView = "insights"; self.renderAll(); setActiveBtn("insights"); };
+
+      if (this.dom.btnTabSettings) this.dom.btnTabSettings.onclick = function() {
+        self.ui.currentView = "settings";
+        self.renderAll();
+        setActiveBtn("settings");
+        try { if (self.renderSettingsView) self.renderSettingsView(); } catch(e) {}
+      };
     if (this.dom.btnTabHistory) this.dom.btnTabHistory.onclick = function() { self.ui.currentView = "history"; self.ui.historyMode = "roster"; self.renderAll(); setActiveBtn("history"); };
     if (this.dom.btnTabOptimal) this.dom.btnTabOptimal.onclick = function() { self.ui.currentView = "optimal"; self.ui.historyMode = "best"; self.renderAll(); setActiveBtn("optimal"); };
 
@@ -4712,6 +4848,7 @@ getPlayerDeltaRank: function(pid) {
     if (this.dom.viewDef) this.dom.viewDef.classList.toggle("hidden", this.ui.currentView !== "def");
     if (this.dom.viewTrades) this.dom.viewTrades.classList.toggle("hidden", this.ui.currentView !== "trades");
     if (this.dom.viewInsights) this.dom.viewInsights.classList.toggle("hidden", this.ui.currentView !== "insights");
+    if (this.dom.viewSettings) this.dom.viewSettings.classList.toggle("hidden", this.ui.currentView !== "settings");
     if (this.dom.viewHistory) this.dom.viewHistory.classList.toggle("hidden", (this.ui.currentView !== "history" && this.ui.currentView !== "optimal"));
 
     // History header (H = actual roster, O = optimal lineup)
@@ -6116,7 +6253,8 @@ renderFA: function() {
         var act = self.scoreFromStats(actStats, pid);
         var played = Object.keys(actStats).length > 0;
         var opp = self.getOpponent(actStats, projStats, p, w);
-        var isFutureWeek = w > currentNflWeek;
+        var effectiveWeek = Number((self.data && self.data.maxWeek) || currentNflWeek || 1);
+        var isFutureWeek = w > effectiveWeek;
 
         labels.push("W" + w);
         playedArr.push(played);
@@ -6310,7 +6448,8 @@ renderFA: function() {
     var conf = this.ui.selectedConference;
     var divisions = nflTeams[conf];
     var pfrStats = this.data.pfrDefenseStats;
-    var season = this.getSeason();
+    //var season = this.getSeason();
+    var season = 2025;
     var dataSource = season + " NFL Season Stats (via Pro-Football-Reference)";
 
     // Get defense stats from our data
@@ -7965,7 +8104,180 @@ var fmtPid = function(pid) {
   }
 };
 
-document.addEventListener("DOMContentLoaded", function() { APP.init(); });
+
+  // ------------------------------
+  // Settings (localStorage-backed)
+  // ------------------------------
+  APP._settingsKey = "sleeper_app_settings_v3_3";
+
+  APP.loadAppSettings = function() {
+    try {
+      var raw = localStorage.getItem(APP._settingsKey);
+      if (!raw) return;
+      var obj = JSON.parse(raw);
+      if (!obj || typeof obj !== "object") return;
+      if (typeof obj.autoSetup === "boolean") APP.cfg.autoSetup = obj.autoSetup;
+      if (obj.manual && typeof obj.manual === "object") {
+        APP.cfg.manual = APP.cfg.manual || {};
+        for (var k in obj.manual) APP.cfg.manual[k] = obj.manual[k];
+      }
+      if (obj.selectedSeasonChoice) APP.cfg.selectedSeasonChoice = String(obj.selectedSeasonChoice);
+      if (obj.seasonType) APP.cfg.seasonType = String(obj.seasonType);
+    } catch(e) {}
+  };
+
+  APP.saveAppSettings = function() {
+    try {
+      var out = {
+        autoSetup: !!APP.cfg.autoSetup,
+        manual: APP.cfg.manual || {},
+        selectedSeasonChoice: String(APP.cfg.selectedSeasonChoice || ""),
+        seasonType: String(APP.cfg.seasonType || "regular")
+      };
+      localStorage.setItem(APP._settingsKey, JSON.stringify(out));
+    } catch(e) {}
+  };
+
+  APP.resolveLeagueId = function() {
+    var man = (APP.cfg && APP.cfg.manual) ? APP.cfg.manual : {};
+    var override = (man && man.leagueId) ? String(man.leagueId).trim() : "";
+    if (override) return override;
+    var yr = String(APP.cfg.selectedSeasonChoice || "");
+    if (APP.cfg.seasonLeagues && APP.cfg.seasonLeagues[yr]) return APP.cfg.seasonLeagues[yr];
+    return APP.cfg.leagueId;
+  };
+
+  APP.getLastScoredWeek = function(league) {
+    try {
+      var s = (league && league.settings) ? league.settings : {};
+      // Sleeper stores the most recently scored week in settings.last_scored_leg (aka "leg")
+      var v = Number(s.last_scored_leg || s.leg || 0);
+      if (!isFinite(v) || v < 1) return 0;
+      return v;
+    } catch(e) {
+      return 0;
+    }
+  };
+
+  APP.renderSettingsView = function() {
+    // Refresh DOM refs (cacheDom may not include new fields in older builds)
+    APP.dom = APP.dom || {};
+    var d = APP.dom;
+    if (!d.viewSettings) d.viewSettings = document.getElementById("viewSettings");
+    if (!d.btnTabSettings) d.btnTabSettings = document.getElementById("btnTabSettings");
+    if (!d.settingsAutoSetup) d.settingsAutoSetup = document.getElementById("settingsAutoSetup");
+    if (!d.settingsLeagueId) d.settingsLeagueId = document.getElementById("settingsLeagueId");
+    if (!d.settingsSeason) d.settingsSeason = document.getElementById("settingsSeason");
+    if (!d.settingsSeasonType) d.settingsSeasonType = document.getElementById("settingsSeasonType");
+    if (!d.settingsCurrentWeek) d.settingsCurrentWeek = document.getElementById("settingsCurrentWeek");
+    if (!d.settingsMaxWeek) d.settingsMaxWeek = document.getElementById("settingsMaxWeek");
+    if (!d.settingsApply) d.settingsApply = document.getElementById("settingsApply");
+    if (!d.settingsReset) d.settingsReset = document.getElementById("settingsReset");
+    if (!d.settingsEffective) d.settingsEffective = document.getElementById("settingsEffective");
+
+    if (!d.viewSettings) return;
+
+    // Populate season dropdown (union of known years + current selection)
+    try {
+      if (d.settingsSeason && d.settingsSeason.options.length === 0) {
+        var years = [];
+        for (var y in (APP.cfg.seasonLeagues || {})) years.push(String(y));
+        years.sort();
+        var manualSeason = (APP.cfg.manual && APP.cfg.manual.season) ? String(APP.cfg.manual.season) : "";
+        if (manualSeason && years.indexOf(manualSeason) === -1) years.push(manualSeason);
+        years.sort();
+        for (var i=0;i<years.length;i++) {
+          var opt = document.createElement("option");
+          opt.value = years[i];
+          opt.textContent = years[i];
+          d.settingsSeason.appendChild(opt);
+        }
+      }
+    } catch(e) {}
+
+    try { if (d.settingsAutoSetup) d.settingsAutoSetup.checked = (APP.cfg.autoSetup !== false); } catch(e) {}
+    try { if (d.settingsLeagueId) d.settingsLeagueId.value = (APP.cfg.manual && APP.cfg.manual.leagueId) ? String(APP.cfg.manual.leagueId) : ""; } catch(e) {}
+    try {
+      var seasonVal = (APP.cfg.manual && APP.cfg.manual.season) ? String(APP.cfg.manual.season) : String(APP.cfg.selectedSeasonChoice || "");
+      if (d.settingsSeason) d.settingsSeason.value = seasonVal;
+    } catch(e) {}
+    try { if (d.settingsSeasonType) d.settingsSeasonType.value = String((APP.cfg.manual && APP.cfg.manual.seasonType) || APP.cfg.seasonType || "regular"); } catch(e) {}
+    try { if (d.settingsCurrentWeek) d.settingsCurrentWeek.value = Number((APP.cfg.manual && APP.cfg.manual.currentWeek) || (APP.ui && APP.ui.selectedWeek) || 1); } catch(e) {}
+    try { if (d.settingsMaxWeek) d.settingsMaxWeek.value = Number((APP.cfg.manual && APP.cfg.manual.maxWeek) || (APP.data && APP.data.maxWeek) || 18); } catch(e) {}
+
+    // Effective config preview
+    try {
+      var eff = {
+        autoSetup: (APP.cfg.autoSetup !== false),
+        leagueId: APP.resolveLeagueId(),
+        selectedSeasonChoice: APP.cfg.selectedSeasonChoice,
+        seasonType: APP.cfg.seasonType,
+        selectedWeek: (APP.ui && APP.ui.selectedWeek) ? APP.ui.selectedWeek : null,
+        maxWeek: (APP.data && APP.data.maxWeek) ? APP.data.maxWeek : null,
+        manual: APP.cfg.manual || {}
+      };
+      if (d.settingsEffective) d.settingsEffective.textContent = JSON.stringify(eff, null, 2);
+    } catch(e) {}
+
+    // Wire buttons once
+    if (!APP._settingsWired) {
+      APP._settingsWired = true;
+
+      if (d.settingsApply) d.settingsApply.onclick = function() {
+        APP.cfg.manual = APP.cfg.manual || {};
+        APP.cfg.autoSetup = !!(d.settingsAutoSetup && d.settingsAutoSetup.checked);
+
+        var lid = (d.settingsLeagueId && d.settingsLeagueId.value) ? String(d.settingsLeagueId.value).trim() : "";
+        APP.cfg.manual.leagueId = lid;
+
+        var yr = (d.settingsSeason && d.settingsSeason.value) ? String(d.settingsSeason.value).trim() : "";
+        if (yr) {
+          APP.cfg.manual.season = yr;
+          APP.cfg.selectedSeasonChoice = yr;
+          try { localStorage.setItem("sleeper_app_season_choice", yr); } catch(e) {}
+        }
+
+        var st = (d.settingsSeasonType && d.settingsSeasonType.value) ? String(d.settingsSeasonType.value) : "regular";
+        APP.cfg.manual.seasonType = st;
+        APP.cfg.seasonType = st;
+
+        var cw = Number(d.settingsCurrentWeek && d.settingsCurrentWeek.value);
+        var mw = Number(d.settingsMaxWeek && d.settingsMaxWeek.value);
+        if (isFinite(cw) && cw > 0) APP.cfg.manual.currentWeek = cw;
+        if (isFinite(mw) && mw > 0) APP.cfg.manual.maxWeek = mw;
+
+        // Resolve leagueId now
+        APP.cfg.leagueId = APP.resolveLeagueId();
+
+        try { APP.saveAppSettings(); } catch(e) {}
+
+        // Use the built-in switchSeason when possible, otherwise do a hard reload
+        if (APP.cfg.seasonLeagues && APP.cfg.seasonLeagues[APP.cfg.selectedSeasonChoice]) {
+          APP.switchSeason(APP.cfg.selectedSeasonChoice);
+        } else {
+          // minimal reload
+          try { APP.data = APP.data || {}; APP.data.weekCache = {}; APP.data.statsByWeek = {}; APP.data.projByWeek = {}; } catch(e) {}
+          APP.init();
+        }
+      };
+
+      if (d.settingsReset) d.settingsReset.onclick = function() {
+        try { localStorage.removeItem(APP._settingsKey); } catch(e) {}
+        try {
+          APP.cfg.autoSetup = true;
+          APP.cfg.manual = { leagueId: "", season: "", seasonType: "regular", currentWeek: 1, maxWeek: 18 };
+          APP.saveAppSettings();
+        } catch(e) {}
+        try { APP.data = APP.data || {}; APP.data.weekCache = {}; APP.data.statsByWeek = {}; APP.data.projByWeek = {}; } catch(e) {}
+        APP.init();
+      };
+    }
+  };
+
+
+document.addEventListener("DOMContentLoaded", function() {
+  APP.init();
+});
 </script>
 </body>
 </html>
