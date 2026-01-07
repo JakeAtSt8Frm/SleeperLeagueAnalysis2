@@ -5,10 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sleeper League Analytics | Standalone</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet" />
-
   <!-- Chart.js 3.x for broader browser compatibility -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
 
@@ -30,17 +26,6 @@
               majorBoom: '#d303fc',
               
               majorBust: '#f97316'
-            },
-            neon: {
-              teal: '#00f6d2',
-              green: '#22f3a5',
-              red: '#ff4d5a',
-              purple: '#b54cff'
-            },
-            shell: {
-              navy: '#060b18',
-              charcoal: '#0d1426',
-              steel: '#151f38'
             }
           }
         }
@@ -55,11 +40,6 @@
     ::-webkit-scrollbar-thumb{background:#3f4451;border-radius:6px}
     ::-webkit-scrollbar-thumb:hover{background:#00ceb8}
 
-    body {
-      font-family: "Barlow Condensed", "Rajdhani", "Inter", system-ui, -apple-system, sans-serif;
-      letter-spacing: 0.01em;
-    }
-
     /* Utility Classes */
     .line-clamp-2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
     .glow-majorBoom{box-shadow:0 0 10px rgba(211,3,252,.5),0 0 20px rgba(211,3,252,.25)}
@@ -68,10 +48,10 @@
 
     /* Sidebar Active States */
     .nav-btn-active {
-      background: linear-gradient(135deg, rgba(0,246,210,0.22) 0%, rgba(0,246,210,0.05) 100%) !important;
-      color: #00f6d2 !important;
-      border: 1px solid rgba(0,246,210,0.4);
-      box-shadow: 0 0 18px rgba(0,246,210,0.2), inset 0 1px 0 rgba(255,255,255,0.05);
+      background: linear-gradient(135deg, rgba(0,206,184,0.15) 0%, rgba(0,206,184,0.05) 100%) !important;
+      color: #00ceb8 !important;
+      border: 1px solid rgba(0,206,184,0.3);
+      box-shadow: 0 0 20px rgba(0,206,184,0.1), inset 0 1px 0 rgba(255,255,255,0.05);
     }
     
     /* Card Hover Effects */
@@ -85,9 +65,7 @@
     
     /* Subtle gradient backgrounds */
     .bg-card {
-      background: linear-gradient(180deg, rgba(12,19,36,0.95) 0%, rgba(10,16,32,0.82) 100%);
-      border: 1px solid rgba(31,42,68,0.6);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+      background: linear-gradient(180deg, rgba(17,24,39,0.95) 0%, rgba(17,24,39,0.8) 100%);
       backdrop-filter: blur(10px);
     }
     
@@ -102,23 +80,6 @@
       transition-timing-function: ease;
       transition-duration: 150ms;
     }
-
-    .card-shell {
-      background: linear-gradient(180deg, rgba(13,20,38,0.9) 0%, rgba(9,14,28,0.85) 100%);
-      border: 1px solid rgba(31,42,68,0.7);
-      box-shadow: 0 18px 32px rgba(0,0,0,0.45);
-    }
-
-    .section-title {
-      letter-spacing: 0.12em;
-      font-weight: 700;
-    }
-
-    .bg-gray-950 { background-color: #070c18 !important; }
-    .bg-gray-900 { background-color: #0b1326 !important; }
-    .bg-gray-800 { background-color: #101a33 !important; }
-    .border-gray-800 { border-color: #1f2a44 !important; }
-    .border-gray-700 { border-color: #2a3551 !important; }
     
     /* Focus states */
     button:focus, select:focus, input:focus {
@@ -136,9 +97,9 @@
   </style>
 </head>
 
-<body class="bg-gradient-to-br from-[#050811] via-[#070c18] to-[#0b1326] text-gray-200 h-screen overflow-hidden selection:bg-sleeper-teal selection:text-black">
+<body class="bg-gray-950 text-gray-200 h-screen overflow-hidden selection:bg-sleeper-teal selection:text-black">
   <!-- Header -->
-  <header class="h-16 border-b border-[#1b2333]/80 bg-gradient-to-r from-[#0a0f1f] via-[#0b1226] to-[#0a0f1f] backdrop-blur-sm flex items-center justify-between px-6 shrink-0 shadow-[0_8px_24px_rgba(0,0,0,0.45)]">
+  <header class="h-16 border-b border-gray-800/50 bg-gradient-to-r from-gray-900 via-gray-900 to-gray-900/95 backdrop-blur-sm flex items-center justify-between px-6 shrink-0">
     <div class="flex items-center gap-4">
       <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sleeper-teal via-teal-500 to-teal-700 flex items-center justify-center text-black font-black text-lg shadow-lg shadow-sleeper-teal/20">S</div>
       <div>
@@ -147,42 +108,18 @@
       </div>
     </div>
     <div class="flex items-center gap-4">
-      <div class="flex items-center gap-2 bg-[#0f162b]/70 rounded-lg px-3 py-1.5 border border-[#1f2a44]/70">
+      <div class="flex items-center gap-2 bg-gray-800/50 rounded-lg px-3 py-1.5 border border-gray-700/50">
         <span class="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Season</span>
-        <select id="seasonSelect" class="bg-transparent border-none text-sm text-white font-medium focus:outline-none cursor-pointer"></select>
+        <select id="seasonSelect" class="bg-transparent border-none text-sm text-white font-medium focus:outline-none cursor-pointer">
+          <option value="2024" class="bg-gray-900">2024</option>
+          <option value="2025" class="bg-gray-900">2025</option>
+          <option value="2026" class="bg-gray-900">2026</option>
+        </select>
       </div>
-      <div class="flex items-center gap-3 bg-[#0f162b]/50 rounded-lg px-3 py-1.5 border border-[#1f2a44]/50">
+      <div class="flex items-center gap-3 bg-gray-800/30 rounded-lg px-3 py-1.5">
         <div class="text-xs font-medium text-gray-400" id="hdrStatus">Loading…</div>
-        <div class="w-32 h-1.5 rounded-full bg-[#101a33] overflow-hidden">
-          <div class="h-full bg-gradient-to-r from-sleeper-teal via-[#36f0c8] to-[#6cffea] w-0 transition-all duration-300" id="hdrProgress"></div>
-        </div>
-      </div>
-      <div class="relative">
-        <button id="settingsToggle" class="w-10 h-10 rounded-xl bg-[#0f162b]/80 border border-[#1f2a44]/70 hover:border-sleeper-teal/60 hover:text-sleeper-teal text-gray-300 flex items-center justify-center transition" title="Settings">
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/>
-            <path stroke-linecap="round" stroke-linejoin="round" d="M19.4 15a1.7 1.7 0 0 0 .34 1.86l.05.05a2 2 0 0 1-2.83 2.83l-.05-.05A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 1.54V21a2 2 0 0 1-4 0v-.06a1.7 1.7 0 0 0-1-1.54 1.7 1.7 0 0 0-1.86.34l-.05.05a2 2 0 1 1-2.83-2.83l.05-.05A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.54-1H3a2 2 0 0 1 0-4h.06A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.34-1.86l-.05-.05a2 2 0 1 1 2.83-2.83l.05.05A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.54V3a2 2 0 0 1 4 0v.06a1.7 1.7 0 0 0 1 1.54 1.7 1.7 0 0 0 1.86-.34l.05-.05a2 2 0 1 1 2.83 2.83l-.05.05A1.7 1.7 0 0 0 19.4 9a1.7 1.7 0 0 0 1.54 1H21a2 2 0 0 1 0 4h-.06A1.7 1.7 0 0 0 19.4 15z"/>
-          </svg>
-        </button>
-        <div id="settingsDropdown" class="absolute right-0 mt-3 w-[360px] bg-[#0b1329]/95 border border-[#1f2a44]/80 rounded-2xl shadow-2xl shadow-black/70 p-4 hidden z-50">
-          <div class="text-xs font-semibold text-sleeper-teal uppercase tracking-wider">Quick Overrides</div>
-          <label class="flex items-center gap-2 mt-3 text-xs text-gray-300">
-            <input id="quickOverrideToggle" type="checkbox" class="accent-sleeper-teal" />
-            Enable manual override for NFL state inputs
-          </label>
-          <div class="grid grid-cols-2 gap-2 mt-3 text-xs text-gray-400">
-            <label class="flex flex-col gap-1">
-              Season
-              <input id="quickOverrideSeason" type="number" class="bg-[#0f162b] border border-[#1f2a44]/70 rounded-lg px-2 py-1 text-white" min="2000" max="2099" />
-            </label>
-            <label class="flex flex-col gap-1">
-              Leg (Week)
-              <input id="quickOverrideWeek" type="number" class="bg-[#0f162b] border border-[#1f2a44]/70 rounded-lg px-2 py-1 text-white" min="0" max="18" />
-            </label>
-          </div>
-          <div class="mt-4 text-xs font-semibold text-sleeper-teal uppercase tracking-wider">Optimal Lineup Weights</div>
-          <div id="optimalWeightSliders" class="mt-3 space-y-2 text-xs text-gray-300"></div>
-          <div class="mt-3 text-[10px] text-gray-500">Adjusting one slider auto-normalizes the rest to keep totals at 100%.</div>
+        <div class="w-32 h-1.5 rounded-full bg-gray-800 overflow-hidden">
+          <div class="h-full bg-gradient-to-r from-sleeper-teal to-teal-400 w-0 transition-all duration-300" id="hdrProgress"></div>
         </div>
       </div>
     </div>
@@ -191,46 +128,40 @@
   <!-- Layout -->
   <div class="flex h-[calc(100vh-4rem)]">
     <!-- Sidebar -->
-    <aside class="w-20 bg-gradient-to-b from-[#0a1022] via-[#0a1022] to-[#0b1226] backdrop-blur-sm border-r border-[#1f2a44]/80 flex flex-col items-center py-4 gap-2 shrink-0 shadow-[4px_0_24px_rgba(0,0,0,0.35)]">
+    <aside class="w-20 bg-gray-900/80 backdrop-blur-sm border-r border-gray-800/50 flex flex-col items-center py-4 gap-2 shrink-0">
       <!-- Main Navigation Group -->
       <div class="flex flex-col items-center gap-1.5">
-        <span class="text-[9px] font-semibold text-gray-600 uppercase tracking-wider mb-1">Core</span>
-        <button class="w-11 h-11 rounded-xl bg-[#0f162b]/80 text-sleeper-teal hover:bg-[#152242] transition-all duration-200 font-bold text-[11px] shadow-lg shadow-black/30" id="btnTabTeams" title="Current Rosters">ROST</button>
-        <button class="w-11 h-11 rounded-xl bg-[#0f162b]/60 text-gray-400 hover:bg-[#152242] hover:text-white transition-all duration-200 font-bold text-[11px]" id="btnTabOptimal" title="Optimal Lineups">OPT</button>
-        <button class="w-11 h-11 rounded-xl bg-[#0f162b]/60 text-gray-400 hover:bg-[#152242] hover:text-white transition-all duration-200 font-bold text-[11px]" id="btnTabHistory" title="Historical Rosters (Actual)">Hx</button>
+        <span class="text-[9px] font-semibold text-gray-600 uppercase tracking-wider mb-1">Rosters</span>
+        <button class="w-11 h-11 rounded-xl bg-gray-800 text-sleeper-teal hover:bg-gray-700 transition-all duration-200 font-bold text-sm shadow-lg shadow-black/20" id="btnTabTeams" title="Current Rosters">R</button>
+        <button class="w-11 h-11 rounded-xl bg-gray-800/60 text-gray-400 hover:bg-gray-700 hover:text-white transition-all duration-200 font-bold text-sm" id="btnTabHistory" title="Historical Rosters (Actual)">H</button>
+        <button class="w-11 h-11 rounded-xl bg-gray-800/60 text-gray-400 hover:bg-gray-700 hover:text-white transition-all duration-200 font-bold text-sm" id="btnTabOptimal" title="Optimal Lineups">O</button>
       </div>
 
-      <div class="w-10 h-px bg-gradient-to-r from-transparent via-[#1f2a44] to-transparent my-2"></div>
-      <!-- Analysis Group -->
+      <div class="w-10 h-px bg-gradient-to-r from-transparent via-gray-700 to-transparent my-2"></div>
+<!-- Analysis Group -->
       <div class="flex flex-col items-center gap-1.5">
-        <span class="text-[9px] font-semibold text-gray-600 uppercase tracking-wider mb-1">Matchup</span>
-        <button class="w-11 h-11 rounded-xl bg-[#0f162b]/60 text-gray-400 hover:bg-[#152242] hover:text-white transition-all duration-200 font-bold text-[11px]" id="btnTabMatchups" title="Weekly Matchups">VS</button>
-        <button class="w-11 h-11 rounded-xl bg-[#0f162b]/60 text-gray-400 hover:bg-[#152242] hover:text-white transition-all duration-200 font-bold text-[11px]" id="btnTabFA" title="Free Agents">FA</button>
-        <button class="w-11 h-11 rounded-xl bg-[#0f162b]/60 text-gray-400 hover:bg-[#152242] hover:text-white transition-all duration-200 font-bold text-[11px]" id="btnTabDef" title="NFL Defense Rankings">DEF</button>
-        <button class="w-11 h-11 rounded-xl bg-[#0f162b]/60 text-gray-400 hover:bg-[#152242] hover:text-white transition-all duration-200 font-bold text-[11px]" id="btnTabTrades" title="Recent Trades">TRD</button>
+        <span class="text-[9px] font-semibold text-gray-600 uppercase tracking-wider mb-1">Analysis</span>
+        <button class="w-11 h-11 rounded-xl bg-gray-800/60 text-gray-400 hover:bg-gray-700 hover:text-white transition-all duration-200 font-bold text-sm" id="btnTabMatchups" title="Weekly Matchups">M</button>
+        <button class="w-11 h-11 rounded-xl bg-gray-800/60 text-gray-400 hover:bg-gray-700 hover:text-white transition-all duration-200 font-bold text-xs" id="btnTabFA" title="Free Agents">FA</button>
+        <button class="w-11 h-11 rounded-xl bg-gray-800/60 text-gray-400 hover:bg-gray-700 hover:text-white transition-all duration-200 font-bold text-sm" id="btnTabDef" title="NFL Defense Rankings">D</button>
       </div>
       
-      <div class="w-10 h-px bg-gradient-to-r from-transparent via-[#1f2a44] to-transparent my-2"></div>
+      <div class="w-10 h-px bg-gradient-to-r from-transparent via-gray-700 to-transparent my-2"></div>
       
       <!-- League Group -->
       <div class="flex flex-col items-center gap-1.5">
-        <span class="text-[9px] font-semibold text-gray-600 uppercase tracking-wider mb-1">Insights</span>
-        <button class="w-11 h-11 rounded-xl bg-[#0f162b]/60 text-gray-400 hover:bg-[#152242] hover:text-white transition-all duration-200 font-bold text-[11px]" id="btnTabInsights" title="League Analytics">STAT</button>
+        <span class="text-[9px] font-semibold text-gray-600 uppercase tracking-wider mb-1">League</span>
+        <button class="w-11 h-11 rounded-xl bg-gray-800/60 text-gray-400 hover:bg-gray-700 hover:text-white transition-all duration-200 font-bold text-sm" id="btnTabTrades" title="Recent Trades">T</button>
+        <button class="w-11 h-11 rounded-xl bg-gray-800/60 text-gray-400 hover:bg-gray-700 hover:text-white transition-all duration-200 font-bold text-sm" id="btnTabInsights" title="League Analytics">A</button>
       </div>
       
       <!-- Spacer to push version to bottom -->
       <div class="flex-1"></div>
-      <button class="w-11 h-11 rounded-xl bg-[#0f162b]/70 text-gray-400 hover:bg-[#152242] hover:text-sleeper-teal transition-all duration-200 flex items-center justify-center" id="btnTabSettings" data-nav="icon" title="Settings">
-        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/>
-          <path stroke-linecap="round" stroke-linejoin="round" d="M19.4 15a1.7 1.7 0 0 0 .34 1.86l.05.05a2 2 0 0 1-2.83 2.83l-.05-.05A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 1.54V21a2 2 0 0 1-4 0v-.06a1.7 1.7 0 0 0-1-1.54 1.7 1.7 0 0 0-1.86.34l-.05.05a2 2 0 1 1-2.83-2.83l.05-.05A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.54-1H3a2 2 0 0 1 0-4h.06A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.34-1.86l-.05-.05a2 2 0 1 1 2.83-2.83l.05.05A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.54V3a2 2 0 0 1 4 0v.06a1.7 1.7 0 0 0 1 1.54 1.7 1.7 0 0 0 1.86-.34l.05-.05a2 2 0 1 1 2.83 2.83l-.05.05A1.7 1.7 0 0 0 19.4 9a1.7 1.7 0 0 0 1.54 1H21a2 2 0 0 1 0 4h-.06A1.7 1.7 0 0 0 19.4 15z"/>
-        </svg>
-      </button>
-      <div class="text-[8px] text-gray-600 font-mono mt-2">v3.1</div>
+      <div class="text-[8px] text-gray-600 font-mono">v3.1</div>
     </aside>
 
     <!-- Main -->
-    <main class="flex-1 overflow-hidden relative bg-gradient-to-br from-[#05070f] via-[#070c18] to-[#0c1630]">
+    <main class="flex-1 overflow-hidden relative bg-gradient-to-br from-gray-950 via-gray-950 to-gray-900/50">
       <!-- Tabs: Teams -->
       <section id="viewTeams" class="h-full flex flex-col p-6 gap-4">
         <div class="flex items-end justify-between gap-4">
@@ -590,52 +521,6 @@
         </div>
       </section>
 
-      <!-- Tabs: Settings -->
-      <section id="viewSettings" class="h-full flex flex-col p-6 gap-4 hidden overflow-hidden">
-        <div class="flex items-end justify-between gap-4">
-          <div>
-            <div class="text-2xl font-bold text-white tracking-tight">Settings</div>
-            <div class="text-sm text-gray-500">Manual overrides, season controls, and optimal lineup weighting</div>
-          </div>
-          <div class="px-3 py-1.5 bg-[#0f162b]/60 rounded-lg border border-[#1f2a44]/70 text-xs text-gray-400">SYSTEM</div>
-        </div>
-
-        <div class="grid grid-cols-1 xl:grid-cols-3 gap-5 flex-1 overflow-hidden">
-          <div class="xl:col-span-2 bg-[#0f162b]/70 border border-[#1f2a44]/80 rounded-2xl overflow-hidden flex flex-col shadow-xl shadow-black/40">
-            <div class="p-4 border-b border-[#1f2a44]/70 bg-[#0b1329]">
-              <div class="text-white font-bold section-title text-xs">NFL STATE OVERRIDE</div>
-              <div class="text-[10px] text-gray-500 font-mono">Override season + leg inputs pulled from Sleeper state API.</div>
-            </div>
-            <div class="p-4 space-y-4 overflow-y-auto">
-              <label class="flex items-center gap-2 text-sm text-gray-300">
-                <input id="settingsOverrideToggle" type="checkbox" class="accent-sleeper-teal" />
-                Enable manual override
-              </label>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <label class="flex flex-col gap-1 text-xs text-gray-400">
-                  Season (year)
-                  <input id="settingsOverrideSeason" type="number" class="bg-[#0f162b] border border-[#1f2a44]/70 rounded-lg px-3 py-2 text-white" min="2000" max="2099" />
-                </label>
-                <label class="flex flex-col gap-1 text-xs text-gray-400">
-                  Current leg (week)
-                  <input id="settingsOverrideWeek" type="number" class="bg-[#0f162b] border border-[#1f2a44]/70 rounded-lg px-3 py-2 text-white" min="0" max="18" />
-                </label>
-              </div>
-              <div class="text-[10px] text-gray-500 font-mono">Season type locked to <span class="text-sleeper-teal">regular</span> for all API calls.</div>
-              <button id="settingsApplyOverride" class="px-4 py-2 bg-sleeper-teal text-black rounded-lg font-bold text-xs uppercase tracking-wider hover:bg-teal-300">Apply Override</button>
-            </div>
-          </div>
-
-          <div class="bg-[#0f162b]/70 border border-[#1f2a44]/80 rounded-2xl overflow-hidden flex flex-col shadow-xl shadow-black/40">
-            <div class="p-4 border-b border-[#1f2a44]/70 bg-[#0b1329]">
-              <div class="text-white font-bold section-title text-xs">OPTIMAL LINEUP WEIGHTS</div>
-              <div class="text-[10px] text-gray-500 font-mono">Normalize to 100% for real-time lineup impact.</div>
-            </div>
-            <div class="p-4 space-y-3 overflow-y-auto" id="settingsWeightSliders"></div>
-          </div>
-        </div>
-      </section>
-
       <!-- Player modal -->
       <div id="playerModal" class="fixed inset-0 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4 z-50">
         <div class="w-full max-w-5xl max-h-[95vh] bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden flex flex-col">
@@ -777,23 +662,7 @@ var APP = {
     leagueId: SEASON_LEAGUES[INITIAL_SEASON_CHOICE],
     seasonType: "regular",
     boomPct: 1.20,
-    bustPct: 0.80,
-    stateOverride: {
-      enabled: false,
-      season: null,
-      week: null
-    },
-    optimalWeights: {
-      value: 16,
-      proj: 16,
-      mu: 8,
-      fit: 12,
-      ppg: 5,
-      l4: 18,
-      cs: 18,
-      bb: 4,
-      dlt: 3
-    }
+    bustPct: 0.80
   },
   data: {
     nflState: null,
@@ -857,20 +726,7 @@ playersById: {},
                'defRoleSelect',
                'defRoleModeMost',
                'defRoleModeLeast',
-               'defRoleTableBody',
-               'settingsToggle',
-               'settingsDropdown',
-               'quickOverrideToggle',
-               'quickOverrideSeason',
-               'quickOverrideWeek',
-               'optimalWeightSliders',
-               'settingsOverrideToggle',
-               'settingsOverrideSeason',
-               'settingsOverrideWeek',
-               'settingsApplyOverride',
-               'settingsWeightSliders',
-               'viewSettings',
-               'btnTabSettings'];
+               'defRoleTableBody'];
     var self = this;
     ids.forEach(function(id) { self.dom[id] = document.getElementById(id); });
   },
@@ -893,199 +749,6 @@ playersById: {},
       if (!r.ok) throw new Error("HTTP " + r.status + " for " + url);
       return r.text();
     });
-  },
-
-  loadStoredSettings: function() {
-    try {
-      var raw = localStorage.getItem("sleeper_app_state_override");
-      if (raw) {
-        var parsed = JSON.parse(raw);
-        if (parsed && typeof parsed === "object") {
-          this.cfg.stateOverride = {
-            enabled: !!parsed.enabled,
-            season: parsed.season || null,
-            week: parsed.week || null
-          };
-        }
-      }
-    } catch(e) {}
-
-    try {
-      var wraw = localStorage.getItem("sleeper_app_optimal_weights");
-      if (wraw) {
-        var wp = JSON.parse(wraw);
-        if (wp && typeof wp === "object") {
-          this.cfg.optimalWeights = Object.assign({}, this.cfg.optimalWeights, wp || {});
-          this.normalizeOptimalWeights();
-        }
-      }
-    } catch(e) {}
-  },
-
-  persistSettings: function() {
-    try {
-      localStorage.setItem("sleeper_app_state_override", JSON.stringify(this.cfg.stateOverride || {}));
-    } catch(e) {}
-    try {
-      localStorage.setItem("sleeper_app_optimal_weights", JSON.stringify(this.cfg.optimalWeights || {}));
-    } catch(e) {}
-  },
-
-  getEffectiveNflState: function() {
-    var nflState = this.data.nflState || {};
-    var weekFromApi = nflState.week;
-    var legFromApi = (nflState.leg !== null && nflState.leg !== undefined) ? nflState.leg : nflState.week;
-    var seasonFromApi = nflState.season;
-    var season = seasonFromApi;
-    var leg = legFromApi;
-
-    if (this.cfg.stateOverride && this.cfg.stateOverride.enabled) {
-      if (this.cfg.stateOverride.season) season = this.cfg.stateOverride.season;
-      if (this.cfg.stateOverride.week !== null && this.cfg.stateOverride.week !== undefined) leg = this.cfg.stateOverride.week;
-    }
-
-    return {
-      season: season,
-      week: weekFromApi,
-      leg: leg,
-      seasonType: this.cfg.seasonType || "regular"
-    };
-  },
-
-  normalizeOptimalWeights: function(changedKey) {
-    var weights = this.cfg.optimalWeights || {};
-    var keys = Object.keys(weights);
-    var total = 0;
-    keys.forEach(function(k) { total += Number(weights[k]) || 0; });
-    if (!total) return;
-    if (!changedKey) {
-      keys.forEach(function(k) { weights[k] = Math.round((weights[k] / total) * 100); });
-    } else {
-      var fixedVal = Number(weights[changedKey]) || 0;
-      var otherKeys = keys.filter(function(k) { return k !== changedKey; });
-      var othersSum = 0;
-      otherKeys.forEach(function(k) { othersSum += Number(weights[k]) || 0; });
-      var remaining = Math.max(0, 100 - fixedVal);
-      if (othersSum <= 0) {
-        var even = otherKeys.length ? remaining / otherKeys.length : 0;
-        otherKeys.forEach(function(k) { weights[k] = Math.round(even); });
-      } else {
-        otherKeys.forEach(function(k) { weights[k] = Math.round(((Number(weights[k]) || 0) / othersSum) * remaining); });
-      }
-      var adjust = 100 - (fixedVal + otherKeys.reduce(function(acc, k) { return acc + (Number(weights[k]) || 0); }, 0));
-      if (otherKeys.length && adjust !== 0) {
-        weights[otherKeys[0]] = (Number(weights[otherKeys[0]]) || 0) + adjust;
-      }
-    }
-    this.cfg.optimalWeights = weights;
-    this.persistSettings();
-  },
-
-  setOptimalWeight: function(key, value) {
-    if (!this.cfg.optimalWeights || !this.cfg.optimalWeights.hasOwnProperty(key)) return;
-    this.cfg.optimalWeights[key] = Math.max(0, Math.min(100, Number(value) || 0));
-    this.normalizeOptimalWeights(key);
-    this.ui._historyBestCache = {};
-    this.renderOptimalWeightSliders(this.dom.optimalWeightSliders);
-    this.renderOptimalWeightSliders(this.dom.settingsWeightSliders);
-    try { this.renderAll(); } catch(e) {}
-  },
-
-  renderOptimalWeightSliders: function(container) {
-    var self = this;
-    if (!container) return;
-    var labels = {
-      value: "Value",
-      proj: "Projection",
-      mu: "Matchup (MU)",
-      fit: "Fit",
-      ppg: "PPG",
-      l4: "Last 4",
-      cs: "Consistency/Snaps",
-      bb: "Boom/Bust",
-      dlt: "Delta"
-    };
-    container.innerHTML = "";
-    var order = ["value","proj","mu","fit","ppg","l4","cs","bb","dlt"];
-    order.forEach(function(key) {
-      if (!self.cfg.optimalWeights.hasOwnProperty(key)) return;
-      var val = Number(self.cfg.optimalWeights[key]) || 0;
-      var row = document.createElement("div");
-      row.className = "flex items-center gap-2";
-      row.innerHTML =
-        '<div class="w-28 text-[11px] text-gray-400 uppercase tracking-wider">' + (labels[key] || key) + '</div>' +
-        '<input type="range" min="0" max="100" value="' + val + '" data-weight-key="' + key + '" class="flex-1 accent-sleeper-teal" />' +
-        '<div class="w-8 text-right text-xs text-white font-mono">' + val + '%</div>';
-      container.appendChild(row);
-    });
-
-    var inputs = container.querySelectorAll("input[type=range]");
-    inputs.forEach(function(input) {
-      input.oninput = function(e) {
-        var key = e && e.target ? e.target.getAttribute("data-weight-key") : null;
-        if (!key) return;
-        self.setOptimalWeight(key, e.target.value);
-        self.renderOptimalWeightSliders(container);
-      };
-    });
-  },
-
-  populateSeasonOptions: function() {
-    if (!this.dom.seasonSelect) return;
-    var seasons = Object.keys(this.cfg.seasonLeagues || {}).sort();
-    this.dom.seasonSelect.innerHTML = "";
-    seasons.forEach(function(season) {
-      var opt = document.createElement("option");
-      opt.value = season;
-      opt.textContent = season;
-      opt.className = "bg-[#0b1226]";
-      this.dom.seasonSelect.appendChild(opt);
-    }, this);
-  },
-
-  syncOverrideControls: function() {
-    var state = this.cfg.stateOverride || {};
-    if (this.dom.quickOverrideToggle) this.dom.quickOverrideToggle.checked = !!state.enabled;
-    if (this.dom.settingsOverrideToggle) this.dom.settingsOverrideToggle.checked = !!state.enabled;
-
-    var season = state.season || (this.getEffectiveNflState().season || this.getSeason());
-    var week = (state.week !== null && state.week !== undefined) ? state.week : (this.getEffectiveNflState().leg || 1);
-
-    if (this.dom.quickOverrideSeason) this.dom.quickOverrideSeason.value = season || "";
-    if (this.dom.settingsOverrideSeason) this.dom.settingsOverrideSeason.value = season || "";
-    if (this.dom.quickOverrideWeek) this.dom.quickOverrideWeek.value = week || "";
-    if (this.dom.settingsOverrideWeek) this.dom.settingsOverrideWeek.value = week || "";
-  },
-
-  applyOverrideInputs: function(source) {
-    var toggle = source && source.toggle ? source.toggle : null;
-    var seasonInput = source && source.season ? source.season : null;
-    var weekInput = source && source.week ? source.week : null;
-
-    this.cfg.stateOverride.enabled = !!(toggle && toggle.checked);
-    var seasonRaw = seasonInput ? String(seasonInput.value || "").trim() : "";
-    var weekRaw = weekInput ? String(weekInput.value || "").trim() : "";
-    var seasonVal = seasonRaw ? Number(seasonRaw) : null;
-    var weekVal = weekRaw ? Number(weekRaw) : null;
-    this.cfg.stateOverride.season = (seasonVal !== null && isFinite(seasonVal)) ? String(seasonVal) : null;
-    this.cfg.stateOverride.week = (weekVal !== null && isFinite(weekVal)) ? weekVal : null;
-    this.persistSettings();
-  },
-
-  formatOptimalWeightLabel: function() {
-    var w = this.cfg.optimalWeights || {};
-    var parts = [
-      "Value " + (w.value || 0) + "%",
-      "Proj " + (w.proj || 0) + "%",
-      "MU " + (w.mu || 0) + "%",
-      "FIT " + (w.fit || 0) + "%",
-      "PPG " + (w.ppg || 0) + "%",
-      "L4 " + (w.l4 || 0) + "%",
-      "Cons/Snaps " + (w.cs || 0) + "%",
-      "Boom/Bust " + (w.bb || 0) + "%",
-      "Delta " + (w.dlt || 0) + "%"
-    ];
-    return parts.join(" • ");
   },
 
 
@@ -1332,14 +995,13 @@ playersById: {},
     if (this.data.appSeason != null) return String(this.data.appSeason);
     if (this.data.league && this.data.league.season != null) return String(this.data.league.season);
     if (this.data.nflState && this.data.nflState.season != null) return String(this.data.nflState.season);
-    return DEFAULT_SEASON_CHOICE;
+    return "2025";
   },
 
   getMaxWeek: function() {
-    var effState = this.getEffectiveNflState();
     var w = (this.data.maxWeek != null) ? Number(this.data.maxWeek)
           : (this.ui && this.ui.selectedWeek != null) ? Number(this.ui.selectedWeek)
-          : (effState && effState.leg != null) ? Number(effState.leg)
+          : (this.data.nflState && this.data.nflState.week != null) ? Number(this.data.nflState.week)
           : 1;
     if (!isFinite(w) || w < 1) w = 1;
     if (w > 18) w = 18;
@@ -4655,90 +4317,79 @@ getPlayerDeltaRank: function(pid) {
   init: function() {
     var self = this;
     this.cacheDom();
-    this.loadStoredSettings();
-    this.populateSeasonOptions();
-    this.syncOverrideControls();
-    this.renderOptimalWeightSliders(this.dom.optimalWeightSliders);
-    this.renderOptimalWeightSliders(this.dom.settingsWeightSliders);
-
+    
     this.setProgress("Loading NFL state…", 8);
-    var statePromise = this.fetchJson("https://api.sleeper.app/v1/state/nfl")
-      .catch(function(e) {
-        console.error("NFL state fetch failed:", e);
-        return {};
-      });
-    var leaguePromise = this.fetchJson("https://api.sleeper.app/v1/league/" + this.cfg.leagueId)
-      .catch(function(e) {
-        console.error("League fetch failed:", e);
-        throw new Error("League not found or not accessible. This season's league may not exist yet.");
-      });
-
-    Promise.all([statePromise, leaguePromise])
-      .then(function(results) {
-        var nflState = results[0] || {};
-        var league = results[1];
-
-        if (!league) {
-          throw new Error("League data is empty. This season's league may not exist yet.");
-        }
-
+    this.fetchJson("https://api.sleeper.app/v1/state/nfl")
+      .then(function(nflState) {
         self.data.nflState = nflState;
-        self.data.league = league;
-
-        var effState = self.getEffectiveNflState();
-        var season = effState.season;
-        var currentWeek = Number(effState.leg) || 1;
+        var season = nflState.season;
+        var currentWeek = nflState.week;
         self.ui.selectedWeek = currentWeek;
 
-        // Prefer the league's season (important in offseason when /state/nfl advances to next season)
-        var leagueSeason = String((league && league.season) || season);
-        self.data.appSeason = leagueSeason;
-
-        // If nflState season differs from league season, infer the last week that has matchup data
-        var startGuess = 18;
-        try {
-          if (league && league.settings && league.settings.playoff_week_start) {
-            startGuess = Math.min(18, Number(league.settings.playoff_week_start) + 2);
+        self.setProgress("Loading league…", 18);
+        return self.fetchJson("https://api.sleeper.app/v1/league/" + self.cfg.leagueId)
+          .catch(function(e) {
+            console.error("League fetch failed:", e);
+            throw new Error("League not found or not accessible. This season's league may not exist yet.");
+          })
+          .then(function(league) {
+          if (!league) {
+            throw new Error("League data is empty. This season's league may not exist yet.");
           }
-        } catch(e) {}
+          self.data.league = league;
 
-        var weekPromise = (String(season) !== leagueSeason)
-          ? self.findLastWeekWithMatchups(startGuess)
-          : Promise.resolve(currentWeek);
+          // Prefer the league's season (important in offseason when /state/nfl advances to next season)
+          var leagueSeason = String((league && league.season) || season);
+          self.data.appSeason = leagueSeason;
 
-        return weekPromise.then(function(effWeek) {
-          currentWeek = Number(effWeek) || Number(currentWeek) || 1;
-          self.data.maxWeek = currentWeek;
-          self.ui.selectedWeek = currentWeek;
+          // If nflState season differs from league season, infer the last week that has matchup data
+          var startGuess = 18;
+          try {
+            if (league && league.settings && league.settings.playoff_week_start) {
+              startGuess = Math.min(18, Number(league.settings.playoff_week_start) + 2);
+            }
+          } catch(e) {}
 
-          if (self.dom.hdrLeague) self.dom.hdrLeague.textContent = (league && league.name) || "Sleeper League";
-          if (self.dom.hdrMeta) self.dom.hdrMeta.textContent = "Season " + leagueSeason + " | Week " + currentWeek;
+          var weekPromise = (String(nflState.season) !== leagueSeason)
+            ? self.findLastWeekWithMatchups(startGuess)
+            : Promise.resolve(currentWeek);
 
-          self.setProgress("Loading users/rosters…", 28);
-          return Promise.all([
-            self.fetchJson("https://api.sleeper.app/v1/league/" + self.cfg.leagueId + "/users").catch(function() { return []; }),
-            self.fetchJson("https://api.sleeper.app/v1/league/" + self.cfg.leagueId + "/rosters").catch(function() { return []; }),
-            self.fetchJson("https://api.sleeper.app/v1/league/" + self.cfg.leagueId + "/matchups/" + currentWeek).catch(function() { return []; }),
-            self.fetchJson("https://api.sleeper.app/v1/league/" + self.cfg.leagueId + "/transactions/" + currentWeek).catch(function() { return []; }),
-            self.fetchJson("https://api.sleeper.app/v1/league/" + self.cfg.leagueId + "/winners_bracket").catch(function() { return []; }),
-            self.fetchJson("https://api.sleeper.app/v1/league/" + self.cfg.leagueId + "/losers_bracket").catch(function() { return []; })
-          ]);
-        });
+          return weekPromise.then(function(effWeek) {
+            currentWeek = Number(effWeek) || Number(currentWeek) || 1;
+            self.data.maxWeek = currentWeek;
+            self.ui.selectedWeek = currentWeek;
+
+            if (self.dom.hdrLeague) self.dom.hdrLeague.textContent = (league && league.name) || "Sleeper League";
+            if (self.dom.hdrMeta) self.dom.hdrMeta.textContent = "Season " + leagueSeason + " | Week " + currentWeek;
+
+            self.setProgress("Loading users/rosters…", 28);
+            return Promise.all([
+              self.fetchJson("https://api.sleeper.app/v1/league/" + self.cfg.leagueId + "/users").catch(function() { return []; }),
+              self.fetchJson("https://api.sleeper.app/v1/league/" + self.cfg.leagueId + "/rosters").catch(function() { return []; }),
+              self.fetchJson("https://api.sleeper.app/v1/league/" + self.cfg.leagueId + "/matchups/" + currentWeek).catch(function() { return []; }),
+              self.fetchJson("https://api.sleeper.app/v1/league/" + self.cfg.leagueId + "/transactions/" + currentWeek).catch(function() { return []; }),
+              self.fetchJson("https://api.sleeper.app/v1/league/" + self.cfg.leagueId + "/winners_bracket").catch(function() { return []; }),
+              self.fetchJson("https://api.sleeper.app/v1/league/" + self.cfg.leagueId + "/losers_bracket").catch(function() { return []; })
+            ]);
+          });
+      });
       })
       .then(function(results) {
         var users = results[0];
         var rosters = results[1];
-        var matchups = results[2];
-        var transactions = results[3];
-        self.data.winnersBracket = results[4] || [];
-        self.data.losersBracket = results[5] || [];
-
+        
         self.data.usersById = {};
         (users || []).forEach(function(u) { self.data.usersById[u.user_id] = u; });
         self.data.rosters = rosters || [];
-        self.data.matchups = matchups || [];
-        self.data.weekMatchups[String(self.ui.selectedWeek)] = matchups || [];
-        self.data.weekTrans[String(self.ui.selectedWeek)] = transactions || [];
+
+        return Promise.all([
+          self.fetchJson("https://api.sleeper.app/v1/league/" + self.cfg.leagueId + "/winners_bracket").catch(function() { return []; }),
+          self.fetchJson("https://api.sleeper.app/v1/league/" + self.cfg.leagueId + "/losers_bracket").catch(function() { return []; })
+        ]);
+      })
+      .then(function(brackets) {
+        self.data.winnersBracket = brackets[0] || [];
+        self.data.losersBracket = brackets[1] || [];
 
         self.ui.selectedRosterId = (self.data.rosters[0] && self.data.rosters[0].roster_id) || null;
 
@@ -4761,40 +4412,72 @@ getPlayerDeltaRank: function(pid) {
         }
       })
       .then(function() {
-        self.setProgress("Building analytics…", 60);
-        return Promise.all([
-          Promise.resolve().then(function() { return self.buildSeasonTotals(); }).catch(function(e) {
+        self.setProgress("Building season totals…", 60);
+        try {
+          var p = self.buildSeasonTotals();
+          return (p && typeof p.catch === 'function') ? p.catch(function(e) {
             console.warn("Season totals build failed (non-critical):", e);
             self.data.seasonTotals = {};
-          }),
-          Promise.resolve().then(function() { return self.buildPlayerValueIndex(); }).catch(function(e) {
-            console.warn("Value index build failed", e);
-          }),
-          Promise.resolve().then(function() { return self.buildLeagueMetrics(); }).catch(function(e) {
-            console.warn("League metrics build failed (non-critical):", e);
-          }),
-          Promise.resolve().then(function() { return self.loadNFLSchedule(); }).catch(function(e) {
-            console.warn("NFL schedule load failed (non-critical):", e);
-          }),
-          Promise.resolve().then(function() { return self.loadDefenseStats(); }).catch(function(e) {
-            console.warn("Defense stats load failed (non-critical):", e);
-          })
-        ]);
-      })
-      .then(function() {
-        self.setProgress("Building defense role metrics…", 80);
-        try {
-          var p = self.buildDefenseRoleMetrics();
-          return (p && typeof p.catch === 'function') ? p.catch(function(e) {
-            console.warn("Defense role metrics build failed (non-critical):", e);
           }) : Promise.resolve();
         } catch(e) {
-          console.warn("Defense role metrics build failed (non-critical):", e);
+          console.warn("Season totals build failed (non-critical):", e);
+          self.data.seasonTotals = {};
           return Promise.resolve();
         }
       })
       .then(function() {
-        self.setProgress("Building UI…", 90);
+        self.setProgress("Building player values…", 65);
+        try { self.buildPlayerValueIndex(); } catch(e) { console.warn("Value index build failed", e); }
+      })
+      .then(function() {
+        self.setProgress("Building league insights…", 70);
+        try {
+          var p = self.buildLeagueMetrics();
+          return (p && typeof p.catch === 'function') ? p.catch(function(e) {
+            console.warn("League metrics build failed (non-critical):", e);
+          }) : Promise.resolve();
+        } catch(e) {
+          console.warn("League metrics build failed (non-critical):", e);
+          return Promise.resolve();
+        }
+      })
+      .then(function() {
+        self.setProgress("Loading NFL schedule…", 75);
+        try {
+          var p = self.loadNFLSchedule();
+          return (p && typeof p.catch === 'function') ? p.catch(function(e) {
+            console.warn("NFL schedule load failed (non-critical):", e);
+          }) : Promise.resolve();
+        } catch(e) {
+          console.warn("NFL schedule load failed (non-critical):", e);
+          return Promise.resolve();
+        }
+      })
+      .then(function() {
+        self.setProgress("Loading defense stats…", 78);
+        try {
+          var p = self.loadDefenseStats();
+          return (p && typeof p.catch === 'function') ? p.catch(function(e) {
+            console.warn("Defense stats load failed (non-critical):", e);
+          }) : Promise.resolve();
+        } catch(e) {
+          console.warn("Defense stats load failed (non-critical):", e);
+          return Promise.resolve();
+        }
+    }).then(function() {
+      self.setProgress("Building defense role metrics…", 80);
+      try {
+        var p = self.buildDefenseRoleMetrics();
+        return (p && typeof p.catch === 'function') ? p.catch(function(e) {
+          console.warn("Defense role metrics build failed (non-critical):", e);
+        }) : Promise.resolve();
+      } catch(e) {
+        console.warn("Defense role metrics build failed (non-critical):", e);
+        return Promise.resolve();
+      }
+      })
+      .then(function() {
+        self.setProgress("Building UI…", 80);
         self.bindNav();
         try {
           self.renderAll();
@@ -4808,17 +4491,14 @@ getPlayerDeltaRank: function(pid) {
         self.setProgress("Error: " + (err.message || "Unknown error"), 100);
         
         // Show error UI with option to switch season
-        var seasons = Object.keys(self.cfg.seasonLeagues || {}).sort();
-        var buttonHtml = seasons.map(function(yr) {
-          var cls = (yr === DEFAULT_SEASON_CHOICE) ? "bg-sleeper-teal text-black hover:bg-teal-400" : "bg-gray-700 text-white hover:bg-gray-600";
-          return '<button onclick="APP.switchSeason(\'' + yr + '\')" class="px-4 py-2 rounded-lg font-semibold ' + cls + '">Switch to ' + yr + '</button>';
-        }).join('');
         var errorHtml = '<div class="flex items-center justify-center h-full">' +
           '<div class="bg-red-900/20 border border-red-800 rounded-xl p-6 max-w-md text-center">' +
           '<div class="text-red-400 text-lg font-bold mb-2">Failed to Load League</div>' +
           '<div class="text-gray-400 text-sm mb-4">' + (err.message || "The selected league could not be loaded.") + '</div>' +
           '<div class="text-gray-500 text-xs mb-4">League ID: ' + self.cfg.leagueId + '</div>' +
-          '<div class="flex gap-2 justify-center flex-wrap">' + buttonHtml + '</div>' +
+          '<div class="flex gap-2 justify-center">' +
+          '<button onclick="APP.switchSeason(\'2025\')" class="px-4 py-2 bg-sleeper-teal text-black rounded-lg hover:bg-teal-400 font-semibold">Switch to 2025</button>' +
+          '<button onclick="APP.switchSeason(\'2024\')" class="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600">Switch to 2024</button>' +
           '</div></div></div>';
         
         if (self.dom.rosterList) self.dom.rosterList.innerHTML = errorHtml;
@@ -4923,7 +4603,7 @@ getPlayerDeltaRank: function(pid) {
 
     // Year selector (league swap). Switch season in-place without page reload (for Google Apps Script compatibility)
     if (this.dom.seasonSelect) {
-      try { this.dom.seasonSelect.value = String(this.cfg.selectedSeasonChoice || this.getSeason() || DEFAULT_SEASON_CHOICE); } catch(e) {}
+      try { this.dom.seasonSelect.value = String(this.cfg.selectedSeasonChoice || this.getSeason() || "2025"); } catch(e) {}
       this.dom.seasonSelect.onchange = function() {
         var yr = String(self.dom.seasonSelect.value || "");
         if (self.cfg.seasonLeagues && self.cfg.seasonLeagues[yr]) {
@@ -4941,8 +4621,7 @@ getPlayerDeltaRank: function(pid) {
       ["trades", this.dom.btnTabTrades],
       ["insights", this.dom.btnTabInsights],
       ["history", this.dom.btnTabHistory],
-      ["optimal", this.dom.btnTabOptimal],
-      ["settings", this.dom.btnTabSettings]
+      ["optimal", this.dom.btnTabOptimal]
     ];
 
     var setActiveBtn = function(view) {
@@ -4950,13 +4629,11 @@ getPlayerDeltaRank: function(pid) {
         var v = pair[0];
         var el = pair[1];
         if (!el) return;
-        var isIcon = el.dataset && el.dataset.nav === "icon";
-        var baseClass = isIcon
-          ? "w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-200"
-          : "w-11 h-11 rounded-xl transition-all duration-200 font-bold text-[11px] flex items-center justify-center uppercase tracking-wide";
-        el.className = (v === view)
-          ? baseClass + " nav-btn-active"
-          : baseClass + " bg-[#0f162b]/60 text-gray-400 hover:bg-[#152242] hover:text-white";
+        var isFa = (v === "fa");
+        var baseSize = isFa ? "text-xs" : "text-sm";
+        el.className = v === view
+          ? "w-11 h-11 rounded-xl nav-btn-active transition-all duration-200 font-bold " + baseSize
+          : "w-11 h-11 rounded-xl bg-gray-800/60 text-gray-400 hover:bg-gray-700 hover:text-white transition-all duration-200 font-bold " + baseSize;
       });
     };
 
@@ -4968,81 +4645,8 @@ getPlayerDeltaRank: function(pid) {
     if (this.dom.btnTabInsights) this.dom.btnTabInsights.onclick = function() { self.ui.currentView = "insights"; self.renderAll(); setActiveBtn("insights"); };
     if (this.dom.btnTabHistory) this.dom.btnTabHistory.onclick = function() { self.ui.currentView = "history"; self.ui.historyMode = "roster"; self.renderAll(); setActiveBtn("history"); };
     if (this.dom.btnTabOptimal) this.dom.btnTabOptimal.onclick = function() { self.ui.currentView = "optimal"; self.ui.historyMode = "best"; self.renderAll(); setActiveBtn("optimal"); };
-    if (this.dom.btnTabSettings) this.dom.btnTabSettings.onclick = function() { self.ui.currentView = "settings"; self.renderAll(); setActiveBtn("settings"); };
 
     setActiveBtn("teams");
-
-    if (this.dom.settingsToggle && this.dom.settingsDropdown) {
-      this.dom.settingsToggle.onclick = function(e) {
-        e.stopPropagation();
-        self.dom.settingsDropdown.classList.toggle("hidden");
-      };
-      if (!this.ui._dropdownListenerBound) {
-        document.addEventListener("click", function(event) {
-          if (!self.dom.settingsDropdown) return;
-          if (!self.dom.settingsDropdown.contains(event.target) && event.target !== self.dom.settingsToggle) {
-            self.dom.settingsDropdown.classList.add("hidden");
-          }
-        });
-        this.ui._dropdownListenerBound = true;
-      }
-    }
-
-    if (this.dom.quickOverrideToggle) {
-      this.dom.quickOverrideToggle.onchange = function() {
-        self.applyOverrideInputs({
-          toggle: self.dom.quickOverrideToggle,
-          season: self.dom.quickOverrideSeason,
-          week: self.dom.quickOverrideWeek
-        });
-        self.syncOverrideControls();
-        self.init();
-      };
-    }
-    if (this.dom.quickOverrideSeason) {
-      this.dom.quickOverrideSeason.onchange = function() {
-        self.applyOverrideInputs({
-          toggle: self.dom.quickOverrideToggle,
-          season: self.dom.quickOverrideSeason,
-          week: self.dom.quickOverrideWeek
-        });
-        self.syncOverrideControls();
-        self.init();
-      };
-    }
-    if (this.dom.quickOverrideWeek) {
-      this.dom.quickOverrideWeek.onchange = function() {
-        self.applyOverrideInputs({
-          toggle: self.dom.quickOverrideToggle,
-          season: self.dom.quickOverrideSeason,
-          week: self.dom.quickOverrideWeek
-        });
-        self.syncOverrideControls();
-        self.init();
-      };
-    }
-
-    if (this.dom.settingsOverrideToggle) {
-      this.dom.settingsOverrideToggle.onchange = function() {
-        self.applyOverrideInputs({
-          toggle: self.dom.settingsOverrideToggle,
-          season: self.dom.settingsOverrideSeason,
-          week: self.dom.settingsOverrideWeek
-        });
-        self.syncOverrideControls();
-      };
-    }
-    if (this.dom.settingsApplyOverride) {
-      this.dom.settingsApplyOverride.onclick = function() {
-        self.applyOverrideInputs({
-          toggle: self.dom.settingsOverrideToggle,
-          season: self.dom.settingsOverrideSeason,
-          week: self.dom.settingsOverrideWeek
-        });
-        self.syncOverrideControls();
-        self.init();
-      };
-    }
 
     // History controls - auto-load on week change
     if (this.dom.historyWeekSelect) {
@@ -5109,13 +4713,12 @@ getPlayerDeltaRank: function(pid) {
     if (this.dom.viewTrades) this.dom.viewTrades.classList.toggle("hidden", this.ui.currentView !== "trades");
     if (this.dom.viewInsights) this.dom.viewInsights.classList.toggle("hidden", this.ui.currentView !== "insights");
     if (this.dom.viewHistory) this.dom.viewHistory.classList.toggle("hidden", (this.ui.currentView !== "history" && this.ui.currentView !== "optimal"));
-    if (this.dom.viewSettings) this.dom.viewSettings.classList.toggle("hidden", this.ui.currentView !== "settings");
 
     // History header (H = actual roster, O = optimal lineup)
     if (this.dom.historyHeaderTitle && this.dom.historyHeaderSubtitle) {
       if (this.ui.currentView === "optimal") {
         this.dom.historyHeaderTitle.textContent = "Optimal Lineups";
-        this.dom.historyHeaderSubtitle.textContent = "Best possible lineup by week (weighted optimal blend)";
+        this.dom.historyHeaderSubtitle.textContent = "Best possible lineup by week (FIT-weighted)";
         this.ui.historyMode = "best";
       } else if (this.ui.currentView === "history") {
         this.dom.historyHeaderTitle.textContent = "Historical Rosters";
@@ -5157,9 +4760,6 @@ getPlayerDeltaRank: function(pid) {
       } else if (this.ui.historySelectedWeek) {
         this.loadHistoricalWeek();
       }
-    } else if (this.ui.currentView === "settings") {
-      this.syncOverrideControls();
-      this.renderOptimalWeightSliders(this.dom.settingsWeightSliders);
     }
 
     // Defense-vs-role UI bindings
@@ -5238,9 +4838,6 @@ var benchPlayers = Object.keys(benchByPid).map(function(pid) {
   return { pid: pid, slot: benchByPid[pid], isStarter: false };
 });
 
-    var allPids = starters.map(function(s) { return s.pid; }).concat(benchPlayers.map(function(b) { return b.pid; }));
-    var fitMap = this.computeFitScoresForPlayers(allPids, this.ui.selectedWeek, projMap, statsMap);
-
 
     // Helper to check if player is IR/Out
     var isInjuredOut = function(p) {
@@ -5274,6 +4871,8 @@ var benchPlayers = Object.keys(benchByPid).map(function(pid) {
       
       var valObj = self.getPlayerValue(pid);
       var valueScore = valObj ? valObj.score : null;
+      
+      // Get player efficiency metrics
       var effMetrics = self.getPlayerEfficiencyMetrics(pid, p);
 
       return {
@@ -5295,7 +4894,6 @@ var benchPlayers = Object.keys(benchByPid).map(function(pid) {
         ppgRank: ppgRank,
       deltaRank: deltaRank,
         valueScore: valueScore,
-        fitScore: fitMap[pid] || 0,
         effMetrics: effMetrics,
         enhancedMU: enhancedMU
       };
@@ -5386,14 +4984,6 @@ var benchPlayers = Object.keys(benchByPid).map(function(pid) {
         }
       } catch (e) {}
 
-      // Fit badge
-      var fitBadge = '';
-      try {
-        var ft = Math.round(item.fitScore || 0);
-        var clsFT = (ft >= 75) ? 'bg-[#d303fc]/20 text-[#d303fc] border-[#d303fc]/40' : (ft >= 60) ? 'bg-gray-800 text-gray-300 border-gray-700' : 'bg-orange-900/20 text-orange-300 border-orange-900/40';
-        fitBadge = '<span class="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border ' + clsFT + '">FIT ' + ft + '</span>';
-      } catch (e) {}
-
       // Major-position rank (season total points within major position group)
       var rankText = '';
       if (item.posRank && isFinite(item.posRank.rank)) {
@@ -5466,7 +5056,6 @@ var benchPlayers = Object.keys(benchByPid).map(function(pid) {
             '<div class="mt-1 flex justify-end items-center gap-1 flex-wrap">' +
               (valBadge ? valBadge.replace('ml-2','') : '') +
               (muBadge ? muBadge : '') +
-              (fitBadge ? fitBadge : '') +
               '<span class="bb-pill shrink-0 whitespace-nowrap min-w-[84px] text-center ' + item.status.bg + ' ' + item.status.color + ' ' + (item.status.label === "Major Boom" ? "glow-majorBoom" : (item.status.label === "Major Bust" ? "glow-majorBust" : "")) + '">' + item.status.label + '</span>' +
             '</div>' +
           '</div>' +
@@ -5850,148 +5439,6 @@ var benchPlayers = Object.keys(benchByPid).map(function(pid) {
     });
 
     return insights;
-  },
-
-  computeFitScoresForPlayers: function(pids, week, projMap, statsMap) {
-    var self = this;
-    var fitById = {};
-    if (!Array.isArray(pids) || !pids.length) return fitById;
-
-    var projVals = [];
-    var valVals = [];
-    var ppgVals = [];
-    var l4Vals = [];
-    var deltaVals = [];
-
-    var muById = {};
-    var projById = {};
-    var valById = {};
-    var ppgById = {};
-    var l4ById = {};
-    var consById = {};
-    var snapById = {};
-    var bbById = {};
-    var deltaById = {};
-
-    pids.forEach(function(pid) {
-      pid = String(pid);
-      var p = self.data.playersById[pid] || {};
-      var projStats = projMap[pid] || {};
-      var actStats = statsMap[pid] || {};
-      var proj = self.scoreFromStats(projStats, pid);
-      var act = self.scoreFromStats(actStats, pid);
-      var hasPlayed = Object.keys(actStats || {}).length > 0;
-      if ((!isFinite(proj) || proj === 0) && hasPlayed && isFinite(act)) proj = act;
-
-      projById[pid] = isFinite(proj) ? proj : 0;
-      if (projById[pid] > 0) projVals.push(projById[pid]);
-
-      var opp = self.getOpponent(actStats, projStats, p, week);
-      var enh = self.getEnhancedMatchupInfo(pid, opp);
-      var mu = (enh && isFinite(enh.matchScore)) ? enh.matchScore : null;
-      if ((mu === null || mu === undefined) && opp) {
-        var roleKey = self.primaryRoleKeyForPlayer(p);
-        var infoMU = self.getDefenseRoleInfo(opp, roleKey);
-        if (infoMU && isFinite(infoMU.matchScore)) mu = infoMU.matchScore;
-      }
-      if (mu === null || mu === undefined || !isFinite(mu)) mu = 50;
-      muById[pid] = mu;
-
-      var m = (self.data.playerValueMetrics && self.data.playerValueMetrics[pid]) ? self.data.playerValueMetrics[pid] : null;
-      var ppg = (m && isFinite(m.ppg)) ? m.ppg : null;
-      var l4 = (m && isFinite(m.l4)) ? m.l4 : null;
-      var cons = (m && isFinite(m.consistency)) ? m.consistency : 0.5;
-      var snap = (m && isFinite(m.snapAdj)) ? m.snapAdj : 0.5;
-      var bb = (m && isFinite(m.bbAdj)) ? m.bbAdj : 0.5;
-      var dlt = (m && isFinite(m.deltaAvg)) ? m.deltaAvg : 0;
-
-      var vObj = (self.data.playerValues && self.data.playerValues[pid]) ? self.data.playerValues[pid] : null;
-      var valScore = (vObj && isFinite(vObj.score)) ? vObj.score : null;
-
-      valById[pid] = valScore;
-      ppgById[pid] = ppg;
-      l4ById[pid] = l4;
-      consById[pid] = cons;
-      snapById[pid] = snap;
-      bbById[pid] = bb;
-      deltaById[pid] = dlt;
-
-      if (valScore !== null) valVals.push(valScore);
-      if (ppg !== null) ppgVals.push(ppg);
-      if (l4 !== null) l4Vals.push(l4);
-      if (isFinite(dlt)) deltaVals.push(dlt);
-    });
-
-    var p90 = function(arr, fallback) {
-      if (!arr || !arr.length) return fallback;
-      var a = arr.slice().sort(function(x,y){ return x-y; });
-      var idx = Math.floor(0.90 * (a.length - 1));
-      var v = a[Math.max(0, Math.min(a.length - 1, idx))];
-      return (isFinite(v) && v > 0) ? v : fallback;
-    };
-
-    var projDenom = p90(projVals, 20);
-    var valDenom = p90(valVals, 800);
-    var ppgDenom = p90(ppgVals, 12);
-    var l4Denom = p90(l4Vals, 12);
-    var dMin = null, dMax = null;
-    deltaVals.forEach(function(v){
-      if (!isFinite(v)) return;
-      if (dMin === null || v < dMin) dMin = v;
-      if (dMax === null || v > dMax) dMax = v;
-    });
-    var dRange = (dMin !== null && dMax !== null) ? (dMax - dMin) : 0;
-
-    var clamp = function(x, lo, hi) { return Math.max(lo, Math.min(hi, x)); };
-    var outStatuses = ["OUT","IR","PUP","NFI","SUSP","SUSPENDED","COVID","INACTIVE","DNR"];
-    var doubtfulStatuses = ["DOUBTFUL"];
-    var questionableStatuses = ["QUESTIONABLE","Q"];
-
-    var W_VAL  = 0.14;
-    var W_PROJ = 0.25;
-    var W_MU   = 0.23;
-    var W_PPG  = 0.12;
-    var W_L4   = 0.12;
-    var W_CS   = 0.10;
-    var W_BB   = 0.03;
-    var W_DLT  = 0.01;
-
-    pids.forEach(function(pid) {
-      pid = String(pid);
-      var mu = clamp(muById[pid] || 50, 0, 100);
-      var projScaled = projDenom ? clamp(((projById[pid] || 0) / projDenom) * 100, 0, 100) : 0;
-      var valScaled = (valDenom && isFinite(valById[pid])) ? clamp((valById[pid] / valDenom) * 100, 0, 100) : 50;
-      var ppgScaled = (ppgDenom && isFinite(ppgById[pid])) ? clamp((ppgById[pid] / ppgDenom) * 100, 0, 100) : 50;
-      var l4Scaled = (l4Denom && isFinite(l4ById[pid])) ? clamp((l4ById[pid] / l4Denom) * 100, 0, 100) : 50;
-      var consScaled = clamp((consById[pid] || 0.5) * 100, 0, 100);
-      var snapScaled = clamp((snapById[pid] || 0.5) * 100, 0, 100);
-      var csScaled = (consScaled + snapScaled) / 2;
-      var bbScaled = clamp((bbById[pid] || 0.5) * 100, 0, 100);
-      var dlt = deltaById[pid];
-      var dltScaled = 50;
-      if (isFinite(dlt) && dRange > 0) dltScaled = clamp(((dlt - dMin) / dRange) * 100, 0, 100);
-
-      var p = self.data.playersById[pid] || {};
-      var st = ((p && (p.injury_status || p.status)) || "").toString().trim().toUpperCase();
-      var availability = 1.0;
-      if (outStatuses.indexOf(st) >= 0) availability = 0.05;
-      else if (doubtfulStatuses.indexOf(st) >= 0) availability = 0.60;
-      else if (questionableStatuses.indexOf(st) >= 0) availability = 0.85;
-
-      var fitRaw =
-        (W_VAL  * valScaled) +
-        (W_PROJ * projScaled) +
-        (W_MU   * mu) +
-        (W_PPG  * ppgScaled) +
-        (W_L4   * l4Scaled) +
-        (W_CS   * csScaled) +
-        (W_BB   * bbScaled) +
-        (W_DLT  * dltScaled);
-
-      fitById[pid] = Math.round(clamp(fitRaw * availability, 0, 100) * 100) / 100;
-    });
-
-    return fitById;
   },
 
   getHeatmapColor: function(value, myValue, allValues, isTotal) {
@@ -6659,7 +6106,7 @@ renderFA: function() {
       }
 
       var wk = String(w);
-      var currentNflWeek = (self.getEffectiveNflState().leg || 18);
+      var currentNflWeek = (self.data.nflState && self.data.nflState.week) || 18;
       var proceed = function() {
         var projMap = self.data.weekProj[wk] || {};
         var statsMap = self.data.weekStats[wk] || {};
@@ -7712,7 +7159,6 @@ var wrap = document.createElement("div");
     var projById = {};
     var actById = {};
     var hasPlayedById = {};
-    var hasProjById = {};
     var muById = {};
     var ceilById = {};
 
@@ -7724,17 +7170,15 @@ var wrap = document.createElement("div");
       var proj = self.scoreFromStats(projStats, pid);
       var act = self.scoreFromStats(actStats, pid);
       var hasPlayed = Object.keys(actStats || {}).length > 0;
-      var hasProj = Object.keys(projStats || {}).length > 0;
 
       // If projections are missing but the week is completed, fall back to actual so the tab still works
       if ((!isFinite(proj) || proj === 0) && hasPlayed && isFinite(act)) proj = act;
 
       projById[pid] = isFinite(proj) ? proj : 0;
-      hasProjById[pid] = hasProj && isFinite(proj) && proj > 0;
       actById[pid] = isFinite(act) ? act : 0;
       hasPlayedById[pid] = !!hasPlayed;
 
-      if (hasProjById[pid] && isFinite(projById[pid]) && projById[pid] > 0) projVals.push(projById[pid]);
+      if (isFinite(projById[pid]) && projById[pid] > 0) projVals.push(projById[pid]);
 
       var opp = self.getOpponent(actStats, projStats, p, week);
       var enh = self.getEnhancedMatchupInfo(pid, opp);
@@ -7880,27 +7324,24 @@ var wrap = document.createElement("div");
       fitById[pid] = Math.round(fitAdj * 100) / 100;
       // Optimal lineup pick score weights (custom): Value 18% • Proj 18% • MU 8% • FIT 8% • PPG 3% • L4 20% • Cons/Snaps 21% • Boom/Bust 5%
       // Note: your percentages sum to 101%, so these are normalized to 100% in code.
-      var oW = self.cfg.optimalWeights || {};
-      var W_PICK_VAL  = (oW.value || 0) / 100;
-      var W_PICK_PROJ = (oW.proj || 0) / 100;
-      var W_PICK_MU   = (oW.mu || 0) / 100;
-      var W_PICK_FIT  = (oW.fit || 0) / 100;
-      var W_PICK_PPG  = (oW.ppg || 0) / 100;
-      var W_PICK_L4   = (oW.l4 || 0) / 100;
-      var W_PICK_CS   = (oW.cs || 0) / 100;
-      var W_PICK_BB   = (oW.bb || 0) / 100;
-      var W_PICK_DLT  = (oW.dlt || 0) / 100;
+      var W_PICK_VAL  = 0.1782178218;
+      var W_PICK_PROJ = 0.1782178218;
+      var W_PICK_MU   = 0.0792079208;
+      var W_PICK_FIT  = 0.0792079208;
+      var W_PICK_PPG  = 0.0297029703;
+      var W_PICK_L4   = 0.1980198020;
+      var W_PICK_CS   = 0.2079207921;
+      var W_PICK_BB   = 0.0495049505;
 
       var pickRaw =
         (W_PICK_VAL  * valScaled) +
         (W_PICK_PROJ * projScaled) +
         (W_PICK_MU   * mu) +
-        (W_PICK_FIT  * fitAdj) +
+        (W_PICK_FIT  * fitRaw) +
         (W_PICK_PPG  * ppgScaled) +
         (W_PICK_L4   * l4Scaled) +
         (W_PICK_CS   * csScaled) +
-        (W_PICK_BB   * bbScaled) +
-        (W_PICK_DLT  * dltScaled);
+        (W_PICK_BB   * bbScaled);
 
       var pickAdj = clamp(pickRaw * availability, 0, 100);
       pickById[pid] = Math.round(pickAdj * 100) / 100;
@@ -7912,11 +7353,8 @@ var wrap = document.createElement("div");
       var p = self.data.playersById[pid] || {};
       var pos = self.primaryRoleKeyForPlayer(p) || String(p.position || "").toUpperCase();
       if (pos === "DST") pos = "DEF";
-      var st = ((p && (p.injury_status || p.status)) || "").toString().trim().toUpperCase();
-      var isOut = outStatuses.indexOf(st) >= 0;
-      var hasProjection = !!hasProjById[pid];
-      return { id: pid, pos: pos, fit: fitById[pid] || 0, pick: pickById[pid] || 0, eligible: (!isOut && hasProjection) };
-    }).filter(function(it) { return it.id && it.pos && it.eligible; });
+      return { id: pid, pos: pos, fit: fitById[pid] || 0, pick: pickById[pid] || 0 };
+    }).filter(function(it) { return it.id && it.pos; });
 
     pool.sort(function(a,b){ return (b.pick || 0) - (a.pick || 0); });
 
@@ -8030,7 +7468,7 @@ actualStarters: actualStarters,
 
     // Subtitle
     if (this.dom.historyTeamSubtitle) {
-      this.dom.historyTeamSubtitle.textContent = "Week " + week + " | Best lineup (" + this.formatOptimalWeightLabel() + ")";
+      this.dom.historyTeamSubtitle.textContent = "Week " + week + " | Best lineup (Value 18% • Proj 18% • MU 8% • FIT 8% • PPG 3% • L4 20% • Cons/Snaps 21% • Boom/Bust 5%)";
     }
 
     // Build items for rendering
@@ -8099,8 +7537,7 @@ actualStarters: actualStarters,
         opp: opp,
         valueScore: valueScore,
         muScore: muScore,
-        fit: data.fitById[pid] || 0,
-        effMetrics: effMetrics
+        fit: data.fitById[pid] || 0
       };
     };
 
@@ -8151,18 +7588,6 @@ actualStarters: actualStarters,
         }
       } catch(e) {}
 
-      var effRow = '';
-      if (item.effMetrics && item.effMetrics.games > 0) {
-        var eff = item.effMetrics;
-        var labels = [];
-        if (eff.label1) labels.push('<span class="text-gray-400">' + eff.label1.name + ':</span><span class="text-white">' + eff.label1.value + '</span>');
-        if (eff.label2) labels.push('<span class="text-gray-400">' + eff.label2.name + ':</span><span class="text-white">' + eff.label2.value + '</span>');
-        if (eff.label3) labels.push('<span class="text-gray-400">' + eff.label3.name + ':</span><span class="text-white">' + eff.label3.value + '</span>');
-        if (labels.length > 0) {
-          effRow = '<div class="flex items-center gap-2 text-[9px] font-mono bg-gray-900/60 rounded px-2 py-1 mt-2">' + labels.join('<span class="text-gray-700">|</span>') + '</div>';
-        }
-      }
-
       card.innerHTML =
         slotBadge +
         avatar +
@@ -8175,7 +7600,6 @@ actualStarters: actualStarters,
             (item.disp.age ? (' • Age ' + item.disp.age) : '') +
           '</div>' +
           '<div class="flex items-center gap-2 mt-2">' + (valBadge ? valBadge : '') + muBadge + fitBadge + '</div>' +
-          effRow +
         '</div>' +
         '<div class="text-right w-20 shrink-0">' +
           '<div class="text-base font-black ' + item.scoreCls + '">' + item.score.toFixed(2) + '</div>' +
