@@ -1373,8 +1373,7 @@ playersById: {},
   getMaxWeek: function() {
     var w = (this.data.maxWeek != null) ? Number(this.data.maxWeek)
           : (this.ui && this.ui.selectedWeek != null) ? Number(this.ui.selectedWeek)
-          : (this.data.nflState ? Number(this.getNflStateWeek()) : 1)
-          : 1;
+          : Number(this.getNflStateWeek());
     if (!isFinite(w) || w < 1) w = 1;
     if (w > 18) w = 18;
     return w;
