@@ -68,6 +68,22 @@
       background: linear-gradient(180deg, rgba(17,24,39,0.95) 0%, rgba(17,24,39,0.8) 100%);
       backdrop-filter: blur(10px);
     }
+
+    .player-card {
+      background: linear-gradient(145deg, rgba(17,24,39,0.95), rgba(15,23,42,0.85));
+      border: 1px solid rgba(51,65,85,0.6);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+    }
+    .player-card:hover {
+      border-color: rgba(0,206,184,0.6);
+      box-shadow: 0 10px 28px rgba(0,0,0,0.35);
+    }
+    .stat-chip {
+      background: rgba(15,23,42,0.7);
+      border: 1px solid rgba(51,65,85,0.5);
+      border-radius: 0.75rem;
+      padding: 0.35rem 0.6rem;
+    }
     
     /* Table row hover */
     .table-row-hover:hover {
@@ -202,7 +218,6 @@
         <div class="flex items-end justify-between gap-4">
           <div>
             <div class="text-2xl font-bold text-white tracking-tight">Matchups</div>
-            <div class="text-sm text-gray-500">Head-to-head matchup analysis</div>
           </div>
           <div class="flex items-center gap-2 bg-gray-800/50 rounded-lg px-3 py-1.5 border border-gray-700/50">
             <span class="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Week</span>
@@ -470,7 +485,7 @@
         <div class="flex items-end justify-between gap-4">
           <div>
             <div class="text-2xl font-bold text-white tracking-tight" id="historyHeaderTitle">Historical Rosters</div>
-            <div class="text-sm text-gray-500" id="historyHeaderSubtitle">Actual lineup results by week</div>
+            <div class="text-sm text-gray-500" id="historyHeaderSubtitle">Weekly lineup snapshots</div>
           </div>
           <div class="flex items-center gap-2">
             <button id="optSettingsToggle" class="hidden px-3 py-1.5 rounded-lg bg-gray-800/70 text-xs font-semibold text-gray-300 border border-gray-700/50 hover:bg-gray-700 hover:text-white transition">Settings</button>
@@ -1047,9 +1062,8 @@ playersById: {},
     var self = this;
     opts = opts || {};
     var card = document.createElement("div");
-    var borderColor = item.isOut ? "border-red-900/50" : "border-gray-800";
-    var bgColor = item.isOut ? "bg-gray-950/50" : "bg-gray-950";
-    card.className = "flex flex-col gap-1 " + bgColor + " border " + borderColor + " rounded-xl p-3 hover:border-sleeper-teal transition cursor-pointer";
+    var borderColor = item.isOut ? "border-red-900/50" : "border-slate-800/70";
+    card.className = "player-card flex flex-col gap-2 rounded-2xl p-3.5 transition cursor-pointer " + borderColor + (item.isOut ? " opacity-70" : "");
     card.onclick = function() { self.openPlayerModal(item.pid); };
 
     var displaySlot = String(item.slot || "").toUpperCase() === "SUPER_FLEX" ? "SF" : (item.slot || "");
@@ -1124,7 +1138,7 @@ playersById: {},
       if (eff.label2) labels.push('<span class="text-gray-400">' + eff.label2.name + ':</span><span class="text-white">' + eff.label2.value + '</span>');
       if (eff.label3) labels.push('<span class="text-gray-400">' + eff.label3.name + ':</span><span class="text-white">' + eff.label3.value + '</span>');
       if (labels.length > 0) {
-        effRow = '<div class="flex items-center gap-2 text-[9px] font-mono bg-gray-900/50 rounded px-2 py-1 mt-1">' + labels.join('<span class="text-gray-700">|</span>') + '</div>';
+        effRow = '<div class="flex items-center gap-2 text-[9px] font-mono bg-gray-900/60 rounded-xl px-2 py-1.5 mt-2">' + labels.join('<span class="text-gray-700">|</span>') + '</div>';
       }
     }
 
@@ -1134,41 +1148,62 @@ playersById: {},
       statusPill = '<span class="bb-pill shrink-0 whitespace-nowrap min-w-[84px] text-center ' + item.status.bg + ' ' + item.status.color + ' ' + (item.status.label === "Major Boom" ? "glow-majorBoom" : (item.status.label === "Major Bust" ? "glow-majorBust" : "")) + '">' + item.status.label + '</span>';
     }
 
+    var quickMetricLabel = "Fit";
+    var quickMetricValue = "—";
+    if (isFinite(item.fit)) {
+      quickMetricValue = Math.round(item.fit);
+    } else if (item.enhancedMU && isFinite(item.enhancedMU.matchScore)) {
+      quickMetricLabel = "MU";
+      quickMetricValue = Math.round(item.enhancedMU.matchScore);
+    } else if (isFinite(item.muScore)) {
+      quickMetricLabel = "MU";
+      quickMetricValue = Math.round(item.muScore);
+    }
+
+    var statsRow = 
+      '<div class="grid grid-cols-3 sm:grid-cols-4 gap-2 mt-2 text-[10px] font-mono">' +
+        '<div class="stat-chip flex items-center justify-between gap-2"><span class="text-gray-400">Proj</span><span class="text-white">' + proj.toFixed(2) + '</span></div>' +
+        '<div class="stat-chip flex items-center justify-between gap-2"><span class="text-gray-400">Act</span><span class="text-white">' + (hasPlayed && act !== null ? act.toFixed(2) : "—") + '</span></div>' +
+        '<div class="stat-chip flex items-center justify-between gap-2"><span class="text-gray-400">Total</span><span class="text-white">' + (seasonTotal !== null ? seasonTotal.toFixed(2) : "—") + '</span></div>' +
+        '<div class="stat-chip hidden sm:flex items-center justify-between gap-2"><span class="text-gray-400">' + quickMetricLabel + '</span><span class="text-white">' + quickMetricValue + '</span></div>' +
+      '</div>';
+
     card.innerHTML = 
-      '<div class="flex items-center gap-2">' +
+      '<div class="flex items-start gap-3">' +
         slotBadge +
-        '<div class="shrink-0">' + self.playerImg(item.pid, item.player || item.p || {}, "w-10 h-10") + '</div>' +
+        '<div class="shrink-0">' + self.playerImg(item.pid, item.player || item.p || {}, "w-12 h-12") + '</div>' +
         '<div class="min-w-0 flex-1 overflow-hidden">' +
-          '<div class="flex items-start gap-1 min-w-0">' +
-            '<div class="min-w-0 flex-1">' +
-              '<div class="font-semibold text-white text-sm leading-tight line-clamp-1">' + self.escapeHtml(item.disp && item.disp.name ? item.disp.name : "") + '</div>' +
+          '<div class="flex items-start justify-between gap-3">' +
+            '<div class="min-w-0">' +
+              '<div class="flex items-center gap-1 min-w-0">' +
+                '<div class="font-semibold text-white text-sm leading-tight line-clamp-1">' + self.escapeHtml(item.disp && item.disp.name ? item.disp.name : "") + '</div>' +
+                self.injuryTag(item.player || item.p || {}) +
+              '</div>' +
+              '<div class="text-[10px] text-gray-500 font-mono flex items-center gap-1 flex-wrap mt-1">' +
+                (rankText || ppgRankText || deltaRankText ? '<span class="flex items-center gap-1 text-gray-300">' + rankText + ppgRankText + deltaRankText + '</span><span class="text-gray-700">|</span>' : '') +
+                '<span class="text-gray-400">' + self.escapeHtml((item.disp && item.disp.pos) ? item.disp.pos : "") + '</span>' +
+                '<span>•</span>' +
+                '<span>' + self.escapeHtml((item.disp && item.disp.team) ? item.disp.team : "") + '</span>' +
+                ((item.disp && item.disp.age) ? '<span>•</span><span>Age ' + self.escapeHtml(item.disp.age) + '</span>' : '') +
+                (oppText ? '<span>•</span>' + oppText : '') +
+              '</div>' +
             '</div>' +
-            self.injuryTag(item.player || item.p || {}) +
-          '</div>' +
-          '<div class="text-[10px] text-gray-500 font-mono flex items-center gap-1 flex-wrap mt-0.5">' +
-            '<span class="flex items-center gap-0.5 mr-3">' + rankText + ppgRankText + deltaRankText + '</span>' +
-            '<span class="text-gray-400">' + self.escapeHtml((item.disp && item.disp.pos) ? item.disp.pos : "") + '</span>' +
-            '<span>•</span>' +
-            '<span>' + self.escapeHtml((item.disp && item.disp.team) ? item.disp.team : "") + '</span>' +
-            ((item.disp && item.disp.age) ? '<span>•</span><span>Age ' + self.escapeHtml(item.disp.age) + '</span>' : '') +
-            (oppText ? '<span>•</span>' + oppText : '') +
+            '<div class="text-right shrink-0">' +
+              '<div class="text-lg font-black ' + scoreCls + '">' + (Number.isFinite(scoreToShow) ? scoreToShow.toFixed(2) : "0.00") + '</div>' +
+              '<div class="text-[10px] text-gray-500 font-mono">' + (hasPlayed ? "Actual" : "Projected") + '</div>' +
+            '</div>' +
           '</div>' +
           muStatLine +
-        '</div>' +
-        '<div class="text-right shrink-0 ml-auto">' +
-          '<div class="text-base font-black ' + scoreCls + '">' + (Number.isFinite(scoreToShow) ? scoreToShow.toFixed(2) : "0.00") + '</div>' +
-          '<div class="text-[10px] text-gray-500 font-mono">Proj ' + proj.toFixed(2) + '</div>' +
-          '<div class="text-[10px] text-gray-500 font-mono">Act ' + (hasPlayed && act !== null ? act.toFixed(2) : "—") + '</div>' +
-          (seasonTotal !== null ? '<div class="text-[10px] font-mono" style="color:#d303fc">Total ' + seasonTotal.toFixed(2) + '</div>' : '') +
-          '<div class="mt-1 flex justify-end items-center gap-1 flex-wrap">' +
+          statsRow +
+          '<div class="mt-2 flex flex-wrap items-center gap-1.5">' +
             (valBadge ? valBadge.replace('ml-2','') : '') +
             (muBadge ? muBadge : '') +
             (fitBadge ? fitBadge : '') +
             statusPill +
           '</div>' +
+          effRow +
         '</div>' +
-      '</div>' +
-      effRow;
+      '</div>';
 
     return card;
   },
@@ -4752,8 +4787,13 @@ getPlayerDeltaRank: function(pid) {
               maxWeek = Math.max(1, mw);
               effWeek = Math.min(Math.max(1, cw), maxWeek);
             } else {
-              // If league is complete or live season differs, lock to last scored week
-              if ((league && league.status === "complete") || (liveSeason && liveSeason !== leagueSeason)) {
+              var sameSeason = !liveSeason || !leagueSeason || liveSeason === leagueSeason;
+              // If league is complete but NFL state is ahead for the same season, honor the live week.
+              if ((league && league.status === "complete") && sameSeason && currentWeek > (lastScored || 0)) {
+                maxWeek = Math.max(currentWeek, lastScored || 0);
+                effWeek = Math.min(Math.max(1, currentWeek), maxWeek);
+              } else if ((league && league.status === "complete") || (liveSeason && liveSeason !== leagueSeason)) {
+                // If league is complete or live season differs, lock to last scored week
                 maxWeek = lastScored || Math.max(1, currentWeek);
                 effWeek = maxWeek;
               } else {
@@ -5153,14 +5193,14 @@ getPlayerDeltaRank: function(pid) {
     if (this.dom.viewHistory) this.dom.viewHistory.classList.toggle("hidden", (this.ui.currentView !== "history" && this.ui.currentView !== "optimal"));
 
     // History header (H = actual roster, O = optimal lineup)
-    if (this.dom.historyHeaderTitle && this.dom.historyHeaderSubtitle) {
+    if (this.dom.historyHeaderTitle) {
       if (this.ui.currentView === "optimal") {
         this.dom.historyHeaderTitle.textContent = "Optimal Lineups";
-        this.dom.historyHeaderSubtitle.textContent = "Best possible lineup by week (custom weighted)";
+        if (this.dom.historyHeaderSubtitle) this.dom.historyHeaderSubtitle.textContent = "Weighted lineup suggestions by week";
         this.ui.historyMode = "best";
       } else if (this.ui.currentView === "history") {
         this.dom.historyHeaderTitle.textContent = "Historical Rosters";
-        this.dom.historyHeaderSubtitle.textContent = "Actual lineup results by week";
+        if (this.dom.historyHeaderSubtitle) this.dom.historyHeaderSubtitle.textContent = "Weekly lineup snapshots";
         this.ui.historyMode = "roster";
       }
     }
@@ -7609,16 +7649,15 @@ var wrap = document.createElement("div");
 
     var clamp = function(x, lo, hi) { return Math.max(lo, Math.min(hi, x)); };
 
-    // Weights (sum to 1.00)
-    // Value/Projection/MU are anchors; the rest stabilize / de-noise.
-    var W_VAL  = 0.14;
-    var W_PROJ = 0.25;
-    var W_MU   = 0.23;
-    var W_PPG  = 0.12;
-    var W_L4   = 0.12;
-    var W_CS   = 0.10; // Consistency/Snaps combined
-    var W_BB   = 0.03;
-    var W_DLT  = 0.01;
+    // Stability weights (sum to 1.00) for the FIT signal (separate from slider weights).
+    // FIT focuses on reliability signals so the sliders can control value/proj/matchup directly.
+    var W_PPG  = 0.22;
+    var W_L4   = 0.22;
+    var W_CS   = 0.18; // Consistency/Snaps combined
+    var W_BB   = 0.10;
+    var W_DLT  = 0.08;
+    var W_CEIL = 0.10;
+    var W_SEASON = 0.10;
 
     var pickWeights = self.getOptimalWeights();
 
@@ -7661,14 +7700,13 @@ var wrap = document.createElement("div");
       else if (questionableStatuses.indexOf(st) >= 0) availability = 0.85;
 
       var fitRaw =
-        (W_VAL  * valScaled) +
-        (W_PROJ * projScaled) +
-        (W_MU   * mu) +
         (W_PPG  * ppgScaled) +
         (W_L4   * l4Scaled) +
         (W_CS   * csScaled) +
         (W_BB   * bbScaled) +
-        (W_DLT  * dltScaled);
+        (W_DLT  * dltScaled) +
+        (W_CEIL * ceilScaled) +
+        (W_SEASON * seasonScaled);
 
       var fitAdj = clamp(fitRaw * availability, 0, 100);
       fitById[pid] = Math.round(fitAdj * 100) / 100;
@@ -7797,7 +7835,7 @@ actualStarters: actualStarters,
 
     var data = this.computeHistoryBestLineupData();
 
-    // Update header title to selected team (fix: title wasn't updating in Best lineup mode)
+    // Update header title to selected team (fix: title wasn't updating in weighted lineup mode)
     if (this.dom.historyTeamTitle) {
       var _r = (data && data.rosterObj) || this.data.rosters.find(function(rr){ return String(rr.roster_id) === String(this.ui.historySelectedRosterId); }.bind(this));
       if (_r) this.dom.historyTeamTitle.textContent = this.rosterLabel(_r);
@@ -7817,7 +7855,7 @@ actualStarters: actualStarters,
 
     // Subtitle
     if (this.dom.historyTeamSubtitle) {
-      this.dom.historyTeamSubtitle.textContent = "Week " + week + " | Best lineup (custom weighted)";
+      this.dom.historyTeamSubtitle.textContent = "Week " + week + " | Weighted lineup view";
     }
 
     // Build items for rendering
