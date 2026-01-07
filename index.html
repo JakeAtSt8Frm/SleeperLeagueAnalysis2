@@ -70,9 +70,9 @@
     }
 
     .player-card {
-      background: linear-gradient(145deg, rgba(17,24,39,0.95), rgba(15,23,42,0.85));
-      border: 1px solid rgba(51,65,85,0.6);
-      box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+      background: linear-gradient(135deg, rgba(17,24,39,0.95) 0%, rgba(12,20,34,0.92) 55%, rgba(8,12,22,0.98) 100%);
+      border: 1px solid rgba(51,65,85,0.65);
+      box-shadow: 0 10px 22px rgba(0,0,0,0.3);
     }
     .player-card:hover {
       border-color: rgba(0,206,184,0.6);
@@ -646,6 +646,15 @@
                 <div class="text-xs text-gray-500 mt-1">Locked to regular for stats/projections.</div>
               </div>
 
+              <div>
+                <label class="block text-xs text-gray-400 mb-1">Auto week selection</label>
+                <select id="settingsWeekMode" class="w-full rounded-xl bg-gray-950/60 border border-gray-800 px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-600/40">
+                  <option value="max_week">Use max week (latest available)</option>
+                  <option value="last_scored">Use last scored week</option>
+                </select>
+                <div class="text-xs text-gray-500 mt-1">Only applies when Auto setup is on.</div>
+              </div>
+
               <div class="grid grid-cols-2 gap-3">
                 <div>
                   <label class="block text-xs text-gray-400 mb-1">Current week</label>
@@ -816,6 +825,7 @@ var APP = {
       // Auto setup uses /state/nfl + league metadata. Manual overrides are stored in localStorage.
       autoSetup: true,
       manual: { leagueId: "", season: "", seasonType: "regular", currentWeek: 1, maxWeek: 18 },
+      weekSelectionMode: "max_week",
     boomPct: 1.20,
     bustPct: 0.80
   },
@@ -897,7 +907,7 @@ playersById: {},
                'defRoleSelect',
                'defRoleModeMost',
                'defRoleModeLeast',
-               'defRoleTableBody', 'viewSettings', 'btnTabSettings', 'settingsAutoSetup', 'settingsLeagueId', 'settingsSeason', 'settingsSeasonType', 'settingsCurrentWeek', 'settingsMaxWeek', 'settingsApply', 'settingsReset', 'settingsEffective'];
+               'defRoleTableBody', 'viewSettings', 'btnTabSettings', 'settingsAutoSetup', 'settingsLeagueId', 'settingsSeason', 'settingsSeasonType', 'settingsWeekMode', 'settingsCurrentWeek', 'settingsMaxWeek', 'settingsApply', 'settingsReset', 'settingsEffective'];
     var self = this;
     ids.forEach(function(id) { self.dom[id] = document.getElementById(id); });
   },
@@ -1063,7 +1073,7 @@ playersById: {},
     opts = opts || {};
     var card = document.createElement("div");
     var borderColor = item.isOut ? "border-red-900/50" : "border-slate-800/70";
-    card.className = "player-card flex flex-col gap-2 rounded-2xl p-3.5 transition cursor-pointer " + borderColor + (item.isOut ? " opacity-70" : "");
+    card.className = "player-card card-hover rounded-2xl overflow-hidden transition cursor-pointer " + borderColor + (item.isOut ? " opacity-70" : "");
     card.onclick = function() { self.openPlayerModal(item.pid); };
 
     var displaySlot = String(item.slot || "").toUpperCase() === "SUPER_FLEX" ? "SF" : (item.slot || "");
@@ -1117,18 +1127,9 @@ playersById: {},
       }
     } catch (e) {}
 
-    var rankText = '';
-    if (item.posRank && isFinite(item.posRank.rank)) {
-      rankText = '<span class="text-sleeper-teal font-mono font-black">#' + item.posRank.rank + '</span>';
-    }
-    var ppgRankText = '';
-    if (item.ppgRank && isFinite(item.ppgRank.rank)) {
-      ppgRankText = '<span class="text-[#d303fc] font-mono font-black">(' + item.ppgRank.rank + ')</span>';
-    }
-    var deltaRankText = '';
-    if (item.deltaRank && isFinite(item.deltaRank.rank)) {
-      deltaRankText = '<span class="text-[#00ff66] font-mono font-black">[' + item.deltaRank.rank + ']</span>';
-    }
+    var posRankValue = (item.posRank && isFinite(item.posRank.rank)) ? ("#" + item.posRank.rank) : "—";
+    var ppgRankValue = (item.ppgRank && isFinite(item.ppgRank.rank)) ? ("#" + item.ppgRank.rank) : "—";
+    var deltaRankValue = (item.deltaRank && isFinite(item.deltaRank.rank)) ? ((item.deltaRank.rank > 0 ? "+" : "") + item.deltaRank.rank) : "—";
 
     var effRow = '';
     if (item.effMetrics && item.effMetrics.games > 0) {
@@ -1148,39 +1149,56 @@ playersById: {},
       statusPill = '<span class="bb-pill shrink-0 whitespace-nowrap min-w-[84px] text-center ' + item.status.bg + ' ' + item.status.color + ' ' + (item.status.label === "Major Boom" ? "glow-majorBoom" : (item.status.label === "Major Bust" ? "glow-majorBust" : "")) + '">' + item.status.label + '</span>';
     }
 
-    var quickMetricLabel = "Fit";
-    var quickMetricValue = "—";
-    if (isFinite(item.fit)) {
-      quickMetricValue = Math.round(item.fit);
-    } else if (item.enhancedMU && isFinite(item.enhancedMU.matchScore)) {
-      quickMetricLabel = "MU";
-      quickMetricValue = Math.round(item.enhancedMU.matchScore);
+    var muValue = "—";
+    if (item.enhancedMU && isFinite(item.enhancedMU.matchScore)) {
+      muValue = Math.round(item.enhancedMU.matchScore);
     } else if (isFinite(item.muScore)) {
-      quickMetricLabel = "MU";
-      quickMetricValue = Math.round(item.muScore);
+      muValue = Math.round(item.muScore);
     }
 
-    var statsRow = 
-      '<div class="grid grid-cols-3 sm:grid-cols-4 gap-2 mt-2 text-[10px] font-mono">' +
-        '<div class="stat-chip flex items-center justify-between gap-2"><span class="text-gray-400">Proj</span><span class="text-white">' + proj.toFixed(2) + '</span></div>' +
-        '<div class="stat-chip flex items-center justify-between gap-2"><span class="text-gray-400">Act</span><span class="text-white">' + (hasPlayed && act !== null ? act.toFixed(2) : "—") + '</span></div>' +
-        '<div class="stat-chip flex items-center justify-between gap-2"><span class="text-gray-400">Total</span><span class="text-white">' + (seasonTotal !== null ? seasonTotal.toFixed(2) : "—") + '</span></div>' +
-        '<div class="stat-chip hidden sm:flex items-center justify-between gap-2"><span class="text-gray-400">' + quickMetricLabel + '</span><span class="text-white">' + quickMetricValue + '</span></div>' +
+    var fitValue = isFinite(item.fit) ? Math.round(item.fit) : "—";
+    var seasonValue = (seasonTotal !== null) ? seasonTotal.toFixed(1) : "—";
+    var projValue = proj.toFixed(1);
+    var scoreValue = Number.isFinite(scoreToShow) ? scoreToShow.toFixed(1) : "0.0";
+    var scoreLabel = hasPlayed ? "Actual" : "Proj";
+    var oppDisplay = item.opp ? ("vs " + self.escapeHtml(item.opp)) : "Opponent —";
+
+    var rankRowsHtml =
+      '<div class="space-y-1.5 mt-3">' +
+        '<div class="flex items-center justify-between text-[10px] font-mono uppercase tracking-wider text-gray-400 bg-gray-900/60 rounded-lg px-2 py-1 border border-gray-800/50">' +
+          '<span class="text-gray-500">Pos total rank</span>' +
+          '<span class="font-black text-sleeper-teal">' + posRankValue + '</span>' +
+        '</div>' +
+        '<div class="flex items-center justify-between text-[10px] font-mono uppercase tracking-wider text-gray-400 bg-gray-900/60 rounded-lg px-2 py-1 border border-gray-800/50">' +
+          '<span class="text-gray-500">Pos PPG rank</span>' +
+          '<span class="font-black text-[#d303fc]">' + ppgRankValue + '</span>' +
+        '</div>' +
+        '<div class="flex items-center justify-between text-[10px] font-mono uppercase tracking-wider text-gray-400 bg-gray-900/60 rounded-lg px-2 py-1 border border-gray-800/50">' +
+          '<span class="text-gray-500">Delta rank</span>' +
+          '<span class="font-black text-[#00ff66]">' + deltaRankValue + '</span>' +
+        '</div>' +
+      '</div>';
+
+    var badgeRow =
+      '<div class="mt-3 flex flex-wrap items-center gap-1.5">' +
+        (valBadge ? valBadge.replace('ml-2','') : '') +
+        (muBadge ? muBadge : '') +
+        (fitBadge ? fitBadge : '') +
+        statusPill +
       '</div>';
 
     card.innerHTML = 
-      '<div class="flex items-start gap-3">' +
-        slotBadge +
-        '<div class="shrink-0">' + self.playerImg(item.pid, item.player || item.p || {}, "w-12 h-12") + '</div>' +
-        '<div class="min-w-0 flex-1 overflow-hidden">' +
-          '<div class="flex items-start justify-between gap-3">' +
+      '<div class="grid gap-0 md:grid-cols-[1.55fr_1fr_0.7fr]">' +
+        '<div class="p-4">' +
+          '<div class="flex items-start gap-3">' +
+            slotBadge +
+            '<div class="shrink-0">' + self.playerImg(item.pid, item.player || item.p || {}, "w-12 h-12") + '</div>' +
             '<div class="min-w-0">' +
-              '<div class="flex items-center gap-1 min-w-0">' +
-                '<div class="font-semibold text-white text-sm leading-tight line-clamp-1">' + self.escapeHtml(item.disp && item.disp.name ? item.disp.name : "") + '</div>' +
+              '<div class="flex items-center gap-2">' +
+                '<div class="font-black italic tracking-wide text-white text-lg leading-tight line-clamp-1 uppercase">' + self.escapeHtml(item.disp && item.disp.name ? item.disp.name : "") + '</div>' +
                 self.injuryTag(item.player || item.p || {}) +
               '</div>' +
               '<div class="text-[10px] text-gray-500 font-mono flex items-center gap-1 flex-wrap mt-1">' +
-                (rankText || ppgRankText || deltaRankText ? '<span class="flex items-center gap-1 text-gray-300">' + rankText + ppgRankText + deltaRankText + '</span><span class="text-gray-700">|</span>' : '') +
                 '<span class="text-gray-400">' + self.escapeHtml((item.disp && item.disp.pos) ? item.disp.pos : "") + '</span>' +
                 '<span>•</span>' +
                 '<span>' + self.escapeHtml((item.disp && item.disp.team) ? item.disp.team : "") + '</span>' +
@@ -1188,20 +1206,27 @@ playersById: {},
                 (oppText ? '<span>•</span>' + oppText : '') +
               '</div>' +
             '</div>' +
-            '<div class="text-right shrink-0">' +
-              '<div class="text-lg font-black ' + scoreCls + '">' + (Number.isFinite(scoreToShow) ? scoreToShow.toFixed(2) : "0.00") + '</div>' +
-              '<div class="text-[10px] text-gray-500 font-mono">' + (hasPlayed ? "Actual" : "Projected") + '</div>' +
-            '</div>' +
           '</div>' +
-          muStatLine +
-          statsRow +
-          '<div class="mt-2 flex flex-wrap items-center gap-1.5">' +
-            (valBadge ? valBadge.replace('ml-2','') : '') +
-            (muBadge ? muBadge : '') +
-            (fitBadge ? fitBadge : '') +
-            statusPill +
-          '</div>' +
+          rankRowsHtml +
+          badgeRow +
           effRow +
+        '</div>' +
+        '<div class="p-4 border-t border-gray-800/60 md:border-t-0 md:border-l">' +
+          '<div class="text-[10px] uppercase tracking-[0.25em] text-gray-500 font-semibold">Opponent</div>' +
+          '<div class="text-lg font-black text-white mt-1">' + oppDisplay + '</div>' +
+          '<div class="mt-3 space-y-2 text-[11px] font-mono">' +
+            '<div class="flex items-center justify-between text-gray-400"><span>MU</span><span class="text-white">' + muValue + '</span></div>' +
+            '<div class="flex items-center justify-between text-gray-400"><span>Fit</span><span class="text-white">' + fitValue + '</span></div>' +
+            '<div class="flex items-center justify-between text-gray-400"><span>Szn Pts</span><span class="text-white">' + seasonValue + '</span></div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="p-4 border-t border-gray-800/60 md:border-t-0 md:border-l flex flex-col items-end justify-between">' +
+          '<div class="flex justify-end w-full">' + (statusPill || '') + '</div>' +
+          '<div class="text-right">' +
+            '<div class="text-2xl font-black ' + scoreCls + '">' + scoreValue + '</div>' +
+            '<div class="text-[10px] uppercase tracking-widest text-gray-500 font-mono">' + self.escapeHtml(scoreLabel) + '</div>' +
+          '</div>' +
+          '<div class="text-[11px] font-mono text-sleeper-teal uppercase">' + projValue + ' Proj</div>' +
         '</div>' +
       '</div>';
 
@@ -4780,6 +4805,7 @@ getPlayerDeltaRank: function(pid) {
             var lastScored = self.getLastScoredWeek(league);
             var maxWeek = 18;
             var effWeek = currentWeek;
+            var weekMode = String(self.cfg.weekSelectionMode || "max_week");
 
             if (self.cfg && self.cfg.autoSetup === false) {
               var mw = Number(self.cfg.manual && self.cfg.manual.maxWeek) || lastScored || 18;
@@ -4799,6 +4825,12 @@ getPlayerDeltaRank: function(pid) {
               } else {
                 maxWeek = Math.max(Math.max(1, currentWeek), lastScored || 0);
                 effWeek = Math.min(Math.max(1, currentWeek), maxWeek);
+              }
+
+              if (weekMode === "last_scored" && lastScored) {
+                effWeek = Math.min(Math.max(1, lastScored), maxWeek);
+              } else if (weekMode === "max_week") {
+                effWeek = maxWeek;
               }
             }
 
@@ -8317,6 +8349,7 @@ var fmtPid = function(pid) {
         APP.cfg.manual = APP.cfg.manual || {};
         for (var k in obj.manual) APP.cfg.manual[k] = obj.manual[k];
       }
+      if (obj.weekSelectionMode) APP.cfg.weekSelectionMode = String(obj.weekSelectionMode);
       if (obj.selectedSeasonChoice) APP.cfg.selectedSeasonChoice = String(obj.selectedSeasonChoice);
       APP.cfg.seasonType = "regular";
       if (APP.cfg.manual) APP.cfg.manual.seasonType = "regular";
@@ -8329,6 +8362,7 @@ var fmtPid = function(pid) {
         autoSetup: !!APP.cfg.autoSetup,
         manual: APP.cfg.manual || {},
         selectedSeasonChoice: String(APP.cfg.selectedSeasonChoice || ""),
+        weekSelectionMode: String(APP.cfg.weekSelectionMode || "max_week"),
         seasonType: "regular"
       };
       localStorage.setItem(APP._settingsKey, JSON.stringify(out));
@@ -8366,6 +8400,7 @@ var fmtPid = function(pid) {
     if (!d.settingsLeagueId) d.settingsLeagueId = document.getElementById("settingsLeagueId");
     if (!d.settingsSeason) d.settingsSeason = document.getElementById("settingsSeason");
     if (!d.settingsSeasonType) d.settingsSeasonType = document.getElementById("settingsSeasonType");
+    if (!d.settingsWeekMode) d.settingsWeekMode = document.getElementById("settingsWeekMode");
     if (!d.settingsCurrentWeek) d.settingsCurrentWeek = document.getElementById("settingsCurrentWeek");
     if (!d.settingsMaxWeek) d.settingsMaxWeek = document.getElementById("settingsMaxWeek");
     if (!d.settingsApply) d.settingsApply = document.getElementById("settingsApply");
@@ -8399,6 +8434,7 @@ var fmtPid = function(pid) {
       if (d.settingsSeason) d.settingsSeason.value = seasonVal;
     } catch(e) {}
     try { if (d.settingsSeasonType) d.settingsSeasonType.value = "regular"; } catch(e) {}
+    try { if (d.settingsWeekMode) d.settingsWeekMode.value = String(APP.cfg.weekSelectionMode || "max_week"); } catch(e) {}
     try { if (d.settingsCurrentWeek) d.settingsCurrentWeek.value = Number((APP.cfg.manual && APP.cfg.manual.currentWeek) || (APP.ui && APP.ui.selectedWeek) || 1); } catch(e) {}
     try { if (d.settingsMaxWeek) d.settingsMaxWeek.value = Number((APP.cfg.manual && APP.cfg.manual.maxWeek) || (APP.data && APP.data.maxWeek) || 18); } catch(e) {}
 
@@ -8409,6 +8445,7 @@ var fmtPid = function(pid) {
         leagueId: APP.resolveLeagueId(),
         selectedSeasonChoice: APP.cfg.selectedSeasonChoice,
         seasonType: APP.cfg.seasonType,
+        weekSelectionMode: APP.cfg.weekSelectionMode || "max_week",
         selectedWeek: (APP.ui && APP.ui.selectedWeek) ? APP.ui.selectedWeek : null,
         maxWeek: (APP.data && APP.data.maxWeek) ? APP.data.maxWeek : null,
         manual: APP.cfg.manual || {}
@@ -8438,6 +8475,9 @@ var fmtPid = function(pid) {
         APP.cfg.manual.seasonType = st;
         APP.cfg.seasonType = st;
 
+        var wkMode = (d.settingsWeekMode && d.settingsWeekMode.value) ? String(d.settingsWeekMode.value) : "max_week";
+        APP.cfg.weekSelectionMode = wkMode;
+
         var cw = Number(d.settingsCurrentWeek && d.settingsCurrentWeek.value);
         var mw = Number(d.settingsMaxWeek && d.settingsMaxWeek.value);
         if (isFinite(cw) && cw > 0) APP.cfg.manual.currentWeek = cw;
@@ -8463,6 +8503,7 @@ var fmtPid = function(pid) {
         try {
           APP.cfg.autoSetup = true;
           APP.cfg.manual = { leagueId: "", season: "", seasonType: "regular", currentWeek: 1, maxWeek: 18 };
+          APP.cfg.weekSelectionMode = "max_week";
           APP.saveAppSettings();
         } catch(e) {}
         try { APP.data = APP.data || {}; APP.data.weekCache = {}; APP.data.statsByWeek = {}; APP.data.projByWeek = {}; } catch(e) {}
