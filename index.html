@@ -129,36 +129,30 @@
   <div class="flex h-[calc(100vh-4rem)]">
     <!-- Sidebar -->
     <aside class="w-20 bg-gray-900/80 backdrop-blur-sm border-r border-gray-800/50 flex flex-col items-center py-4 gap-2 shrink-0">
-      <!-- Main Navigation Group -->
       <div class="flex flex-col items-center gap-1.5">
-        <span class="text-[9px] font-semibold text-gray-600 uppercase tracking-wider mb-1">Rosters</span>
-        <button class="w-11 h-11 rounded-xl bg-gray-800 text-sleeper-teal hover:bg-gray-700 transition-all duration-200 font-bold text-sm shadow-lg shadow-black/20" id="btnTabTeams" title="Current Rosters">R</button>
-        <button class="w-11 h-11 rounded-xl bg-gray-800/60 text-gray-400 hover:bg-gray-700 hover:text-white transition-all duration-200 font-bold text-sm" id="btnTabHistory" title="Historical Rosters (Actual)">H</button>
-        <button class="w-11 h-11 rounded-xl bg-gray-800/60 text-gray-400 hover:bg-gray-700 hover:text-white transition-all duration-200 font-bold text-sm" id="btnTabOptimal" title="Optimal Lineups">O</button>
-              <button class="w-11 h-11 rounded-xl bg-gray-800/60 text-gray-400 hover:bg-gray-700 hover:text-white transition-all duration-200 font-bold text-sm" id="btnTabSettings" title="Settings">S</button>
-</div>
+        <button class="w-11 h-11 rounded-xl bg-gray-800 text-sleeper-teal hover:bg-gray-700 transition-all duration-200 font-bold text-[10px] shadow-lg shadow-black/20" id="btnTabTeams" title="Current Rosters">ROST</button>
+        <button class="w-11 h-11 rounded-xl bg-gray-800/60 text-gray-400 hover:bg-gray-700 hover:text-white transition-all duration-200 font-bold text-[10px]" id="btnTabOptimal" title="Optimal Lineups">OPT</button>
+        <button class="w-11 h-11 rounded-xl bg-gray-800/60 text-gray-400 hover:bg-gray-700 hover:text-white transition-all duration-200 font-bold text-[10px]" id="btnTabHistory" title="Historical Rosters (Actual)">HIST</button>
+      </div>
 
       <div class="w-10 h-px bg-gradient-to-r from-transparent via-gray-700 to-transparent my-2"></div>
-<!-- Analysis Group -->
+
       <div class="flex flex-col items-center gap-1.5">
-        <span class="text-[9px] font-semibold text-gray-600 uppercase tracking-wider mb-1">Analysis</span>
-        <button class="w-11 h-11 rounded-xl bg-gray-800/60 text-gray-400 hover:bg-gray-700 hover:text-white transition-all duration-200 font-bold text-sm" id="btnTabMatchups" title="Weekly Matchups">M</button>
-        <button class="w-11 h-11 rounded-xl bg-gray-800/60 text-gray-400 hover:bg-gray-700 hover:text-white transition-all duration-200 font-bold text-xs" id="btnTabFA" title="Free Agents">FA</button>
-        <button class="w-11 h-11 rounded-xl bg-gray-800/60 text-gray-400 hover:bg-gray-700 hover:text-white transition-all duration-200 font-bold text-sm" id="btnTabDef" title="NFL Defense Rankings">D</button>
+        <button class="w-11 h-11 rounded-xl bg-gray-800/60 text-gray-400 hover:bg-gray-700 hover:text-white transition-all duration-200 font-bold text-[10px]" id="btnTabMatchups" title="Weekly Matchups">VS</button>
+        <button class="w-11 h-11 rounded-xl bg-gray-800/60 text-gray-400 hover:bg-gray-700 hover:text-white transition-all duration-200 font-bold text-[10px]" id="btnTabFA" title="Free Agents">FA</button>
+        <button class="w-11 h-11 rounded-xl bg-gray-800/60 text-gray-400 hover:bg-gray-700 hover:text-white transition-all duration-200 font-bold text-[10px]" id="btnTabTrades" title="Recent Trades">TRD</button>
+        <button class="w-11 h-11 rounded-xl bg-gray-800/60 text-gray-400 hover:bg-gray-700 hover:text-white transition-all duration-200 font-bold text-[10px]" id="btnTabDef" title="NFL Defense Rankings">DEF</button>
       </div>
       
       <div class="w-10 h-px bg-gradient-to-r from-transparent via-gray-700 to-transparent my-2"></div>
       
-      <!-- League Group -->
       <div class="flex flex-col items-center gap-1.5">
-        <span class="text-[9px] font-semibold text-gray-600 uppercase tracking-wider mb-1">League</span>
-        <button class="w-11 h-11 rounded-xl bg-gray-800/60 text-gray-400 hover:bg-gray-700 hover:text-white transition-all duration-200 font-bold text-sm" id="btnTabTrades" title="Recent Trades">T</button>
-        <button class="w-11 h-11 rounded-xl bg-gray-800/60 text-gray-400 hover:bg-gray-700 hover:text-white transition-all duration-200 font-bold text-sm" id="btnTabInsights" title="League Analytics">A</button>
+        <button class="w-11 h-11 rounded-xl bg-gray-800/60 text-gray-400 hover:bg-gray-700 hover:text-white transition-all duration-200 font-bold text-[10px]" id="btnTabInsights" title="League Analytics">STAT</button>
       </div>
       
-      <!-- Spacer to push version to bottom -->
       <div class="flex-1"></div>
-      <div class="text-[8px] text-gray-600 font-mono">v3.1</div>
+      <button class="w-11 h-11 rounded-xl bg-gray-800/60 text-gray-400 hover:bg-gray-700 hover:text-white transition-all duration-200 font-bold text-[10px]" id="btnTabSettings" title="Settings">SET</button>
+      <div class="text-[8px] text-gray-600 font-mono mt-2">v3.1</div>
     </aside>
 
     <!-- Main -->
@@ -168,7 +162,6 @@
         <div class="flex items-end justify-between gap-4">
           <div>
             <div class="text-2xl font-bold text-white tracking-tight">Current Rosters</div>
-            <div class="text-sm text-gray-500">Live roster view with Boom/Bust analysis and team comparisons</div>
           </div>
           <div class="px-3 py-1.5 bg-gray-800/50 rounded-lg border border-gray-700/50">
             <span class="text-xs text-gray-400 font-mono" id="currentWeekLabel">Week —</span>
@@ -479,9 +472,84 @@
             <div class="text-2xl font-bold text-white tracking-tight" id="historyHeaderTitle">Historical Rosters</div>
             <div class="text-sm text-gray-500" id="historyHeaderSubtitle">Actual lineup results by week</div>
           </div>
-          <div class="flex items-center gap-2 bg-gray-800/50 rounded-lg px-3 py-1.5 border border-gray-700/50">
-            <span class="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Week</span>
-            <select id="historyWeekSelect" class="bg-transparent border-none text-sm text-white font-medium focus:outline-none cursor-pointer"></select>
+          <div class="flex items-center gap-2">
+            <button id="optSettingsToggle" class="hidden px-3 py-1.5 rounded-lg bg-gray-800/70 text-xs font-semibold text-gray-300 border border-gray-700/50 hover:bg-gray-700 hover:text-white transition">Settings</button>
+            <div class="flex items-center gap-2 bg-gray-800/50 rounded-lg px-3 py-1.5 border border-gray-700/50">
+              <span class="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Week</span>
+              <select id="historyWeekSelect" class="bg-transparent border-none text-sm text-white font-medium focus:outline-none cursor-pointer"></select>
+            </div>
+          </div>
+        </div>
+
+        <div id="optSettingsPanel" class="hidden bg-gray-900/80 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-4 shadow-xl shadow-black/20">
+          <div class="flex items-center justify-between gap-3 mb-3">
+            <div>
+              <div class="text-sm font-bold text-white">Optimal weighting sliders</div>
+              <div class="text-[10px] text-gray-500 font-mono">Weights auto-normalize to 100%.</div>
+            </div>
+            <button id="optSettingsReset" class="px-3 py-1.5 rounded-lg bg-gray-800 text-xs font-semibold text-gray-200 hover:bg-gray-700 transition">Reset</button>
+          </div>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+            <div class="flex items-center gap-3">
+              <div class="w-20 text-xs text-gray-400">Value</div>
+              <input type="range" min="0" max="100" value="16" data-weight-key="value" class="flex-1 accent-sleeper-teal">
+              <div class="w-10 text-xs text-gray-300 text-right" data-weight-value="value">16%</div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="w-20 text-xs text-gray-400">Proj</div>
+              <input type="range" min="0" max="100" value="16" data-weight-key="proj" class="flex-1 accent-sleeper-teal">
+              <div class="w-10 text-xs text-gray-300 text-right" data-weight-value="proj">16%</div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="w-20 text-xs text-gray-400">MU</div>
+              <input type="range" min="0" max="100" value="10" data-weight-key="mu" class="flex-1 accent-sleeper-teal">
+              <div class="w-10 text-xs text-gray-300 text-right" data-weight-value="mu">10%</div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="w-20 text-xs text-gray-400">FIT</div>
+              <input type="range" min="0" max="100" value="10" data-weight-key="fit" class="flex-1 accent-sleeper-teal">
+              <div class="w-10 text-xs text-gray-300 text-right" data-weight-value="fit">10%</div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="w-20 text-xs text-gray-400">PPG</div>
+              <input type="range" min="0" max="100" value="5" data-weight-key="ppg" class="flex-1 accent-sleeper-teal">
+              <div class="w-10 text-xs text-gray-300 text-right" data-weight-value="ppg">5%</div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="w-20 text-xs text-gray-400">L4</div>
+              <input type="range" min="0" max="100" value="15" data-weight-key="l4" class="flex-1 accent-sleeper-teal">
+              <div class="w-10 text-xs text-gray-300 text-right" data-weight-value="l4">15%</div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="w-20 text-xs text-gray-400">Cons</div>
+              <input type="range" min="0" max="100" value="8" data-weight-key="consistency" class="flex-1 accent-sleeper-teal">
+              <div class="w-10 text-xs text-gray-300 text-right" data-weight-value="consistency">8%</div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="w-20 text-xs text-gray-400">Snaps</div>
+              <input type="range" min="0" max="100" value="6" data-weight-key="snaps" class="flex-1 accent-sleeper-teal">
+              <div class="w-10 text-xs text-gray-300 text-right" data-weight-value="snaps">6%</div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="w-20 text-xs text-gray-400">B/B</div>
+              <input type="range" min="0" max="100" value="4" data-weight-key="boomBust" class="flex-1 accent-sleeper-teal">
+              <div class="w-10 text-xs text-gray-300 text-right" data-weight-value="boomBust">4%</div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="w-20 text-xs text-gray-400">Delta</div>
+              <input type="range" min="0" max="100" value="4" data-weight-key="delta" class="flex-1 accent-sleeper-teal">
+              <div class="w-10 text-xs text-gray-300 text-right" data-weight-value="delta">4%</div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="w-20 text-xs text-gray-400">Ceil</div>
+              <input type="range" min="0" max="100" value="3" data-weight-key="ceil" class="flex-1 accent-sleeper-teal">
+              <div class="w-10 text-xs text-gray-300 text-right" data-weight-value="ceil">3%</div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="w-20 text-xs text-gray-400">Season</div>
+              <input type="range" min="0" max="100" value="3" data-weight-key="season" class="flex-1 accent-sleeper-teal">
+              <div class="w-10 text-xs text-gray-300 text-right" data-weight-value="season">3%</div>
+            </div>
           </div>
         </div>
 
@@ -528,7 +596,6 @@
           <div class="flex items-center justify-between mb-5">
             <div>
               <div class="text-2xl font-bold text-white">Settings</div>
-              <div class="text-sm text-gray-400 mt-1">Toggle auto-setup (uses /state/nfl + league metadata) or manually override league/year/weeks for debugging.</div>
             </div>
           </div>
 
@@ -558,11 +625,10 @@
 
               <div>
                 <label class="block text-xs text-gray-400 mb-1">Season type</label>
-                <select id="settingsSeasonType" class="w-full rounded-xl bg-gray-950/60 border border-gray-800 px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-600/40">
+                <select id="settingsSeasonType" class="w-full rounded-xl bg-gray-950/60 border border-gray-800 px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-600/40" disabled>
                   <option value="regular">regular</option>
-                  <option value="post">post</option>
                 </select>
-                <div class="text-xs text-gray-500 mt-1">Used for stats/projections endpoints.</div>
+                <div class="text-xs text-gray-500 mt-1">Locked to regular for stats/projections.</div>
               </div>
 
               <div class="grid grid-cols-2 gap-3">
@@ -738,6 +804,20 @@ var APP = {
     boomPct: 1.20,
     bustPct: 0.80
   },
+  optWeightDefaults: {
+    value: 16,
+    proj: 16,
+    mu: 10,
+    fit: 10,
+    ppg: 5,
+    l4: 15,
+    consistency: 8,
+    snaps: 6,
+    boomBust: 4,
+    delta: 4,
+    ceil: 3,
+    season: 3
+  },
   data: {
     nflState: null,
     league: null,
@@ -781,7 +861,9 @@ playersById: {},
     historySelectedRosterId: null,
     historyMatchups: null,
     historyMode: "roster",
-    faConfig: []
+    faConfig: [],
+    optSettingsOpen: false,
+    optWeights: null
   },
 
   dom: {},
@@ -796,7 +878,7 @@ playersById: {},
                'viewTeams', 'viewMatchups', 'viewFA', 'viewDef', 'btnTabTeams', 'btnTabMatchups', 
                'btnTabFA', 'btnTabDef', 'pmClose', 'mmClose', 'defContent', 'defTabAFC', 'defTabNFC', 'viewTrades', 'btnTabTrades', 'tradeContent', 'tradeSearch', 'tradeType', 'btnTradeRefresh', 'tradeWeekLabel', 'leagueInsights',
              'viewInsights', 'btnTabInsights', 'insightsPFChart', 'insightsLuckChart', 'insightsLucky', 'insightsUnlucky', 'insightsConsistent', 'insightsTrendsChart',
-             'viewHistory', 'btnTabHistory', 'btnTabOptimal', 'historyHeaderTitle', 'historyHeaderSubtitle', 'historyWeekSelect',  'historyTeamTabs', 'historyTeamTitle', 'historyTeamSubtitle', 'historyRosterList', 'historyCompareBox', 'historyCompareSubtitle', 'historyLoading', 'historyMainContent', 'currentWeekLabel', 'leagueLineupInsights', 'posBaselineTable', 'insightsBestEfficiency', 'insightsMostRegret', 'insightsBenchLeaders',
+             'viewHistory', 'btnTabHistory', 'btnTabOptimal', 'historyHeaderTitle', 'historyHeaderSubtitle', 'historyWeekSelect', 'optSettingsToggle', 'optSettingsPanel', 'optSettingsReset', 'historyTeamTabs', 'historyTeamTitle', 'historyTeamSubtitle', 'historyRosterList', 'historyCompareBox', 'historyCompareSubtitle', 'historyLoading', 'historyMainContent', 'currentWeekLabel', 'leagueLineupInsights', 'posBaselineTable', 'insightsBestEfficiency', 'insightsMostRegret', 'insightsBenchLeaders',
                'defRoleSelect',
                'defRoleModeMost',
                'defRoleModeLeast',
@@ -808,6 +890,92 @@ playersById: {},
   setProgress: function(msg, pct) {
     if (this.dom.hdrStatus) this.dom.hdrStatus.textContent = msg;
     if (this.dom.hdrProgress) this.dom.hdrProgress.style.width = pct + "%";
+  },
+
+  getNflStateWeek: function() {
+    var ns = this.data.nflState || {};
+    var leg = Number(ns.leg != null ? ns.leg : ns.week);
+    if (!isFinite(leg) || leg < 1) leg = 1;
+    return leg;
+  },
+
+  getOptimalWeights: function() {
+    var base = this.optWeightDefaults || {};
+    var current = (this.ui && this.ui.optWeights) ? this.ui.optWeights : {};
+    var merged = {};
+    var total = 0;
+    Object.keys(base).forEach(function(key) {
+      var v = Number(current[key] != null ? current[key] : base[key]);
+      if (!isFinite(v) || v < 0) v = 0;
+      merged[key] = v;
+      total += v;
+    });
+    if (!total) total = 1;
+    var normalized = {};
+    Object.keys(merged).forEach(function(key) {
+      normalized[key] = merged[key] / total;
+    });
+    return normalized;
+  },
+
+  syncOptimalSliderUI: function() {
+    var panel = this.dom.optSettingsPanel;
+    if (!panel) return;
+    var self = this;
+    var weights = this.ui.optWeights || {};
+    Object.keys(this.optWeightDefaults || {}).forEach(function(key) {
+      var input = panel.querySelector('[data-weight-key="' + key + '"]');
+      var valueEl = panel.querySelector('[data-weight-value="' + key + '"]');
+      var baseVal = self.optWeightDefaults[key];
+      var val = (weights[key] != null) ? weights[key] : baseVal;
+      if (input) input.value = val;
+      if (valueEl) valueEl.textContent = Math.round(val) + "%";
+    });
+  },
+
+  bindOptimalSettings: function() {
+    if (this._optSettingsWired) return;
+    this._optSettingsWired = true;
+    var self = this;
+    var panel = this.dom.optSettingsPanel;
+    var toggle = this.dom.optSettingsToggle;
+    if (toggle) {
+      toggle.onclick = function() {
+        self.ui.optSettingsOpen = !self.ui.optSettingsOpen;
+        if (panel) panel.classList.toggle("hidden", !self.ui.optSettingsOpen);
+        if (toggle) toggle.textContent = self.ui.optSettingsOpen ? "Close" : "Settings";
+      };
+    }
+    if (!panel) return;
+
+    var inputs = panel.querySelectorAll("[data-weight-key]");
+    inputs.forEach(function(input) {
+      var key = input.getAttribute("data-weight-key");
+      input.oninput = function() {
+        var val = Number(input.value);
+        if (!self.ui.optWeights) self.ui.optWeights = {};
+        self.ui.optWeights[key] = val;
+        var valueEl = panel.querySelector('[data-weight-value="' + key + '"]');
+        if (valueEl) valueEl.textContent = Math.round(val) + "%";
+        self.ui._historyBestCache = {};
+        if (self.ui.currentView === "optimal") {
+          self.renderHistoryRoster();
+          self.renderHistoryComparison();
+        }
+      };
+    });
+
+    if (this.dom.optSettingsReset) {
+      this.dom.optSettingsReset.onclick = function() {
+        self.ui.optWeights = null;
+        self.ui._historyBestCache = {};
+        self.syncOptimalSliderUI();
+        if (self.ui.currentView === "optimal") {
+          self.renderHistoryRoster();
+          self.renderHistoryComparison();
+        }
+      };
+    }
   },
 
   fetchJson: function(url) {
@@ -873,6 +1041,136 @@ playersById: {},
       }
     }
     return m;
+  },
+
+  buildPlayerCardElement: function(item, opts) {
+    var self = this;
+    opts = opts || {};
+    var card = document.createElement("div");
+    var borderColor = item.isOut ? "border-red-900/50" : "border-gray-800";
+    var bgColor = item.isOut ? "bg-gray-950/50" : "bg-gray-950";
+    card.className = "flex flex-col gap-1 " + bgColor + " border " + borderColor + " rounded-xl p-3 hover:border-sleeper-teal transition cursor-pointer";
+    card.onclick = function() { self.openPlayerModal(item.pid); };
+
+    var displaySlot = String(item.slot || "").toUpperCase() === "SUPER_FLEX" ? "SF" : (item.slot || "");
+    var slotBadge = opts.showSlot ? 
+      '<div class="w-7 h-7 rounded-lg bg-gray-800 border border-gray-700 flex items-center justify-center text-[9px] font-bold text-gray-400 shrink-0">' + self.escapeHtml(displaySlot) + '</div>' : '';
+
+    var proj = isFinite(item.proj) ? item.proj : 0;
+    var act = isFinite(item.act) ? item.act : (isFinite(item.actual) ? item.actual : null);
+    var hasPlayed = (typeof item.hasPlayed === "boolean") ? item.hasPlayed : (act !== null && act !== undefined && act !== 0);
+    var scoreToShow = isFinite(item.scoreToShow) ? item.scoreToShow : (isFinite(item.score) ? item.score : (hasPlayed ? act : proj));
+    var scoreCls = item.scoreCls || (hasPlayed ? "text-gray-200" : "text-gray-200");
+
+    var oppText = item.opp ? '<span class="text-gray-500">@' + self.escapeHtml(item.opp) + '</span>' : '';
+
+    var muBadge = '';
+    var muStatLine = '';
+    try {
+      if (item.enhancedMU && isFinite(item.enhancedMU.matchScore)) {
+        var mu = item.enhancedMU;
+        var scMU = Math.round(mu.matchScore);
+        var clsMU = (scMU >= 70) ? 'bg-sleeper-teal/20 text-sleeper-teal border-sleeper-teal/40' : (scMU >= 50) ? 'bg-gray-800 text-gray-300 border-gray-700' : 'bg-red-900/20 text-red-300 border-red-900/40';
+        muBadge = '<span class="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded ' + clsMU + '">MU ' + scMU + '</span>';
+        if (mu.keyMetric && item.opp) {
+          var ceilPct = mu.ceilRate ? (mu.ceilRate * 100).toFixed(0) : 0;
+          muStatLine = '<div class="text-[9px] font-mono text-gray-500 mt-0.5">' +
+            '<span class="text-gray-400">vs ' + self.escapeHtml(item.opp) + ':</span> ' +
+            '<span class="text-gray-300">' + self.escapeHtml(mu.keyMetric.name) + ' ' + self.escapeHtml(mu.keyMetric.value) + '</span>' +
+            '<span class="text-gray-600 ml-1">Ceil ' + ceilPct + '%</span>' +
+          '</div>';
+        }
+      } else if (isFinite(item.muScore)) {
+        var scMU2 = Math.round(item.muScore);
+        var clsMU2 = (scMU2 >= 70) ? 'bg-sleeper-teal/20 text-sleeper-teal border-sleeper-teal/40' : (scMU2 >= 50) ? 'bg-gray-800 text-gray-300 border-gray-700' : 'bg-red-900/20 text-red-300 border-red-900/40';
+        muBadge = '<span class="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded ' + clsMU2 + '">MU ' + scMU2 + '</span>';
+      }
+    } catch (e) {}
+
+    var fitBadge = '';
+    try {
+      if (isFinite(item.fit)) {
+        var ft = Math.round(item.fit || 0);
+        var clsFT = (ft >= 75) ? 'bg-[#d303fc]/20 text-[#d303fc] border-[#d303fc]/40' : (ft >= 60) ? 'bg-gray-800 text-gray-300 border-gray-700' : 'bg-orange-900/20 text-orange-300 border-orange-900/40';
+        fitBadge = '<span class="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded ' + clsFT + '">FIT ' + ft + '</span>';
+      }
+    } catch (e) {}
+
+    var valBadge = '';
+    try {
+      if (item.valueScore !== null && item.valueScore !== undefined) {
+        valBadge = self.valueBadgeHtml(item.valueScore);
+      }
+    } catch (e) {}
+
+    var rankText = '';
+    if (item.posRank && isFinite(item.posRank.rank)) {
+      rankText = '<span class="text-sleeper-teal font-mono font-black">#' + item.posRank.rank + '</span>';
+    }
+    var ppgRankText = '';
+    if (item.ppgRank && isFinite(item.ppgRank.rank)) {
+      ppgRankText = '<span class="text-[#d303fc] font-mono font-black">(' + item.ppgRank.rank + ')</span>';
+    }
+    var deltaRankText = '';
+    if (item.deltaRank && isFinite(item.deltaRank.rank)) {
+      deltaRankText = '<span class="text-[#00ff66] font-mono font-black">[' + item.deltaRank.rank + ']</span>';
+    }
+
+    var effRow = '';
+    if (item.effMetrics && item.effMetrics.games > 0) {
+      var eff = item.effMetrics;
+      var labels = [];
+      if (eff.label1) labels.push('<span class="text-gray-400">' + eff.label1.name + ':</span><span class="text-white">' + eff.label1.value + '</span>');
+      if (eff.label2) labels.push('<span class="text-gray-400">' + eff.label2.name + ':</span><span class="text-white">' + eff.label2.value + '</span>');
+      if (eff.label3) labels.push('<span class="text-gray-400">' + eff.label3.name + ':</span><span class="text-white">' + eff.label3.value + '</span>');
+      if (labels.length > 0) {
+        effRow = '<div class="flex items-center gap-2 text-[9px] font-mono bg-gray-900/50 rounded px-2 py-1 mt-1">' + labels.join('<span class="text-gray-700">|</span>') + '</div>';
+      }
+    }
+
+    var seasonTotal = isFinite(item.seasonTotal) ? item.seasonTotal : null;
+    var statusPill = '';
+    if (item.status && item.status.label) {
+      statusPill = '<span class="bb-pill shrink-0 whitespace-nowrap min-w-[84px] text-center ' + item.status.bg + ' ' + item.status.color + ' ' + (item.status.label === "Major Boom" ? "glow-majorBoom" : (item.status.label === "Major Bust" ? "glow-majorBust" : "")) + '">' + item.status.label + '</span>';
+    }
+
+    card.innerHTML = 
+      '<div class="flex items-center gap-2">' +
+        slotBadge +
+        '<div class="shrink-0">' + self.playerImg(item.pid, item.player || item.p || {}, "w-10 h-10") + '</div>' +
+        '<div class="min-w-0 flex-1 overflow-hidden">' +
+          '<div class="flex items-start gap-1 min-w-0">' +
+            '<div class="min-w-0 flex-1">' +
+              '<div class="font-semibold text-white text-sm leading-tight line-clamp-1">' + self.escapeHtml(item.disp && item.disp.name ? item.disp.name : "") + '</div>' +
+            '</div>' +
+            self.injuryTag(item.player || item.p || {}) +
+          '</div>' +
+          '<div class="text-[10px] text-gray-500 font-mono flex items-center gap-1 flex-wrap mt-0.5">' +
+            '<span class="flex items-center gap-0.5 mr-3">' + rankText + ppgRankText + deltaRankText + '</span>' +
+            '<span class="text-gray-400">' + self.escapeHtml((item.disp && item.disp.pos) ? item.disp.pos : "") + '</span>' +
+            '<span>•</span>' +
+            '<span>' + self.escapeHtml((item.disp && item.disp.team) ? item.disp.team : "") + '</span>' +
+            ((item.disp && item.disp.age) ? '<span>•</span><span>Age ' + self.escapeHtml(item.disp.age) + '</span>' : '') +
+            (oppText ? '<span>•</span>' + oppText : '') +
+          '</div>' +
+          muStatLine +
+        '</div>' +
+        '<div class="text-right shrink-0 ml-auto">' +
+          '<div class="text-base font-black ' + scoreCls + '">' + (Number.isFinite(scoreToShow) ? scoreToShow.toFixed(2) : "0.00") + '</div>' +
+          '<div class="text-[10px] text-gray-500 font-mono">Proj ' + proj.toFixed(2) + '</div>' +
+          '<div class="text-[10px] text-gray-500 font-mono">Act ' + (hasPlayed && act !== null ? act.toFixed(2) : "—") + '</div>' +
+          (seasonTotal !== null ? '<div class="text-[10px] font-mono" style="color:#d303fc">Total ' + seasonTotal.toFixed(2) + '</div>' : '') +
+          '<div class="mt-1 flex justify-end items-center gap-1 flex-wrap">' +
+            (valBadge ? valBadge.replace('ml-2','') : '') +
+            (muBadge ? muBadge : '') +
+            (fitBadge ? fitBadge : '') +
+            statusPill +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      effRow;
+
+    return card;
   },
 
   scoreFromStats: function(statsObj, playerId) {
@@ -1075,7 +1373,7 @@ playersById: {},
   getMaxWeek: function() {
     var w = (this.data.maxWeek != null) ? Number(this.data.maxWeek)
           : (this.ui && this.ui.selectedWeek != null) ? Number(this.ui.selectedWeek)
-          : (this.data.nflState && this.data.nflState.week != null) ? Number(this.data.nflState.week)
+          : (this.data.nflState ? Number(this.getNflStateWeek()) : 1)
           : 1;
     if (!isFinite(w) || w < 1) w = 1;
     if (w > 18) w = 18;
@@ -4370,7 +4668,9 @@ getPlayerDeltaRank: function(pid) {
       historyMatchups: null,
       faConfig: [],
       defRoleKey: null,
-      defRoleSort: null
+      defRoleSort: null,
+      optSettingsOpen: false,
+      optWeights: null
     };
     
     // Clear DOM elements that might have stale content
@@ -4401,7 +4701,10 @@ getPlayerDeltaRank: function(pid) {
 
     // Apply saved settings (if any)
     try { if (self.loadAppSettings) self.loadAppSettings(); } catch(e) {}
-    try { if (self.cfg && self.cfg.manual && self.cfg.manual.seasonType) self.cfg.seasonType = self.cfg.manual.seasonType; } catch(e) {}
+    try {
+      self.cfg.seasonType = "regular";
+      if (self.cfg && self.cfg.manual) self.cfg.manual.seasonType = "regular";
+    } catch(e) {}
     try { if (self.resolveLeagueId) self.cfg.leagueId = self.resolveLeagueId(); } catch(e) {}
     this.cacheDom();
     
@@ -4411,7 +4714,7 @@ getPlayerDeltaRank: function(pid) {
         self.data.nflState = nflState || {};
 
         var liveSeason = String((nflState && nflState.season) || "");
-        var liveWeek = Number((nflState && nflState.week) || 1);
+        var liveWeek = Number((nflState && (nflState.leg != null ? nflState.leg : nflState.week)) || 1);
         if (!isFinite(liveWeek) || liveWeek < 1) liveWeek = 1;
 
         // Default to live NFL state; league metadata + settings can override below.
@@ -4758,8 +5061,7 @@ getPlayerDeltaRank: function(pid) {
         var v = pair[0];
         var el = pair[1];
         if (!el) return;
-        var isFa = (v === "fa");
-        var baseSize = isFa ? "text-xs" : "text-sm";
+        var baseSize = "text-[10px]";
         el.className = v === view
           ? "w-11 h-11 rounded-xl nav-btn-active transition-all duration-200 font-bold " + baseSize
           : "w-11 h-11 rounded-xl bg-gray-800/60 text-gray-400 hover:bg-gray-700 hover:text-white transition-all duration-200 font-bold " + baseSize;
@@ -4855,13 +5157,30 @@ getPlayerDeltaRank: function(pid) {
     if (this.dom.historyHeaderTitle && this.dom.historyHeaderSubtitle) {
       if (this.ui.currentView === "optimal") {
         this.dom.historyHeaderTitle.textContent = "Optimal Lineups";
-        this.dom.historyHeaderSubtitle.textContent = "Best possible lineup by week (FIT-weighted)";
+        this.dom.historyHeaderSubtitle.textContent = "Best possible lineup by week (custom weighted)";
         this.ui.historyMode = "best";
       } else if (this.ui.currentView === "history") {
         this.dom.historyHeaderTitle.textContent = "Historical Rosters";
         this.dom.historyHeaderSubtitle.textContent = "Actual lineup results by week";
         this.ui.historyMode = "roster";
       }
+    }
+
+    if (this.dom.optSettingsToggle) {
+      var showOptSettings = this.ui.currentView === "optimal";
+      this.dom.optSettingsToggle.classList.toggle("hidden", !showOptSettings);
+      this.dom.optSettingsToggle.textContent = this.ui.optSettingsOpen ? "Close" : "Settings";
+    }
+    if (this.dom.optSettingsPanel) {
+      var showPanel = (this.ui.currentView === "optimal") && this.ui.optSettingsOpen;
+      this.dom.optSettingsPanel.classList.toggle("hidden", !showPanel);
+    }
+    if (this.ui.currentView !== "optimal") {
+      this.ui.optSettingsOpen = false;
+    }
+    if (this.ui.currentView === "optimal") {
+      this.bindOptimalSettings();
+      this.syncOptimalSliderUI();
     }
 
     // Update current week label
@@ -5069,137 +5388,8 @@ var benchPlayers = Object.keys(benchByPid).map(function(pid) {
       startersBySlot[slotKey].push(s);
     });
 
-    // Render a compact player card with enhanced metrics
     var renderPlayerCard = function(item, showSlot) {
-      var card = document.createElement("div");
-      var borderColor = item.isOut ? "border-red-900/50" : "border-gray-800";
-      var bgColor = item.isOut ? "bg-gray-950/50" : "bg-gray-950";
-      card.className = "flex flex-col gap-1 " + bgColor + " border " + borderColor + " rounded-xl p-3 hover:border-sleeper-teal transition cursor-pointer";
-      card.onclick = function() { self.openPlayerModal(item.pid); };
-
-      var displaySlot = item.slot === "SUPER_FLEX" ? "SF" : item.slot;
-
-      var slotBadge = showSlot ? 
-        '<div class="w-7 h-7 rounded-lg bg-gray-800 border border-gray-700 flex items-center justify-center text-[9px] font-bold text-gray-400 shrink-0">' + displaySlot + '</div>' : '';
-
-      var oppText = item.opp ? '<span class="text-gray-500">@' + item.opp + '</span>' : '';
-      
-      // Enhanced matchup score badge with detailed tooltip
-      var muBadge = '';
-      var muTooltip = '';
-      try {
-        if (item.enhancedMU && isFinite(item.enhancedMU.matchScore)) {
-          var mu = item.enhancedMU;
-          var scMU = Math.round(mu.matchScore);
-          var clsMU = (scMU >= 70) ? 'bg-sleeper-teal/20 text-sleeper-teal border-sleeper-teal/40' : (scMU >= 50) ? 'bg-gray-800 text-gray-300 border-gray-700' : 'bg-red-900/20 text-red-300 border-red-900/40';
-          
-          // Build tooltip with breakdown
-          muTooltip = 'PPG: ' + (mu.ppg || 0).toFixed(1) + ' | L4: ' + (mu.last4 || 0).toFixed(1) + ' | Rk #' + (mu.rank || '?');
-          if (mu.statLine) muTooltip += '\\n' + mu.statLine;
-          if (mu.breakdown) {
-            muTooltip += '\\nBase:' + (mu.breakdown.base || 0).toFixed(0) + ' Trend:' + (mu.breakdown.trend || 0).toFixed(0);
-          }
-          
-          muBadge = '<span class="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded ' + clsMU + '" title="' + muTooltip + '">MU ' + scMU + '</span>';
-        } else if (item.opp) {
-          // Fallback to basic MU lookup
-          var roleKeyMU = self.primaryRoleKeyForPlayer(item.player);
-          var infoMU = self.getDefenseRoleInfo(item.opp, roleKeyMU);
-          if (infoMU && isFinite(infoMU.matchScore)) {
-            var scMU = Math.round(infoMU.matchScore);
-            var clsMU = (scMU >= 70) ? 'bg-sleeper-teal/20 text-sleeper-teal border-sleeper-teal/40' : (scMU >= 50) ? 'bg-gray-800 text-gray-300 border-gray-700' : 'bg-red-900/20 text-red-300 border-red-900/40';
-            muBadge = '<span class="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded ' + clsMU + '">MU ' + scMU + '</span>';
-          }
-        }
-      } catch (e) {}
-
-      // Value score badge (0-1000)
-      var valBadge = '';
-      try {
-        if (item.valueScore !== null && item.valueScore !== undefined) {
-          valBadge = self.valueBadgeHtml(item.valueScore);
-        }
-      } catch (e) {}
-
-      // Major-position rank (season total points within major position group)
-      var rankText = '';
-      if (item.posRank && isFinite(item.posRank.rank)) {
-        rankText = '<span class="text-sleeper-teal font-mono font-black">#' + item.posRank.rank + '</span>';
-      }
-
-      // Second rank: PPG rank within major position group
-      var ppgRankText = '';
-      if (item.ppgRank && isFinite(item.ppgRank.rank)) {
-        ppgRankText = '<span class="text-[#d303fc] font-mono font-black">(' + item.ppgRank.rank + ')</span>';
-      }
-      
-      // Third rank: Avg delta PPG rank within major position group
-      var deltaRankText = '';
-      if (item.deltaRank && isFinite(item.deltaRank.rank)) {
-        deltaRankText = '<span class="text-[#00ff66] font-mono font-black">[' + item.deltaRank.rank + ']</span>';
-      }
-
-      // Build efficiency metrics row based on position
-      var effRow = '';
-      if (item.effMetrics && item.effMetrics.games > 0) {
-        var eff = item.effMetrics;
-        var labels = [];
-        if (eff.label1) labels.push('<span class="text-gray-400">' + eff.label1.name + ':</span><span class="text-white">' + eff.label1.value + '</span>');
-        if (eff.label2) labels.push('<span class="text-gray-400">' + eff.label2.name + ':</span><span class="text-white">' + eff.label2.value + '</span>');
-        if (eff.label3) labels.push('<span class="text-gray-400">' + eff.label3.name + ':</span><span class="text-white">' + eff.label3.value + '</span>');
-        
-        if (labels.length > 0) {
-          effRow = '<div class="flex items-center gap-2 text-[9px] font-mono bg-gray-900/50 rounded px-2 py-1 mt-1">' + labels.join('<span class="text-gray-700">|</span>') + '</div>';
-        }
-      }
-      
-      // Enhanced matchup stat line (when available)
-      var muStatLine = '';
-      if (item.enhancedMU && item.enhancedMU.keyMetric && item.opp) {
-        var km = item.enhancedMU.keyMetric;
-        var ceilPct = item.enhancedMU.ceilRate ? (item.enhancedMU.ceilRate * 100).toFixed(0) : 0;
-        muStatLine = '<div class="text-[9px] font-mono text-gray-500 mt-0.5">' +
-          '<span class="text-gray-400">vs ' + item.opp + ':</span> ' +
-          '<span class="text-gray-300">' + km.name + ' ' + km.value + '</span>' +
-          '<span class="text-gray-600 ml-1">Ceil ' + ceilPct + '%</span>' +
-        '</div>';
-      }
-
-      card.innerHTML = 
-        '<div class="flex items-center gap-2">' +
-          slotBadge +
-          '<div class="shrink-0">' + self.playerImg(item.pid, item.player, "w-10 h-10") + '</div>' +
-          '<div class="min-w-0 flex-1 overflow-hidden">' +
-            '<div class="flex items-start gap-1 min-w-0">' +
-              '<div class="min-w-0 flex-1">' +
-                '<div class="font-semibold text-white text-sm leading-tight line-clamp-1">' + item.disp.name + '</div>' +
-              '</div>' +
-              self.injuryTag(item.player) +
-            '</div>' +
-            '<div class="text-[10px] text-gray-500 font-mono flex items-center gap-1 flex-wrap mt-0.5">' +
-              '<span class="flex items-center gap-0.5 mr-3">' + rankText + ppgRankText + deltaRankText + '</span>' +
-              '<span class="text-gray-400">' + item.disp.pos + '</span>' +
-              '<span>•</span>' +
-              '<span>' + item.disp.team + '</span>' +
-              (item.disp.age ? '<span>•</span><span>Age ' + item.disp.age + '</span>' : '') +
-              (oppText ? '<span>•</span>' + oppText : '') +
-            '</div>' +
-            muStatLine +
-          '</div>' +
-          '<div class="text-right shrink-0 ml-auto">' +
-            '<div class="text-base font-black ' + item.scoreCls + '">' + (Number.isFinite(item.scoreToShow) ? item.scoreToShow.toFixed(2) : "0.00") + '</div>' +
-            '<div class="text-[10px] text-gray-500 font-mono">Proj ' + item.proj.toFixed(2) + '</div>' +
-            '<div class="text-[10px] font-mono" style="color:#d303fc">Total ' + (Number(item.seasonTotal) || 0).toFixed(2) + '</div>' +
-            '<div class="mt-1 flex justify-end items-center gap-1 flex-wrap">' +
-              (valBadge ? valBadge.replace('ml-2','') : '') +
-              (muBadge ? muBadge : '') +
-              '<span class="bb-pill shrink-0 whitespace-nowrap min-w-[84px] text-center ' + item.status.bg + ' ' + item.status.color + ' ' + (item.status.label === "Major Boom" ? "glow-majorBoom" : (item.status.label === "Major Bust" ? "glow-majorBust" : "")) + '">' + item.status.label + '</span>' +
-            '</div>' +
-          '</div>' +
-        '</div>' +
-        effRow;
-
-      return card;
+      return self.buildPlayerCardElement(item, { showSlot: showSlot });
     };
 
     // Render section header
@@ -5760,7 +5950,7 @@ var wrap = document.createElement("div");
 
     box.appendChild(mkHeatmapTable({
       title: "Team Score Projected",
-      subtitle: "Totals are sum of projections for all players on roster.",
+      subtitle: "",
       selectorFn: function(roster) { return summarizePlayers((roster && roster.players) || []); }
     }));
 
@@ -5816,11 +6006,24 @@ var wrap = document.createElement("div");
       var A = self.startersHybridTotal(rosterA, weekNum, aStarters);
       var B = self.startersHybridTotal(rosterB, weekNum, bStarters);
 
+      var sumFromMap = function(pids, map) {
+        var total = 0;
+        (pids || []).forEach(function(pid) {
+          if (!pid || pid === "0") return;
+          total += self.scoreFromStats(map[String(pid)] || {}, String(pid));
+        });
+        return Math.round(total * 100) / 100;
+      };
+
       // Boom/Bust summary (includes Major Boom/Major Bust) for this specific week
       var statsMapW = self.data.weekStats[String(weekNum)] || {};
       var projMapW  = self.data.weekProj[String(weekNum)] || {};
       var countsA = self.countStatusesForPids(aStarters, statsMapW, projMapW, weekNum);
       var countsB = self.countStatusesForPids(bStarters, statsMapW, projMapW, weekNum);
+      var projA = sumFromMap(aStarters, projMapW);
+      var projB = sumFromMap(bStarters, projMapW);
+      var actA = sumFromMap(aStarters, statsMapW);
+      var actB = sumFromMap(bStarters, statsMapW);
       var pillsA = self.statusPillsFromCounts(countsA);
       var pillsB = self.statusPillsFromCounts(countsB);
 
@@ -5845,7 +6048,7 @@ var wrap = document.createElement("div");
               '<div class="text-gray-300 text-sm truncate">' + self.escapeHtml(teamAName) + '</div>' +
               '<div class="text-sleeper-teal font-black font-mono">' + A.toFixed(2) + '</div>' +
             '</div>' +
-            '<div class="text-[11px] text-gray-500 font-mono">Starters hybrid total</div>' +
+            '<div class="text-[11px] text-gray-500 font-mono">Proj ' + projA.toFixed(2) + ' • Act ' + actA.toFixed(2) + '</div>' +
           (pillsA ? '<div class=\"mt-2\">' + pillsA + '</div>' : '') +
             '</div>' +
           '<div class="bg-gray-950 border border-gray-800 rounded-xl p-3">' +
@@ -5853,7 +6056,7 @@ var wrap = document.createElement("div");
               '<div class="text-gray-300 text-sm truncate">' + self.escapeHtml(teamBName) + '</div>' +
               '<div class="text-sleeper-teal font-black font-mono">' + B.toFixed(2) + '</div>' +
             '</div>' +
-            '<div class="text-[11px] text-gray-500 font-mono">Starters hybrid total</div>' +
+            '<div class="text-[11px] text-gray-500 font-mono">Proj ' + projB.toFixed(2) + ' • Act ' + actB.toFixed(2) + '</div>' +
           (pillsB ? '<div class=\"mt-2\">' + pillsB + '</div>' : '') +
             '</div>' +
         '</div>' +
@@ -6243,7 +6446,7 @@ renderFA: function() {
       }
 
       var wk = String(w);
-      var currentNflWeek = (self.data.nflState && self.data.nflState.week) || 18;
+      var currentNflWeek = (self.data.nflState ? self.getNflStateWeek() : 18) || 18;
       var proceed = function() {
         var projMap = self.data.weekProj[wk] || {};
         var statsMap = self.data.weekStats[wk] || {};
@@ -6863,6 +7066,12 @@ renderFA: function() {
     var statsMap = this.data.weekStats[weekStr] || {};
     var projMap = this.data.weekProj[weekStr] || {};
 
+    var isInjuredOut = function(p) {
+      var status = ((p && (p.injury_status || p.status)) || "").toString().trim().toUpperCase();
+      var outStatuses = ["OUT", "IR", "PUP", "NFI", "SUSP", "SUSPENDED", "COVID", "INACTIVE", "DNR"];
+      return outStatuses.indexOf(status) >= 0;
+    };
+
     // Get starters and players from the matchup data (historical roster for that week)
     var starters = matchupData.starters || roster.starters || [];
     var allPlayers = matchupData.players || roster.players || [];
@@ -6899,29 +7108,35 @@ renderFA: function() {
       var status = self.boomBustStatus(proj, actual, hasPlayed, muScore);
       var score = hasPlayed ? actual : proj;
       var scoreCls = hasPlayed ? self.scoreColor(proj, actual, true) : "text-gray-200";
-
-        var valObj = self.getPlayerValue(pid);
-        var valueScore = valObj ? valObj.score : null;
-        var valBadge = '';
-        try {
-          if (valueScore !== null && valueScore !== undefined) valBadge = self.valueBadgeHtml(valueScore);
-        } catch(e) {}
-      var slot = slots[idx] || "ST";
-
-
       var valObj = self.getPlayerValue(pid);
       var valueScore = valObj ? valObj.score : null;
+      var posRank = self.positionRank(pid);
+      var ppgRank = self.getPlayerPpgRank(pid);
+      var deltaRank = self.getPlayerDeltaRank(pid);
+      var seasonTotal = (self.data.seasonTotals && (self.data.seasonTotals[pid] || self.data.seasonTotals[String(pid)])) || 0;
+      var effMetrics = self.getPlayerEfficiencyMetrics(pid, p);
+      var slot = slots[idx] || "ST";
 
       starterItems.push({
         pid: pid,
-        p: p,
+        player: p,
         disp: disp,
         proj: proj,
-        score: score,
+        act: actual,
+        hasPlayed: hasPlayed,
+        scoreToShow: score,
         scoreCls: scoreCls,
         status: status,
         slot: slot,
-        valueScore: valueScore
+        valueScore: valueScore,
+        opp: opp,
+        enhancedMU: enh,
+        posRank: posRank,
+        ppgRank: ppgRank,
+        deltaRank: deltaRank,
+        seasonTotal: seasonTotal,
+        effMetrics: effMetrics,
+        isOut: isInjuredOut(p)
       });
     });
 
@@ -6952,38 +7167,7 @@ renderFA: function() {
     });
 
     var renderHistoryCard = function(item, showSlot) {
-      var card = document.createElement("div");
-      card.className = "flex items-center gap-2 bg-gray-950 border border-gray-800 rounded-xl p-3 hover:border-sleeper-teal transition cursor-pointer";
-      card.onclick = function() { self.openPlayerModal(item.pid); };
-
-      var displaySlot = item.slot === "SUPER_FLEX" ? "SF" : item.slot;
-      var slotBadge = showSlot ?
-        '<div class="w-8 h-8 rounded-lg bg-gray-800 flex items-center justify-center text-[10px] font-bold text-gray-400">' + displaySlot + '</div>' : '';
-
-
-      var valBadge = '';
-      try {
-        if (item.valueScore !== null && item.valueScore !== undefined) {
-          valBadge = self.valueBadgeHtml(item.valueScore);
-        }
-      } catch(e) {}
-      card.innerHTML =
-        slotBadge +
-        '<div class="shrink-0">' + self.playerImg(item.pid, item.p, "w-10 h-10") + '</div>' +
-        '<div class="min-w-0 flex-1">' +
-          '<div class="flex items-center justify-between gap-2">' +
-            '<div class="font-bold text-white truncate">' + self.escapeHtml(item.disp.name) + '</div>' +
-          '</div>' +
-          '<div class="text-[10px] text-gray-500 font-mono">' + self.escapeHtml(item.disp.pos) + ' • ' + self.escapeHtml(item.disp.team) + (item.disp.age ? (' • Age ' + item.disp.age) : '') + '</div>' +
-          (valBadge ? '<div class="mt-2 flex items-center gap-2 flex-wrap">' + valBadge + '</div>' : '') +
-        '</div>' +
-        '<div class="text-right w-20 shrink-0">' +
-          '<div class="text-base font-black ' + item.scoreCls + '">' + item.score.toFixed(2) + '</div>' +
-          '<div class="text-[10px] text-gray-500 font-mono">Proj ' + item.proj.toFixed(2) + '</div>' +
-        '</div>' +
-        '<span class="bb-pill ml-3 min-w-[84px] text-center self-start mt-0.5 ' + item.status.bg + ' ' + item.status.color + ' ' + (item.status.label === "Major Boom" ? "glow-majorBoom" : (item.status.label === "Major Bust" ? "glow-majorBust" : "")) + '">' + item.status.label + '</span>';
-
-      return card;
+      return self.buildPlayerCardElement(item, { showSlot: showSlot });
     };
 
     // Render grouped starters
@@ -7039,17 +7223,36 @@ renderFA: function() {
         var status = self.boomBustStatus(proj, actual, hasPlayed, muScore);
         var score = hasPlayed ? actual : proj;
         var scoreCls = hasPlayed ? self.scoreColor(proj, actual, true) : "text-gray-200";
+        var valObj = self.getPlayerValue(pid);
+        var valueScore = valObj ? valObj.score : null;
+        var posRank = self.positionRank(pid);
+        var ppgRank = self.getPlayerPpgRank(pid);
+        var deltaRank = self.getPlayerDeltaRank(pid);
+        var seasonTotal = (self.data.seasonTotals && (self.data.seasonTotals[pid] || self.data.seasonTotals[String(pid)])) || 0;
+        var effMetrics = self.getPlayerEfficiencyMetrics(pid, p);
 
-        var card = document.createElement("div");
-        card.className = "flex items-center gap-2 bg-gray-950 border border-gray-800 rounded-xl p-3 hover:border-sleeper-teal transition cursor-pointer";
-        card.onclick = function() { self.openPlayerModal(pid); };
-        card.innerHTML = 
-          '<div class="w-8 h-8 rounded-lg bg-gray-800 flex items-center justify-center text-[10px] font-bold text-gray-400">BN</div>' +
-          '<div class="shrink-0">' + self.playerImg(pid, p, "w-10 h-10") + '</div>' +
-          '<div class="min-w-0 flex-1"><div class="flex items-center gap-1"><span class="font-semibold text-white truncate text-sm">' + disp.name + '</span>' + self.injuryTag(p) + '</div><div class="text-[10px] text-gray-500 font-mono">' + disp.pos + ' • ' + disp.team + (disp.age ? (' • Age ' + disp.age) : '') + '</div></div>' +
-          '<div class="text-right w-20 shrink-0"><div class="text-base font-black ' + scoreCls + '">' + score.toFixed(2) + '</div><div class="text-[10px] text-gray-500 font-mono">Proj ' + proj.toFixed(2) + '</div></div>' +
-          '<span class="bb-pill ml-3 min-w-[84px] text-center self-start mt-0.5 ' + status.bg + ' ' + status.color + ' ' + (status.label === "Major Boom" ? "glow-majorBoom" : (status.label === "Major Bust" ? "glow-majorBust" : "")) + '">' + status.label + '</span>';
-        benchGrid.appendChild(card);
+        var cardItem = {
+          pid: pid,
+          slot: "BN",
+          player: p,
+          disp: disp,
+          proj: proj,
+          act: actual,
+          hasPlayed: hasPlayed,
+          scoreToShow: score,
+          scoreCls: scoreCls,
+          status: status,
+          opp: opp,
+          enhancedMU: enh,
+          valueScore: valueScore,
+          posRank: posRank,
+          ppgRank: ppgRank,
+          deltaRank: deltaRank,
+          seasonTotal: seasonTotal,
+          effMetrics: effMetrics,
+          isOut: isInjuredOut(p)
+        };
+        benchGrid.appendChild(self.buildPlayerCardElement(cardItem, { showSlot: true }));
       });
 
       list.appendChild(benchGrid);
@@ -7346,8 +7549,8 @@ var wrap = document.createElement("div");
     // (season PPG, last-4 form, consistency, snaps, and boom/bust tendency).
     var fitById = {};
     var pickById = {};
-    var valById = {}, ppgById = {}, l4ById = {}, consById = {}, snapById = {}, bbById = {}, deltaById = {};
-    var valVals = [], ppgVals = [], l4Vals = [], deltaVals = [];
+    var valById = {}, ppgById = {}, l4ById = {}, consById = {}, snapById = {}, bbById = {}, deltaById = {}, seasonById = {};
+    var valVals = [], ppgVals = [], l4Vals = [], deltaVals = [], seasonVals = [];
 
     var outStatuses = ["OUT","IR","PUP","NFI","SUSP","SUSPENDED","COVID","INACTIVE","DNR"];
     var doubtfulStatuses = ["DOUBTFUL"];
@@ -7366,6 +7569,7 @@ var wrap = document.createElement("div");
 
       var vObj = (self.data.playerValues && self.data.playerValues[pid]) ? self.data.playerValues[pid] : null;
       var valScore = (vObj && isFinite(vObj.score)) ? vObj.score : null;
+      var seasonTotal = (self.data.seasonTotals && (self.data.seasonTotals[pid] || self.data.seasonTotals[String(pid)])) || 0;
 
       ppgById[pid] = ppg;
       l4ById[pid] = l4;
@@ -7374,11 +7578,13 @@ var wrap = document.createElement("div");
       bbById[pid] = bb;
       deltaById[pid] = dlt;
       valById[pid] = valScore;
+      seasonById[pid] = seasonTotal;
 
       if (valScore !== null) valVals.push(valScore);
       if (ppg !== null) ppgVals.push(ppg);
       if (l4 !== null) l4Vals.push(l4);
       if (isFinite(dlt)) deltaVals.push(dlt);
+      if (isFinite(seasonTotal)) seasonVals.push(seasonTotal);
     });
 
     var p90 = function(arr, fallback) {
@@ -7393,6 +7599,7 @@ var wrap = document.createElement("div");
 
     var ppgDenom = p90(ppgVals, 12);
     var l4Denom = p90(l4Vals, 12);
+    var seasonDenom = p90(seasonVals, 200);
     var dMin = null, dMax = null;
     deltaVals.forEach(function(v){
       if (!isFinite(v)) return;
@@ -7413,6 +7620,8 @@ var wrap = document.createElement("div");
     var W_CS   = 0.10; // Consistency/Snaps combined
     var W_BB   = 0.03;
     var W_DLT  = 0.01;
+
+    var pickWeights = self.getOptimalWeights();
 
     allPlayers.forEach(function(pid) {
       pid = String(pid);
@@ -7436,6 +7645,9 @@ var wrap = document.createElement("div");
       var snapScaled = clamp((snapById[pid] || 0.5) * 100, 0, 100);
       var csScaled   = (consScaled + snapScaled) / 2;
       var bbScaled   = clamp((bbById[pid]   || 0.5) * 100, 0, 100);
+      var ceilScaled = clamp((ceilById[pid] || 0) * 100, 0, 100);
+      var seasonTotal = seasonById[pid];
+      var seasonScaled = (seasonDenom && isFinite(seasonTotal)) ? clamp((seasonTotal / seasonDenom) * 100, 0, 100) : 50;
 
       var dlt = deltaById[pid];
       var dltScaled = 50;
@@ -7461,26 +7673,19 @@ var wrap = document.createElement("div");
 
       var fitAdj = clamp(fitRaw * availability, 0, 100);
       fitById[pid] = Math.round(fitAdj * 100) / 100;
-      // Optimal lineup pick score weights (custom): Value 18% • Proj 18% • MU 8% • FIT 8% • PPG 3% • L4 20% • Cons/Snaps 21% • Boom/Bust 5%
-      // Note: your percentages sum to 101%, so these are normalized to 100% in code.
-      var W_PICK_VAL  = 0.1782178218;
-      var W_PICK_PROJ = 0.1782178218;
-      var W_PICK_MU   = 0.0792079208;
-      var W_PICK_FIT  = 0.0792079208;
-      var W_PICK_PPG  = 0.0297029703;
-      var W_PICK_L4   = 0.1980198020;
-      var W_PICK_CS   = 0.2079207921;
-      var W_PICK_BB   = 0.0495049505;
-
       var pickRaw =
-        (W_PICK_VAL  * valScaled) +
-        (W_PICK_PROJ * projScaled) +
-        (W_PICK_MU   * mu) +
-        (W_PICK_FIT  * fitRaw) +
-        (W_PICK_PPG  * ppgScaled) +
-        (W_PICK_L4   * l4Scaled) +
-        (W_PICK_CS   * csScaled) +
-        (W_PICK_BB   * bbScaled);
+        (pickWeights.value * valScaled) +
+        (pickWeights.proj * projScaled) +
+        (pickWeights.mu * mu) +
+        (pickWeights.fit * fitRaw) +
+        (pickWeights.ppg * ppgScaled) +
+        (pickWeights.l4 * l4Scaled) +
+        (pickWeights.consistency * consScaled) +
+        (pickWeights.snaps * snapScaled) +
+        (pickWeights.boomBust * bbScaled) +
+        (pickWeights.delta * dltScaled) +
+        (pickWeights.ceil * ceilScaled) +
+        (pickWeights.season * seasonScaled);
 
       var pickAdj = clamp(pickRaw * availability, 0, 100);
       pickById[pid] = Math.round(pickAdj * 100) / 100;
@@ -7605,9 +7810,15 @@ actualStarters: actualStarters,
 
     var week = data.week;
 
+    var isInjuredOut = function(p) {
+      var status = ((p && (p.injury_status || p.status)) || "").toString().trim().toUpperCase();
+      var outStatuses = ["OUT", "IR", "PUP", "NFI", "SUSP", "SUSPENDED", "COVID", "INACTIVE", "DNR"];
+      return outStatuses.indexOf(status) >= 0;
+    };
+
     // Subtitle
     if (this.dom.historyTeamSubtitle) {
-      this.dom.historyTeamSubtitle.textContent = "Week " + week + " | Best lineup (Value 18% • Proj 18% • MU 8% • FIT 8% • PPG 3% • L4 20% • Cons/Snaps 21% • Boom/Bust 5%)";
+      this.dom.historyTeamSubtitle.textContent = "Week " + week + " | Best lineup (custom weighted)";
     }
 
     // Build items for rendering
@@ -7661,6 +7872,12 @@ actualStarters: actualStarters,
       var valObj = self.getPlayerValue(pid);
       var valueScore = valObj ? valObj.score : null;
 
+      var posRank = self.positionRank(pid);
+      var ppgRank = self.getPlayerPpgRank(pid);
+      var deltaRank = self.getPlayerDeltaRank(pid);
+      var seasonTotal = (self.data.seasonTotals && (self.data.seasonTotals[pid] || self.data.seasonTotals[String(pid)])) || 0;
+      var effMetrics = self.getPlayerEfficiencyMetrics(pid, p);
+
       return {
         pid: pid,
         slot: pk.slot,
@@ -7668,85 +7885,27 @@ actualStarters: actualStarters,
         player: p,
         disp: disp,
         proj: proj,
-        actual: actual,
+        act: actual,
         hasPlayed: hasPlayed,
         status: status,
-        score: score,
+        scoreToShow: score,
         scoreCls: scoreCls,
         opp: opp,
+        enhancedMU: enh,
         valueScore: valueScore,
         muScore: muScore,
-        fit: data.fitById[pid] || 0
+        fit: data.fitById[pid] || 0,
+        posRank: posRank,
+        ppgRank: ppgRank,
+        deltaRank: deltaRank,
+        seasonTotal: seasonTotal,
+        effMetrics: effMetrics,
+        isOut: isInjuredOut(p)
       };
     };
 
     var renderCard = function(item, showSlot) {
-      var card = document.createElement("div");
-      card.className = "flex items-center gap-3 bg-gray-950 border border-gray-800 rounded-xl p-3 hover:border-sleeper-teal transition cursor-pointer";
-      card.onclick = function() { self.openPlayerModal(item.pid); };
-
-      var displaySlot = String(item.slot || "").toUpperCase() === "SUPER_FLEX" ? "SF" : item.slot;
-      var slotBadge = showSlot ?
-        '<div class="w-8 h-8 rounded-lg bg-gray-800 flex items-center justify-center text-[10px] font-bold text-gray-400">' + self.escapeHtml(displaySlot) + '</div>' : '';
-
-      var img = self.playerHeadshotUrl(item.pid);
-      var initials = (item.disp && item.disp.pos) ? item.disp.pos : "?";
-
-      var avatar = '<div class="w-10 h-10 rounded-xl bg-gray-800 overflow-hidden flex items-center justify-center text-gray-400 font-bold">' +
-          (img ? ('<img src="' + img + '" class="w-full h-full object-cover"/>') : self.escapeHtml(initials)) +
-        '</div>';
-
-      var statusLabel = '';
-      try {
-        statusLabel = '<span class="bb-pill min-w-[84px] text-center ' + item.status.bg + ' ' + item.status.color + ' ' + (item.status.majorBoom ? "glow-majorBoom" : (item.status.majorBust ? "glow-majorBust" : "")) + '">' + item.status.label + '</span>';
-      } catch(e) {
-        statusLabel = '';
-      }
-
-      // MU badge
-      var muBadge = '';
-      try {
-        var scMU = Math.round(item.muScore || 0);
-        var clsMU = (scMU >= 70) ? 'bg-sleeper-teal/20 text-sleeper-teal border border-sleeper-teal/40' : (scMU >= 50) ? 'bg-gray-800 text-gray-300 border border-gray-700' : 'bg-red-900/20 text-red-300 border border-red-900/40';
-        muBadge = '<span class="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded ' + clsMU + '">MU ' + scMU + '</span>';
-      } catch(e) {}
-
-      // Fit badge
-      var fitBadge = '';
-      try {
-        var ft = Math.round((item.fit || 0));
-        var clsFT = (ft >= 75) ? 'bg-[#d303fc]/20 text-[#d303fc] border border-[#d303fc]/40' : (ft >= 60) ? 'bg-gray-800 text-gray-300 border border-gray-700' : 'bg-orange-900/20 text-orange-300 border border-orange-900/40';
-        fitBadge = '<span class="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded ' + clsFT + '">FIT ' + ft + '</span>';
-      } catch(e) {}
-
-      // Value badge
-      var valBadge = '';
-      try {
-        if (item.valueScore !== null && item.valueScore !== undefined) {
-          valBadge = self.valueBadgeHtml(item.valueScore);
-        }
-      } catch(e) {}
-
-      card.innerHTML =
-        slotBadge +
-        avatar +
-        '<div class="flex-1 min-w-0">' +
-          '<div class="flex items-center justify-between gap-2">' +
-            '<div class="font-bold text-white truncate">' + self.escapeHtml(item.disp.name) + '</div>' +
-          '</div>' +
-          '<div class="text-[10px] text-gray-500 font-mono">' +
-            self.escapeHtml((item.disp.pos || "?") + (item.disp.team ? (" • " + item.disp.team) : "") + (item.opp ? (" • @" + item.opp) : "")) +
-            (item.disp.age ? (' • Age ' + item.disp.age) : '') +
-          '</div>' +
-          '<div class="flex items-center gap-2 mt-2">' + (valBadge ? valBadge : '') + muBadge + fitBadge + '</div>' +
-        '</div>' +
-        '<div class="text-right w-20 shrink-0">' +
-          '<div class="text-base font-black ' + item.scoreCls + '">' + item.score.toFixed(2) + '</div>' +
-          '<div class="text-[10px] text-gray-500 font-mono">Proj ' + item.proj.toFixed(2) + '</div>' +
-        '</div>' +
-        '<div class="ml-3 self-start mt-0.5">' + statusLabel + '</div>';
-
-      return card;
+      return self.buildPlayerCardElement(item, { showSlot: showSlot });
     };
 
     // Render grouped starters in consistent order
@@ -8122,7 +8281,8 @@ var fmtPid = function(pid) {
         for (var k in obj.manual) APP.cfg.manual[k] = obj.manual[k];
       }
       if (obj.selectedSeasonChoice) APP.cfg.selectedSeasonChoice = String(obj.selectedSeasonChoice);
-      if (obj.seasonType) APP.cfg.seasonType = String(obj.seasonType);
+      APP.cfg.seasonType = "regular";
+      if (APP.cfg.manual) APP.cfg.manual.seasonType = "regular";
     } catch(e) {}
   };
 
@@ -8132,7 +8292,7 @@ var fmtPid = function(pid) {
         autoSetup: !!APP.cfg.autoSetup,
         manual: APP.cfg.manual || {},
         selectedSeasonChoice: String(APP.cfg.selectedSeasonChoice || ""),
-        seasonType: String(APP.cfg.seasonType || "regular")
+        seasonType: "regular"
       };
       localStorage.setItem(APP._settingsKey, JSON.stringify(out));
     } catch(e) {}
@@ -8201,7 +8361,7 @@ var fmtPid = function(pid) {
       var seasonVal = (APP.cfg.manual && APP.cfg.manual.season) ? String(APP.cfg.manual.season) : String(APP.cfg.selectedSeasonChoice || "");
       if (d.settingsSeason) d.settingsSeason.value = seasonVal;
     } catch(e) {}
-    try { if (d.settingsSeasonType) d.settingsSeasonType.value = String((APP.cfg.manual && APP.cfg.manual.seasonType) || APP.cfg.seasonType || "regular"); } catch(e) {}
+    try { if (d.settingsSeasonType) d.settingsSeasonType.value = "regular"; } catch(e) {}
     try { if (d.settingsCurrentWeek) d.settingsCurrentWeek.value = Number((APP.cfg.manual && APP.cfg.manual.currentWeek) || (APP.ui && APP.ui.selectedWeek) || 1); } catch(e) {}
     try { if (d.settingsMaxWeek) d.settingsMaxWeek.value = Number((APP.cfg.manual && APP.cfg.manual.maxWeek) || (APP.data && APP.data.maxWeek) || 18); } catch(e) {}
 
@@ -8237,7 +8397,7 @@ var fmtPid = function(pid) {
           try { localStorage.setItem("sleeper_app_season_choice", yr); } catch(e) {}
         }
 
-        var st = (d.settingsSeasonType && d.settingsSeasonType.value) ? String(d.settingsSeasonType.value) : "regular";
+        var st = "regular";
         APP.cfg.manual.seasonType = st;
         APP.cfg.seasonType = st;
 
