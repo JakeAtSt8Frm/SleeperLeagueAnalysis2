@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sleeper League Analytics | Standalone</title>
+  <title>Sleeper League Analytics</title>
 
   <!-- Chart.js 3.x for broader browser compatibility -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
@@ -17,15 +17,29 @@
         extend: {
           colors: {
             sleeper: {
-              teal: '#00ceb8',
+              teal: '#10b981',
               boom: '#22c55e',
-              
               bust: '#ef4444',
               mid:  '#3b82f6',
-              
               majorBoom: '#d303fc',
-              
               majorBust: '#f97316'
+            },
+            madden: {
+              gold: '#FFD700',
+              goldDark: '#C9A227',
+              red: '#E31837'
+            },
+            myteam: {
+              bronze: '#CD7F32',
+              silver: '#C0C0C0',
+              gold: '#FFD700',
+              sapphire: '#0F52BA',
+              ruby: '#E0115F',
+              amethyst: '#9966CC',
+              diamond: '#B9F2FF',
+              pinkdiamond: '#FF69B4',
+              darkmatter: '#1a0033',
+              goat: '#FFD700'
             }
           }
         }
@@ -38,70 +52,78 @@
     ::-webkit-scrollbar{width:6px;height:6px}
     ::-webkit-scrollbar-track{background:transparent}
     ::-webkit-scrollbar-thumb{background:#3f4451;border-radius:6px}
-    ::-webkit-scrollbar-thumb:hover{background:#00ceb8}
+    ::-webkit-scrollbar-thumb:hover{background:#10b981}
 
     /* Utility Classes */
     .line-clamp-2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-    .glow-majorBoom{box-shadow:0 0 10px rgba(211,3,252,.5),0 0 20px rgba(211,3,252,.25)}
-    .glow-majorBust{box-shadow:0 0 10px rgba(249,115,22,.5),0 0 20px rgba(249,115,22,.25)}
+    .glow-majorBoom{box-shadow:0 0 6px rgba(211,3,252,.4)}
+    .glow-majorBust{box-shadow:0 0 6px rgba(249,115,22,.4)}
     .bb-pill{display:inline-block;white-space:nowrap;min-width:84px;text-align:center;font-size:9px;line-height:1.1;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;padding:0.25rem 0.625rem;border-radius:0.5rem}
 
     /* Sidebar Active States */
     .nav-btn-active {
-      background: linear-gradient(135deg, rgba(0,206,184,0.15) 0%, rgba(0,206,184,0.05) 100%) !important;
-      color: #00ceb8 !important;
-      border: 1px solid rgba(0,206,184,0.3);
-      box-shadow: 0 0 20px rgba(0,206,184,0.1), inset 0 1px 0 rgba(255,255,255,0.05);
+      background: linear-gradient(135deg, rgba(16,185,129,0.15) 0%, rgba(16,185,129,0.05) 100%) !important;
+      color: #10b981 !important;
+      border: 1px solid rgba(16,185,129,0.3);
+      box-shadow: none;
     }
     
-    /* Card Hover Effects */
-    .card-hover {
-      transition: all 0.2s ease;
-    }
+    /* Card Hover */
     .card-hover:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      border-color: rgba(16,185,129,0.3);
     }
     
-    /* Subtle gradient backgrounds */
+    /* Backgrounds */
     .bg-card {
-      background: linear-gradient(180deg, rgba(17,24,39,0.95) 0%, rgba(17,24,39,0.8) 100%);
-      backdrop-filter: blur(10px);
+      background: var(--surface-2);
     }
 
     .player-card {
-      background: linear-gradient(135deg, rgba(17,24,39,0.95) 0%, rgba(12,20,34,0.92) 55%, rgba(8,12,22,0.98) 100%);
-      border: 1px solid rgba(51,65,85,0.65);
-      box-shadow: 0 10px 22px rgba(0,0,0,0.3);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
     }
     .player-card:hover {
-      border-color: rgba(0,206,184,0.6);
-      box-shadow: 0 10px 28px rgba(0,0,0,0.35);
+      border-color: rgba(16,185,129,0.3);
     }
+
+    /* Card grid */
+    .ui2k-card-grid{
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 10px;
+      align-items: start;
+      justify-items: center;
+      width: 100%;
+      max-width: calc(3 * 520px + 2 * 10px);
+      margin-inline: auto;
+    }
+    @media (max-width: 520px){
+      .ui2k-card-grid{
+        grid-template-columns: 1fr;
+        max-width: 100%;
+      }
+      .player-card{
+        min-width: 0 !important;
+        width: 100% !important;
+      }
+    }
+
     .stat-chip {
-      background: rgba(15,23,42,0.7);
-      border: 1px solid rgba(51,65,85,0.5);
-      border-radius: 0.75rem;
-      padding: 0.35rem 0.6rem;
+      background: var(--surface-3);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.3rem 0.5rem;
     }
     
     /* Table row hover */
     .table-row-hover:hover {
-      background: rgba(0,206,184,0.05);
-    }
-    
-    /* Smooth transitions */
-    * {
-      transition-property: background-color, border-color, color, opacity, transform;
-      transition-timing-function: ease;
-      transition-duration: 150ms;
+      background: rgba(255,255,255,0.02);
     }
     
     /* Focus states */
     button:focus, select:focus, input:focus {
       outline: none;
-      ring: 2px;
-      ring-color: rgba(0,206,184,0.5);
+      box-shadow: 0 0 0 2px rgba(16,185,129,0.3);
     }
     
     /* Select dropdown styling */
@@ -110,78 +132,363 @@
       color: white;
     }
 
-  </style>
+  
+    /* ===========================
+       UI2K (Modern 2K-like Theme)
+       =========================== */
+
+    /* Charts containers */
+    canvas{ }
+
+    /* Tables */
+    table{ border-collapse:separate; border-spacing:0; }
+    tr:hover td{ background: rgba(255,255,255,.02); }
+
+    /* ===========================
+       CLEAN MODERN THEME
+       =========================== */
+    :root{
+      --accent: #10b981;
+      --accent-dim: rgba(16,185,129,0.15);
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --surface-1: #0f1012;
+      --surface-2: #16181c;
+      --surface-3: #1e2025;
+      --border: rgba(255,255,255,0.06);
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar-thumb{background:rgba(100,116,139,0.3);border-radius:3px}
+    ::-webkit-scrollbar-thumb:hover{background:rgba(100,116,139,0.5)}
+
+    /* Body */
+    body.ui2k{
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--surface-1);
+    }
+
+    /* Header */
+    header.ui2k-header{
+      background: var(--surface-2);
+      border-bottom: 1px solid var(--border);
+    }
+
+    header.ui2k-header::before{ display:none; }
+    header.ui2k-header::after{ display:none; }
+
+    /* Logo */
+    .madden-logo{
+      background: var(--accent) !important;
+      border: none !important;
+      color: #fff !important;
+      font-weight: 700;
+    }
+
+    /* Title */
+    #hdrLeague{
+      color: var(--text-primary);
+      font-weight: 600;
+      background: none;
+      -webkit-text-fill-color: unset;
+    }
+
+    #hdrMeta{
+      color: var(--text-muted) !important;
+      font-family: inherit;
+      letter-spacing: 0;
+      text-transform: uppercase;
+      opacity: 0.8;
+    }
+
+    /* Sidebar */
+    aside.ui2k-sidebar{
+      background: var(--surface-2);
+      border-right: 1px solid var(--border);
+    }
+
+    aside.ui2k-sidebar::before{ display:none; }
+
+    /* Nav Buttons */
+    .ui2k-navbtn{
+      background: transparent !important;
+      border: 1px solid transparent !important;
+      font-family: inherit;
+      font-weight: 500;
+      font-size: 9px;
+      color: var(--text-muted);
+    }
+
+    .ui2k-navbtn:hover{
+      color: var(--text-primary) !important;
+      background: var(--surface-3) !important;
+    }
+
+    /* Active Nav Button */
+    .nav-btn-active{
+      background: var(--accent-dim) !important;
+      color: var(--accent) !important;
+      border: 1px solid transparent !important;
+      font-weight: 600;
+    }
+
+    .nav-btn-active::after{ display:none; }
+
+    /* Panels */
+    .ui2k-panel{
+      background: var(--surface-2) !important;
+      border: 1px solid var(--border) !important;
+    }
+
+    .ui2k-panel::before{ display:none; }
+
+    /* Tabs */
+    .madden-tab{
+      font-family: inherit !important;
+      font-weight: 500;
+      text-transform: none;
+      letter-spacing: 0;
+      background: var(--surface-3);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+    }
+
+    .madden-tab:hover{
+      color: var(--text-primary);
+    }
+
+    .madden-tab-active, .bg-accent{
+      background: var(--accent-dim) !important;
+      color: var(--accent) !important;
+      border: 1px solid rgba(16,185,129,0.3) !important;
+    }
+
+    /* Section Headers */
+    .text-2xl.font-bold.text-white{
+      font-family: inherit !important;
+      font-weight: 600;
+      letter-spacing: 0;
+      text-transform: none;
+      color: var(--text-primary);
+      font-size: 1.5rem !important;
+    }
+
+    /* Dividers */
+    .madden-divider{
+      background: var(--border);
+      height:1px;
+    }
+
+    /* Selects */
+    select{
+      font-family: inherit;
+      font-weight: 500;
+    }
+
+    /* Progress Bar */
+    #hdrProgress{
+      background: var(--accent) !important;
+    }
+
+    /* Roster grid - max 2 columns */
+    .ui2k-card-grid{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(420px, 1fr));
+      gap: 10px;
+      align-items: start;
+      justify-items: center;
+      width: 100%;
+      max-width: calc(2 * 540px + 10px);
+      margin-inline: auto;
+    }
+    @media (max-width: 960px){
+      .ui2k-card-grid{
+        grid-template-columns: 1fr;
+        max-width: 100%;
+      }
+      .player-card{
+        min-width: 0 !important;
+        width: 100% !important;
+      }
+    }
+
+    /* Status bar on left of panel headers */
+    .madden-status-bar{
+      width:3px;
+      background: var(--accent);
+      border-radius:2px;
+    }
+
+    /* Accent colors for text */
+    .text-accent{
+      color: var(--accent) !important;
+    }
+
+    /* ===========================
+       GEM TIER BADGES (Simplified)
+       =========================== */
+    .myteam-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .myteam-tier {
+      font-size: 9px;
+      opacity: 0.8;
+    }
+
+    /* Bronze */
+    .myteam-badge-bronze {
+      background: #92400e;
+      color: #fef3c7;
+    }
+
+    /* Silver */
+    .myteam-badge-silver {
+      background: #6b7280;
+      color: #f9fafb;
+    }
+
+    /* Gold */
+    .myteam-badge-gold {
+      background: #b45309;
+      color: #fef3c7;
+    }
+
+    /* Sapphire */
+    .myteam-badge-sapphire {
+      background: #1d4ed8;
+      color: #dbeafe;
+    }
+
+    /* Ruby */
+    .myteam-badge-ruby {
+      background: #be123c;
+      color: #fce7f3;
+    }
+
+    /* Amethyst */
+    .myteam-badge-amethyst {
+      background: #7c3aed;
+      color: #ede9fe;
+    }
+
+    /* Diamond */
+    .myteam-badge-diamond {
+      background: #0891b2;
+      color: #ecfeff;
+    }
+
+    /* Pink Diamond */
+    .myteam-badge-pinkdiamond {
+      background: #db2777;
+      color: #fce7f3;
+    }
+
+    /* Dark Matter */
+    .myteam-badge-darkmatter {
+      background: #581c87;
+      color: #f3e8ff;
+    }
+
+    /* G.O.A.T */
+    .myteam-badge-goat {
+      background: linear-gradient(135deg, #b45309 0%, #d97706 50%, #b45309 100%);
+      color: #fef3c7;
+      font-weight: 700;
+    }
+
+    /* Card tier borders - subtle colored left border */
+    .player-card.tier-bronze { border-left: 3px solid #92400e; }
+    .player-card.tier-silver { border-left: 3px solid #6b7280; }
+    .player-card.tier-gold { border-left: 3px solid #b45309; }
+    .player-card.tier-sapphire { border-left: 3px solid #1d4ed8; }
+    .player-card.tier-ruby { border-left: 3px solid #be123c; }
+    .player-card.tier-amethyst { border-left: 3px solid #7c3aed; }
+    .player-card.tier-diamond { border-left: 3px solid #0891b2; }
+    .player-card.tier-pinkdiamond { border-left: 3px solid #db2777; }
+    .player-card.tier-darkmatter { border-left: 3px solid #581c87; }
+    .player-card.tier-goat { border-left: 3px solid #d97706; }
+
+</style>
 </head>
 
-<body class="bg-gray-950 text-gray-200 h-screen overflow-hidden selection:bg-sleeper-teal selection:text-black">
+<body class="bg-gray-950 text-gray-200 h-screen overflow-hidden ui2k">
   <!-- Header -->
-  <header class="h-16 border-b border-gray-800/50 bg-gradient-to-r from-gray-900 via-gray-900 to-gray-900/95 backdrop-blur-sm flex items-center justify-between px-6 shrink-0">
-    <div class="flex items-center gap-4">
-      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sleeper-teal via-teal-500 to-teal-700 flex items-center justify-center text-black font-black text-lg shadow-lg shadow-sleeper-teal/20">S</div>
+  <header class="h-14 border-b border-gray-800/50 flex items-center justify-between px-3.5 shrink-0 ui2k-header">
+    <div class="flex items-center gap-7">
+      <div class="w-14 h-9 rounded-lg flex items-center justify-center text-white font-bold text-sm madden-logo">SLA</div>
       <div>
-        <div class="text-white font-bold leading-tight text-lg" id="hdrLeague">Sleeper League</div>
-        <div class="text-xs text-gray-500 font-mono tracking-wide" id="hdrMeta">Season — | Week —</div>
+        <div class="text-white font-semibold leading-tight text-base" id="hdrLeague">Sleeper League</div>
+        <div class="text-xs text-gray-500" id="hdrMeta">Season — | Week —</div>
       </div>
     </div>
     <div class="flex items-center gap-4">
-      <div class="flex items-center gap-2 bg-gray-800/50 rounded-lg px-3 py-1.5 border border-gray-700/50">
-        <span class="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Season</span>
-        <select id="seasonSelect" class="bg-transparent border-none text-sm text-white font-medium focus:outline-none cursor-pointer">
+      <div class="flex items-center gap-2 rounded px-2 py-1">
+        <span class="text-xs text-gray-500">Season</span>
+        <select id="seasonSelect" class="bg-transparent border-none text-sm text-gray-300 font-medium focus:outline-none cursor-pointer">
           <option value="2024" class="bg-gray-900">2024</option>
           <option value="2025" class="bg-gray-900">2025</option>
           <option value="2026" class="bg-gray-900">2026</option>
         </select>
       </div>
-      <div class="flex items-center gap-3 bg-gray-800/30 rounded-lg px-3 py-1.5">
-        <div class="text-xs font-medium text-gray-400" id="hdrStatus">Loading…</div>
-        <div class="w-32 h-1.5 rounded-full bg-gray-800 overflow-hidden">
-          <div class="h-full bg-gradient-to-r from-sleeper-teal to-teal-400 w-0 transition-all duration-300" id="hdrProgress"></div>
+      <div class="flex items-center gap-3">
+        <div class="text-xs text-gray-400" id="hdrStatus">Loading…</div>
+        <div class="w-24 h-1 rounded-full bg-gray-800 overflow-hidden">
+          <div class="h-full w-0" id="hdrProgress"></div>
         </div>
       </div>
     </div>
   </header>
 
   <!-- Layout -->
-  <div class="flex h-[calc(100vh-4rem)]">
+  <div class="flex h-[calc(100vh-3.5rem)]">
     <!-- Sidebar -->
-    <aside class="w-20 bg-gray-900/80 backdrop-blur-sm border-r border-gray-800/50 flex flex-col items-center py-4 gap-2 shrink-0">
-      <div class="flex flex-col items-center gap-1.5">
-        <button class="w-11 h-11 rounded-xl bg-gray-800 text-sleeper-teal hover:bg-gray-700 transition-all duration-200 font-bold text-[10px] shadow-lg shadow-black/20" id="btnTabTeams" title="Current Rosters">ROST</button>
-        <button class="w-11 h-11 rounded-xl bg-gray-800/60 text-gray-400 hover:bg-gray-700 hover:text-white transition-all duration-200 font-bold text-[10px]" id="btnTabOptimal" title="Optimal Lineups">OPT</button>
-        <button class="w-11 h-11 rounded-xl bg-gray-800/60 text-gray-400 hover:bg-gray-700 hover:text-white transition-all duration-200 font-bold text-[10px]" id="btnTabHistory" title="Historical Rosters (Actual)">HIST</button>
+    <aside class="w-20 border-r border-gray-800/50 flex flex-col items-center py-7 gap-3 shrink-0 ui2k-sidebar">
+      <div class="flex flex-col items-center gap-1">
+        <button class="w-10 h-10 rounded-lg text-gray-400 font-medium text-[9px] ui2k-navbtn" id="btnTabTeams" title="Current Rosters">ROST</button>
+        <button class="w-10 h-10 rounded-lg text-gray-500 font-medium text-[9px] ui2k-navbtn" id="btnTabOptimal" title="Optimal Lineups">OPT</button>
+        <button class="w-10 h-10 rounded-lg text-gray-500 font-medium text-[9px] ui2k-navbtn" id="btnTabHistory" title="Historical Rosters">HIST</button>
       </div>
 
-      <div class="w-10 h-px bg-gradient-to-r from-transparent via-gray-700 to-transparent my-2"></div>
+      <div class="w-8 h-px my-2 bg-gray-800"></div>
 
-      <div class="flex flex-col items-center gap-1.5">
-        <button class="w-11 h-11 rounded-xl bg-gray-800/60 text-gray-400 hover:bg-gray-700 hover:text-white transition-all duration-200 font-bold text-[10px]" id="btnTabMatchups" title="Weekly Matchups">VS</button>
-        <button class="w-11 h-11 rounded-xl bg-gray-800/60 text-gray-400 hover:bg-gray-700 hover:text-white transition-all duration-200 font-bold text-[10px]" id="btnTabFA" title="Free Agents">FA</button>
-        <button class="w-11 h-11 rounded-xl bg-gray-800/60 text-gray-400 hover:bg-gray-700 hover:text-white transition-all duration-200 font-bold text-[10px]" id="btnTabTrades" title="Recent Trades">TRD</button>
-        <button class="w-11 h-11 rounded-xl bg-gray-800/60 text-gray-400 hover:bg-gray-700 hover:text-white transition-all duration-200 font-bold text-[10px]" id="btnTabDef" title="NFL Defense Rankings">DEF</button>
+      <div class="flex flex-col items-center gap-1">
+        <button class="w-10 h-10 rounded-lg text-gray-500 font-medium text-[9px] ui2k-navbtn" id="btnTabMatchups" title="Weekly Matchups">VS</button>
+        <button class="w-10 h-10 rounded-lg text-gray-500 font-medium text-[9px] ui2k-navbtn" id="btnTabFA" title="Free Agents">FA</button>
+        <button class="w-10 h-10 rounded-lg text-gray-500 font-medium text-[9px] ui2k-navbtn" id="btnTabTrades" title="Recent Trades">TRD</button>
+        <button class="w-10 h-10 rounded-lg text-gray-500 font-medium text-[9px] ui2k-navbtn" id="btnTabDef" title="NFL Defense Rankings">DEF</button>
       </div>
       
-      <div class="w-10 h-px bg-gradient-to-r from-transparent via-gray-700 to-transparent my-2"></div>
+      <div class="w-8 h-px my-2 bg-gray-800"></div>
       
-      <div class="flex flex-col items-center gap-1.5">
-        <button class="w-11 h-11 rounded-xl bg-gray-800/60 text-gray-400 hover:bg-gray-700 hover:text-white transition-all duration-200 font-bold text-[10px]" id="btnTabInsights" title="League Analytics">STAT</button>
+      <div class="flex flex-col items-center gap-1">
+        <button class="w-10 h-10 rounded-lg text-gray-500 font-medium text-[9px] ui2k-navbtn" id="btnTabInsights" title="League Analytics">STAT</button>
       </div>
       
       <div class="flex-1"></div>
-      <button class="w-11 h-11 rounded-xl bg-gray-800/60 text-gray-400 hover:bg-gray-700 hover:text-white transition-all duration-200 font-bold text-[10px]" id="btnTabSettings" title="Settings">SET</button>
-      <div class="text-[8px] text-gray-600 font-mono mt-2">v3.1</div>
+      <button class="w-10 h-10 rounded-lg text-gray-500 font-medium text-[9px] ui2k-navbtn" id="btnTabSettings" title="Settings">SET</button>
+      <div class="text-[8px] text-gray-600 mt-1">v3.1</div>
     </aside>
 
     <!-- Main -->
-    <main class="flex-1 overflow-hidden relative bg-gradient-to-br from-gray-950 via-gray-950 to-gray-900/50">
+    <main class="flex-1 overflow-hidden relative bg-gradient-to-br from-gray-950 via-gray-950 to-gray-900/50 ui2k-main">
       <!-- Tabs: Teams -->
-      <section id="viewTeams" class="h-full flex flex-col p-6 gap-4">
+      <section id="viewTeams" class="h-full flex flex-col p-5 gap-3">
         <div class="flex items-end justify-between gap-4">
           <div>
-            <div class="text-2xl font-bold text-white tracking-tight">Current Rosters</div>
-            <div class="text-sm text-[#00CEB8]">Current lineup snapshots (Week 18 cut off because GM started 2026 early)</div>
+            <div class="text-2xl font-bold text-white tracking-tight">CURRENT ROSTERS</div>
+            <div class="text-sm text-accent" >CURRENT LINEUP SNAPSHOTS</div>
           </div>
-          <div class="px-3 py-1.5 bg-gray-800/50 rounded-lg border border-gray-700/50">
-            <span class="text-xs text-gray-400 font-mono" id="currentWeekLabel">Week —</span>
+          <div class="px-3 py-1.5 bg-gray-800/50 rounded-lg border border-accent/30 ui2k-panel">
+            <span class="text-xs text-accent font-mono" id="currentWeekLabel" >Week —</span>
           </div>
         </div>
 
@@ -190,26 +497,34 @@
 
         <!-- Team roster -->
         <div class="grid grid-cols-1 xl:grid-cols-3 gap-5 overflow-hidden flex-1">
-          <div class="xl:col-span-2 bg-gray-900/80 backdrop-blur-sm border border-gray-800/50 rounded-2xl overflow-hidden flex flex-col shadow-xl shadow-black/20">
-            <div class="p-4 border-b border-gray-800/50 flex items-center justify-between bg-gray-900/50">
-              <div>
-                <div class="text-white font-bold" id="teamTitle">Roster</div>
-                <div class="text-xs text-gray-500 font-mono" id="teamSubtitle"></div>
+          <div class="xl:col-span-2 bg-gray-900/80  border border-gray-800/50 rounded-2xl overflow-hidden flex flex-col shadow-xl shadow-black/20 ui2k-panel">
+            <div class="p-4 border-b border-accent/20 flex items-center justify-between bg-black/40">
+              <div class="flex items-center gap-3">
+                <div class="madden-status-bar h-10"></div>
+                <div>
+                  <div class="text-white font-bold uppercase tracking-wide" id="teamTitle" >Roster</div>
+                  <div class="text-xs text-accent/70 font-mono" id="teamSubtitle"></div>
+                </div>
               </div>
               <div class="flex items-center gap-3">
-                <button id="btnRosterRefresh" class="px-3 py-1.5 rounded-lg bg-gray-800/80 text-xs font-medium text-gray-300 border border-gray-700/50 hover:bg-gray-700 hover:text-white transition-all">Refresh</button>
+                <button id="btnRosterRefresh" class="px-3 py-1.5 rounded-lg text-xs font-medium madden-tab">Refresh</button>
                 <span class="text-xs text-gray-500">Click player for details</span>
               </div>
             </div>
-            <div class="flex-1 overflow-y-auto p-4" id="rosterList"></div>
+            <div class="flex-1 overflow-y-auto overflow-x-hidden p-4" id="rosterList"></div>
           </div>
 
-          <div class="bg-gray-900/80 backdrop-blur-sm border border-gray-800/50 rounded-2xl overflow-hidden flex flex-col shadow-xl shadow-black/20">
-            <div class="p-4 border-b border-gray-800/50 bg-gray-900/50">
-              <div class="text-white font-bold">Team Comparison</div>
-              <div class="text-xs text-gray-500 font-mono">Projected totals by position</div>
+          <div class="bg-gray-900/80  border border-gray-800/50 rounded-2xl overflow-hidden flex flex-col shadow-xl shadow-black/20 ui2k-panel">
+            <div class="p-4 border-b border-accent/20 bg-black/40">
+              <div class="flex items-center gap-3">
+                <div class="madden-status-bar h-10"></div>
+                <div>
+                  <div class="text-white font-bold uppercase tracking-wide" >Team Comparison</div>
+                  <div class="text-xs text-accent/70 font-mono">Projected totals by position</div>
+                </div>
+              </div>
             </div>
-            <div class="flex-1 overflow-y-auto p-4" id="compareBox"></div>
+            <div class="flex-1 overflow-y-auto overflow-x-hidden p-4" id="compareBox"></div>
           </div>
         </div>
       </section>
@@ -218,11 +533,11 @@
       <section id="viewMatchups" class="h-full hidden flex flex-col p-6 gap-4">
         <div class="flex items-end justify-between gap-4">
           <div>
-            <div class="text-2xl font-bold text-white tracking-tight">Matchups</div>
+            <div class="text-2xl font-bold text-white tracking-tight">MATCHUPS</div>
           </div>
-          <div class="flex items-center gap-2 bg-gray-800/50 rounded-lg px-3 py-1.5 border border-gray-700/50">
-            <span class="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Week</span>
-            <select id="matchupsWeekSelect" class="bg-transparent border-none text-sm text-white font-medium focus:outline-none cursor-pointer"></select>
+          <div class="flex items-center gap-2 bg-gray-800/50 rounded-lg px-3 py-1.5 border border-accent/30 ui2k-panel">
+            <span class="text-[10px] font-semibold text-accent uppercase tracking-wider" >Week</span>
+            <select id="matchupsWeekSelect" class="bg-transparent border-none text-sm text-accent font-medium focus:outline-none cursor-pointer"></select>
           </div>
         </div>
         <div class="grid grid-cols-1 xl:grid-cols-2 gap-5 overflow-y-auto pr-2 pb-6" id="matchupGrid"></div>
@@ -232,22 +547,17 @@
       <section id="viewFA" class="h-full hidden flex flex-col p-6 gap-4">
         <div class="flex items-end justify-between gap-4">
           <div>
-            <div class="text-2xl font-bold text-white tracking-tight">Available Players</div>
-            <div class="text-sm text-gray-500">Top unrostered players by season total (custom scoring)</div>
+            <div class="text-2xl font-bold text-white tracking-tight">FREE AGENTS</div>
+            <div class="text-sm text-accent" >TOP UNROSTERED PLAYERS BY SEASON TOTAL</div>
           </div>
         </div>
 
         <div class="flex gap-2 overflow-x-auto pb-2" id="faTabs"></div>
 
-        <div class="bg-gray-900/80 backdrop-blur-sm border border-gray-800/50 rounded-2xl overflow-hidden flex flex-col flex-1 shadow-xl shadow-black/20">
-          <div class="grid grid-cols-12 gap-3 px-4 py-3 bg-gray-950/80 border-b border-gray-800/50 text-xs font-bold text-gray-500 uppercase tracking-wider sticky top-0">
-            <div class="col-span-2">Rank</div>
-            <div class="col-span-4">Player</div>
-            <div class="col-span-1">Pos</div>
-            <div class="col-span-2">Team</div>
-            <div class="col-span-3 text-right">Season Pts</div>
+        <div class="bg-gray-900/80  border border-gray-800/50 rounded-2xl overflow-hidden flex flex-col flex-1 shadow-xl shadow-black/20 ui2k-panel">
+          <div class="flex-1 overflow-y-auto p-4" id="faList">
+            <!-- Player cards will be inserted here in a 2-column grid -->
           </div>
-          <div class="flex-1 overflow-y-auto divide-y divide-gray-800/50" id="faList"></div>
         </div>
       </section>
 
@@ -255,14 +565,14 @@
       <section id="viewDef" class="h-full hidden flex flex-col p-6 gap-4 overflow-hidden">
         <div class="flex items-end justify-between gap-4 shrink-0">
           <div>
-            <div class="text-2xl font-bold text-white">NFL Team Defenses</div>
-            <div class="text-sm text-gray-400">Defensive rankings and matchup analysis by conference.</div>
+            <div class="text-2xl font-bold text-white">NFL DEFENSES</div>
+            <div class="text-sm text-accent" >DEFENSIVE RANKINGS & MATCHUP ANALYSIS</div>
           </div>
         </div>
 
         <div class="flex gap-2 pb-2 shrink-0" id="defTabs">
-          <button class="px-4 py-2 rounded-xl bg-sleeper-teal text-black font-bold" id="defTabAFC">AFC</button>
-          <button class="px-4 py-2 rounded-xl bg-gray-900 border border-gray-800 text-gray-300 hover:bg-gray-800 font-bold" id="defTabNFC">NFC</button>
+          <button class="px-4 py-2 rounded-xl font-bold madden-tab madden-tab-active" id="defTabAFC">AFC</button>
+          <button class="px-4 py-2 rounded-xl font-bold madden-tab text-gray-300" id="defTabNFC">NFC</button>
         </div>
 
         <div class="flex-1 overflow-y-auto pr-2 pb-6">
@@ -274,12 +584,12 @@
       <section id="viewTrades" class="h-full flex flex-col p-6 gap-4 hidden">
         <div class="flex items-end justify-between gap-4">
           <div>
-            <div class="text-2xl font-bold text-white">Trades</div>
-            <div class="text-sm text-gray-400">Completed transactions for the selected week (with offseason fallbacks).</div>
+            <div class="text-2xl font-bold text-white">TRANSACTIONS</div>
+            <div class="text-sm text-accent" >COMPLETED TRADES & MOVES</div>
           </div>
           <div class="flex items-center gap-2">
-            <div class="text-xs text-gray-400 font-mono" id="tradeWeekLabel">Week —</div>
-            <input id="tradeSearch" placeholder="Search player/team…" class="bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-sm text-white w-56" />
+            <div class="text-xs text-accent font-bold" id="tradeWeekLabel" >Week —</div>
+            <input id="tradeSearch" placeholder="Search player/team…" class="bg-gray-900 border border-accent/20 rounded-lg px-3 py-2 text-sm text-white w-56" />
             <select id="tradeType" class="bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-sm text-white">
               <option value="all" selected>All Transactions</option>
               <option value="trade">Trades</option>
@@ -292,7 +602,7 @@
         </div>
 
         <div class="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden flex flex-col">
-          <div class="flex-1 overflow-y-auto p-4" id="tradeContent"></div>
+          <div class="flex-1 overflow-y-auto overflow-x-hidden p-4" id="tradeContent"></div>
         </div>
       </section>
 
@@ -300,31 +610,31 @@
       <section id="viewInsights" class="h-full flex flex-col p-6 gap-4 hidden overflow-hidden">
         <div class="flex items-end justify-between gap-4 shrink-0">
           <div>
-            <div class="text-2xl font-bold text-white flex items-center gap-2"><span>📊</span> League Analysis</div>
-            <div class="text-sm text-gray-400">Advanced analytics: All-play, expected wins, luck, consistency, and more.</div>
+            <div class="text-2xl font-bold text-white flex items-center gap-2"><span>📊</span> LEAGUE ANALYSIS</div>
+            <div class="text-sm text-accent" >ADVANCED ANALYTICS: ALL-PLAY, EXPECTED WINS, LUCK & MORE</div>
           </div>
         </div>
 
         <div class="flex-1 overflow-y-auto space-y-6">
           <!-- League Standings Table -->
-          <div class="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden">
-            <div class="p-4 border-b border-gray-800">
-              <div class="text-white font-bold">League Standings & Metrics</div>
-              <div class="text-xs text-gray-400 font-mono">Sorted by expected wins (xW) - click headers to sort</div>
+          <div class="rounded-2xl overflow-hidden ui2k-panel">
+            <div class="p-4 border-b border-accent/20">
+              <div class="text-white font-bold" >LEAGUE STANDINGS & METRICS</div>
+              <div class="text-xs text-accent/70 font-mono">Sorted by expected wins (xW) - click headers to sort</div>
             </div>
             <div class="overflow-x-auto">
               <table class="w-full text-sm">
-                <thead class="bg-gray-950/40">
+                <thead class="bg-black/40">
                   <tr>
-                    <th class="px-4 py-2 text-left text-gray-400 font-mono cursor-pointer hover:text-white" data-sort="name">Team</th>
-                    <th class="px-4 py-2 text-right text-gray-400 font-mono cursor-pointer hover:text-white" data-sort="record">W-L</th>
-                    <th class="px-4 py-2 text-right text-gray-400 font-mono cursor-pointer hover:text-white" data-sort="pf">PF</th>
-                    <th class="px-4 py-2 text-right text-gray-400 font-mono cursor-pointer hover:text-white" data-sort="pa">PA</th>
-                    <th class="px-4 py-2 text-right text-gray-400 font-mono cursor-pointer hover:text-white" data-sort="allplay">All-Play</th>
-                    <th class="px-4 py-2 text-right text-gray-400 font-mono cursor-pointer hover:text-white" data-sort="xw">xW</th>
-                    <th class="px-4 py-2 text-right text-gray-400 font-mono cursor-pointer hover:text-white" data-sort="luck">Luck</th>
-                    <th class="px-4 py-2 text-right text-gray-400 font-mono cursor-pointer hover:text-white" data-sort="stddev">StdDev</th>
-                    <th class="px-4 py-2 text-right text-gray-400 font-mono cursor-pointer hover:text-white" data-sort="sos">SoS</th>
+                    <th class="px-4 py-2 text-left text-accent font-bold uppercase cursor-pointer hover:text-white" data-sort="name" >Team</th>
+                    <th class="px-4 py-2 text-right text-accent font-bold uppercase cursor-pointer hover:text-white" data-sort="record" >W-L</th>
+                    <th class="px-4 py-2 text-right text-accent font-bold uppercase cursor-pointer hover:text-white" data-sort="pf" >PF</th>
+                    <th class="px-4 py-2 text-right text-accent font-bold uppercase cursor-pointer hover:text-white" data-sort="pa" >PA</th>
+                    <th class="px-4 py-2 text-right text-accent font-bold uppercase cursor-pointer hover:text-white" data-sort="allplay" >All-Play</th>
+                    <th class="px-4 py-2 text-right text-accent font-bold uppercase cursor-pointer hover:text-white" data-sort="xw" >xW</th>
+                    <th class="px-4 py-2 text-right text-accent font-bold uppercase cursor-pointer hover:text-white" data-sort="luck" >Luck</th>
+                    <th class="px-4 py-2 text-right text-accent font-bold uppercase cursor-pointer hover:text-white" data-sort="stddev" >StdDev</th>
+                    <th class="px-4 py-2 text-right text-accent font-bold uppercase cursor-pointer hover:text-white" data-sort="sos" >SoS</th>
                   </tr>
                 </thead>
                 <tbody id="leagueInsights"></tbody>
@@ -360,7 +670,7 @@
             </div>
             <!-- Most Consistent -->
             <div class="bg-gray-900 border border-gray-800 rounded-2xl p-4">
-              <div class="text-sleeper-teal font-bold mb-3 flex items-center gap-2">📏 Most Consistent</div>
+              <div class="text-accent font-bold mb-3 flex items-center gap-2">📏 Most Consistent</div>
               <div class="space-y-2" id="insightsConsistent"></div>
             </div>
           </div>
@@ -375,7 +685,7 @@
             <div class="p-4 space-y-4">
               <div class="grid grid-cols-1 xl:grid-cols-3 gap-4">
                 <div class="bg-gray-950/40 border border-gray-800 rounded-xl p-4">
-                  <div class="text-sleeper-teal font-bold mb-2">Best Lineup Efficiency</div>
+                  <div class="text-accent font-bold mb-2">Best Lineup Efficiency</div>
                   <div class="space-y-2" id="insightsBestEfficiency"></div>
                 </div>
                 <div class="bg-gray-950/40 border border-gray-800 rounded-xl p-4">
@@ -438,10 +748,10 @@
             <div class="p-4 space-y-3">
               <div class="flex flex-wrap items-center gap-2">
                 <div class="text-xs text-gray-400 font-mono">Role</div>
-                <select id="defRoleSelect" class="bg-gray-950/40 border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-sleeper-teal/40"></select>
+                <select id="defRoleSelect" class="bg-gray-950/40 border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-accent/40"></select>
                 <div class="flex items-center gap-2 ml-auto">
-                  <button id="defRoleModeMost" class="px-3 py-2 rounded-lg bg-gray-800 text-xs font-mono text-white border border-gray-700 hover:bg-gray-700 transition">Most Generous</button>
-                  <button id="defRoleModeLeast" class="px-3 py-2 rounded-lg bg-gray-900 text-xs font-mono text-gray-300 border border-gray-800 hover:bg-gray-800 hover:text-white transition">Stingiest</button>
+                  <button id="defRoleModeMost" class="px-3 py-2 rounded-lg bg-gray-800 text-xs font-mono text-white border border-gray-700 hover:bg-gray-700">Most Generous</button>
+                  <button id="defRoleModeLeast" class="px-3 py-2 rounded-lg bg-gray-900 text-xs font-mono text-gray-300 border border-gray-800 hover:bg-gray-800 hover:text-white">Stingiest</button>
                 </div>
               </div>
               <div class="overflow-x-auto">
@@ -460,14 +770,14 @@
                       <th class="px-2 py-2 text-right text-gray-400 font-mono text-xs" id="defRoleStatCol1">Stat1</th>
                       <th class="px-2 py-2 text-right text-gray-400 font-mono text-xs" id="defRoleStatCol2">Stat2</th>
                       <th class="px-2 py-2 text-right text-gray-400 font-mono text-xs" id="defRoleStatCol3">Stat3</th>
-                      <th class="px-3 py-2 text-right text-sleeper-teal font-mono text-xs font-bold" title="Matchup Score (0-100) - Higher = better matchup">MU</th>
+                      <th class="px-3 py-2 text-right text-accent font-mono text-xs font-bold" title="Matchup Score (0-100) - Higher = better matchup">MU</th>
                     </tr>
                   </thead>
                   <tbody id="defRoleTableBody"></tbody>
                 </table>
               </div>
               <div class="mt-2 text-[10px] text-gray-500 font-mono">
-                MU Score = Rank Base + Trend Bonus + Ceiling Bonus − Floor Penalty + Consistency + Top10 Rate. Higher = better matchup. Debug: APP.verifyDefenseRole("CIN", "RB")
+                MU Score = Rank Base + Trend Bonus + Ceiling Bonus − Floor Penalty + Consistency + Top10 Rate. Higher = better matchup.
               </div>
             </div>
           </div>
@@ -485,85 +795,85 @@
       <section id="viewHistory" class="h-full flex flex-col p-6 gap-4 hidden">
         <div class="flex items-end justify-between gap-4">
           <div>
-            <div class="text-2xl font-bold text-white tracking-tight" id="historyHeaderTitle">Historical Rosters</div>
-            <div class="text-sm text-[#00CEB8]" id="historyHeaderSubtitle">Weekly lineup snapshots</div>
+            <div class="text-2xl font-bold text-white tracking-tight" id="historyHeaderTitle">HISTORICAL ROSTERS</div>
+            <div class="text-sm text-accent" id="historyHeaderSubtitle" >WEEKLY LINEUP SNAPSHOTS</div>
           </div>
           <div class="flex items-center gap-2">
-            <button id="optSettingsToggle" class="hidden px-3 py-1.5 rounded-lg bg-gray-800/70 text-xs font-semibold text-gray-300 border border-gray-700/50 hover:bg-gray-700 hover:text-white transition">Settings</button>
-            <div class="flex items-center gap-2 bg-gray-800/50 rounded-lg px-3 py-1.5 border border-gray-700/50">
-              <span class="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Week</span>
-              <select id="historyWeekSelect" class="bg-transparent border-none text-sm text-white font-medium focus:outline-none cursor-pointer"></select>
+            <button id="optSettingsToggle" class="hidden px-3 py-1.5 rounded-lg text-xs font-semibold madden-tab">Settings</button>
+            <div class="flex items-center gap-2 bg-gray-800/50 rounded-lg px-3 py-1.5 border border-accent/30 ui2k-panel">
+              <span class="text-[10px] font-semibold text-accent uppercase tracking-wider" >Week</span>
+              <select id="historyWeekSelect" class="bg-transparent border-none text-sm text-accent font-medium focus:outline-none cursor-pointer"></select>
             </div>
           </div>
         </div>
 
-        <div id="optSettingsPanel" class="hidden bg-gray-900/80 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-4 shadow-xl shadow-black/20">
+        <div id="optSettingsPanel" class="hidden bg-gray-900/80  border border-gray-800/50 rounded-2xl p-4 shadow-xl shadow-black/20 ui2k-panel">
           <div class="flex items-center justify-between gap-3 mb-3">
             <div>
               <div class="text-sm font-bold text-white">Optimal weighting sliders</div>
               <div class="text-[10px] text-gray-500 font-mono">Weights auto-normalize to 100%.</div>
             </div>
-            <button id="optSettingsReset" class="px-3 py-1.5 rounded-lg bg-gray-800 text-xs font-semibold text-gray-200 hover:bg-gray-700 transition">Reset</button>
+            <button id="optSettingsReset" class="px-3 py-1.5 rounded-lg bg-gray-800 text-xs font-semibold text-gray-200 hover:bg-gray-700">Reset</button>
           </div>
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+          <div class="grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-3">
             <div class="flex items-center gap-3">
               <div class="w-20 text-xs text-gray-400">Value</div>
-              <input type="range" min="0" max="100" value="16" data-weight-key="value" class="flex-1 accent-sleeper-teal">
+              <input type="range" min="0" max="100" value="16" data-weight-key="value" class="flex-1 accent-accent">
               <div class="w-10 text-xs text-gray-300 text-right" data-weight-value="value">16%</div>
             </div>
             <div class="flex items-center gap-3">
               <div class="w-20 text-xs text-gray-400">Proj</div>
-              <input type="range" min="0" max="100" value="16" data-weight-key="proj" class="flex-1 accent-sleeper-teal">
+              <input type="range" min="0" max="100" value="16" data-weight-key="proj" class="flex-1 accent-accent">
               <div class="w-10 text-xs text-gray-300 text-right" data-weight-value="proj">16%</div>
             </div>
             <div class="flex items-center gap-3">
               <div class="w-20 text-xs text-gray-400">MU</div>
-              <input type="range" min="0" max="100" value="10" data-weight-key="mu" class="flex-1 accent-sleeper-teal">
+              <input type="range" min="0" max="100" value="10" data-weight-key="mu" class="flex-1 accent-accent">
               <div class="w-10 text-xs text-gray-300 text-right" data-weight-value="mu">10%</div>
             </div>
             <div class="flex items-center gap-3">
               <div class="w-20 text-xs text-gray-400">FIT</div>
-              <input type="range" min="0" max="100" value="10" data-weight-key="fit" class="flex-1 accent-sleeper-teal">
+              <input type="range" min="0" max="100" value="10" data-weight-key="fit" class="flex-1 accent-accent">
               <div class="w-10 text-xs text-gray-300 text-right" data-weight-value="fit">10%</div>
             </div>
             <div class="flex items-center gap-3">
               <div class="w-20 text-xs text-gray-400">PPG</div>
-              <input type="range" min="0" max="100" value="5" data-weight-key="ppg" class="flex-1 accent-sleeper-teal">
+              <input type="range" min="0" max="100" value="5" data-weight-key="ppg" class="flex-1 accent-accent">
               <div class="w-10 text-xs text-gray-300 text-right" data-weight-value="ppg">5%</div>
             </div>
             <div class="flex items-center gap-3">
               <div class="w-20 text-xs text-gray-400">L4</div>
-              <input type="range" min="0" max="100" value="15" data-weight-key="l4" class="flex-1 accent-sleeper-teal">
+              <input type="range" min="0" max="100" value="15" data-weight-key="l4" class="flex-1 accent-accent">
               <div class="w-10 text-xs text-gray-300 text-right" data-weight-value="l4">15%</div>
             </div>
             <div class="flex items-center gap-3">
               <div class="w-20 text-xs text-gray-400">Cons</div>
-              <input type="range" min="0" max="100" value="8" data-weight-key="consistency" class="flex-1 accent-sleeper-teal">
+              <input type="range" min="0" max="100" value="8" data-weight-key="consistency" class="flex-1 accent-accent">
               <div class="w-10 text-xs text-gray-300 text-right" data-weight-value="consistency">8%</div>
             </div>
             <div class="flex items-center gap-3">
               <div class="w-20 text-xs text-gray-400">Snaps</div>
-              <input type="range" min="0" max="100" value="6" data-weight-key="snaps" class="flex-1 accent-sleeper-teal">
+              <input type="range" min="0" max="100" value="6" data-weight-key="snaps" class="flex-1 accent-accent">
               <div class="w-10 text-xs text-gray-300 text-right" data-weight-value="snaps">6%</div>
             </div>
             <div class="flex items-center gap-3">
               <div class="w-20 text-xs text-gray-400">B/B</div>
-              <input type="range" min="0" max="100" value="4" data-weight-key="boomBust" class="flex-1 accent-sleeper-teal">
+              <input type="range" min="0" max="100" value="4" data-weight-key="boomBust" class="flex-1 accent-accent">
               <div class="w-10 text-xs text-gray-300 text-right" data-weight-value="boomBust">4%</div>
             </div>
             <div class="flex items-center gap-3">
               <div class="w-20 text-xs text-gray-400">Delta</div>
-              <input type="range" min="0" max="100" value="4" data-weight-key="delta" class="flex-1 accent-sleeper-teal">
+              <input type="range" min="0" max="100" value="4" data-weight-key="delta" class="flex-1 accent-accent">
               <div class="w-10 text-xs text-gray-300 text-right" data-weight-value="delta">4%</div>
             </div>
             <div class="flex items-center gap-3">
               <div class="w-20 text-xs text-gray-400">Ceil</div>
-              <input type="range" min="0" max="100" value="3" data-weight-key="ceil" class="flex-1 accent-sleeper-teal">
+              <input type="range" min="0" max="100" value="3" data-weight-key="ceil" class="flex-1 accent-accent">
               <div class="w-10 text-xs text-gray-300 text-right" data-weight-value="ceil">3%</div>
             </div>
             <div class="flex items-center gap-3">
               <div class="w-20 text-xs text-gray-400">Season</div>
-              <input type="range" min="0" max="100" value="3" data-weight-key="season" class="flex-1 accent-sleeper-teal">
+              <input type="range" min="0" max="100" value="3" data-weight-key="season" class="flex-1 accent-accent">
               <div class="w-10 text-xs text-gray-300 text-right" data-weight-value="season">3%</div>
             </div>
           </div>
@@ -575,7 +885,7 @@
         <!-- Loading indicator (inline) -->
         <div id="historyLoading" class="hidden items-center justify-center py-4">
           <div class="text-gray-400 text-sm flex items-center gap-2">
-            <svg class="animate-spin h-4 w-4 text-sleeper-teal" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <svg class="animate-spin h-4 w-4 text-accent" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
@@ -585,23 +895,31 @@
 
         <!-- Team roster for history -->
         <div class="grid grid-cols-1 xl:grid-cols-3 gap-5 overflow-hidden flex-1" id="historyMainContent">
-          <div class="xl:col-span-2 bg-gray-900/80 backdrop-blur-sm border border-gray-800/50 rounded-2xl overflow-hidden flex flex-col shadow-xl shadow-black/20">
-            <div class="p-4 border-b border-gray-800/50 flex items-center justify-between bg-gray-900/50">
-              <div>
-                <div class="text-white font-bold" id="historyTeamTitle">Roster</div>
-                <div class="text-xs text-gray-500 font-mono" id="historyTeamSubtitle"></div>
+          <div class="xl:col-span-2 bg-gray-900/80  border border-gray-800/50 rounded-2xl overflow-hidden flex flex-col shadow-xl shadow-black/20 ui2k-panel">
+            <div class="p-4 border-b border-accent/20 flex items-center justify-between bg-black/40">
+              <div class="flex items-center gap-3">
+                <div class="madden-status-bar h-10"></div>
+                <div>
+                  <div class="text-white font-bold uppercase tracking-wide" id="historyTeamTitle" >Roster</div>
+                  <div class="text-xs text-accent/70 font-mono" id="historyTeamSubtitle"></div>
+                </div>
               </div>
               <span class="text-xs text-gray-500">Click player for details</span>
             </div>
-            <div class="flex-1 overflow-y-auto p-4" id="historyRosterList"></div>
+            <div class="flex-1 overflow-y-auto overflow-x-hidden p-4" id="historyRosterList"></div>
           </div>
 
-          <div class="bg-gray-900/80 backdrop-blur-sm border border-gray-800/50 rounded-2xl overflow-hidden flex flex-col shadow-xl shadow-black/20">
-            <div class="p-4 border-b border-gray-800/50 bg-gray-900/50">
-              <div class="text-white font-bold">Team Comparison</div>
-              <div class="text-xs text-gray-500 font-mono" id="historyCompareSubtitle">Week — projected totals by position</div>
+          <div class="bg-gray-900/80  border border-gray-800/50 rounded-2xl overflow-hidden flex flex-col shadow-xl shadow-black/20 ui2k-panel">
+            <div class="p-4 border-b border-accent/20 bg-black/40">
+              <div class="flex items-center gap-3">
+                <div class="madden-status-bar h-10"></div>
+                <div>
+                  <div class="text-white font-bold uppercase tracking-wide" >Team Comparison</div>
+                  <div class="text-xs text-accent/70 font-mono" id="historyCompareSubtitle">Week — projected totals by position</div>
+                </div>
+              </div>
             </div>
-            <div class="flex-1 overflow-y-auto p-4" id="historyCompareBox"></div>
+            <div class="flex-1 overflow-y-auto overflow-x-hidden p-4" id="historyCompareBox"></div>
           </div>
         </div>
       </section>
@@ -611,45 +929,46 @@
         <div class="max-w-4xl mx-auto">
           <div class="flex items-center justify-between mb-5">
             <div>
-              <div class="text-2xl font-bold text-white">Settings</div>
+              <div class="text-2xl font-bold text-white">⚙️ SETTINGS</div>
+              <div class="text-sm text-accent" >CONFIGURE YOUR LEAGUE DATA & PREFERENCES</div>
             </div>
           </div>
 
-          <div class="rounded-2xl bg-gray-900/60 border border-gray-800 p-5 shadow-lg">
+          <div class="rounded-2xl p-5 shadow-lg ui2k-panel">
             <div class="flex items-center justify-between gap-4 flex-wrap">
               <label class="flex items-center gap-3 text-gray-200">
-                <input id="settingsAutoSetup" type="checkbox" class="accent-indigo-500 w-4 h-4" checked />
+                <input id="settingsAutoSetup" type="checkbox" class="accent-yellow-500 w-4 h-4" checked />
                 <span class="font-semibold">Auto setup</span>
-                <span class="text-xs text-gray-500">(recommended)</span>
+                <span class="text-xs text-accent/70">(recommended)</span>
               </label>
 
-              <div class="text-xs text-gray-400">Saved locally in your browser.</div>
+              <div class="text-xs text-accent/50">Saved locally in your browser.</div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
               <div>
-                <label class="block text-xs text-gray-400 mb-1">League ID (override)</label>
-                <input id="settingsLeagueId" type="text" placeholder="e.g., 1312656463549726720" class="w-full rounded-xl bg-gray-950/60 border border-gray-800 px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-600/40" />
+                <label class="block text-xs text-accent mb-1" >LEAGUE ID (override)</label>
+                <input id="settingsLeagueId" type="text" placeholder="e.g., 1312656463549726720" class="w-full rounded-xl bg-black/50 border border-accent/20 px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-accent/40" />
                 <div class="text-xs text-gray-500 mt-1">Leave blank to use the Year → League mapping.</div>
               </div>
 
               <div>
-                <label class="block text-xs text-gray-400 mb-1">Season (year) used for weekly stats/projections</label>
-                <select id="settingsSeason" class="w-full rounded-xl bg-gray-950/60 border border-gray-800 px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-600/40"></select>
-                <div class="text-xs text-gray-500 mt-1">In auto mode, league.season is preferred. In manual mode, this forces the stats/projections season.</div>
+                <label class="block text-xs text-accent mb-1" >SEASON (year)</label>
+                <select id="settingsSeason" class="w-full rounded-xl bg-black/50 border border-accent/20 px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-accent/40"></select>
+                <div class="text-xs text-gray-500 mt-1">In auto mode, league.season is preferred.</div>
               </div>
 
               <div>
-                <label class="block text-xs text-gray-400 mb-1">Season type</label>
-                <select id="settingsSeasonType" class="w-full rounded-xl bg-gray-950/60 border border-gray-800 px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-600/40" disabled>
+                <label class="block text-xs text-accent mb-1" >SEASON TYPE</label>
+                <select id="settingsSeasonType" class="w-full rounded-xl bg-black/50 border border-accent/20 px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-accent/40" disabled>
                   <option value="regular">regular</option>
                 </select>
                 <div class="text-xs text-gray-500 mt-1">Locked to regular for stats/projections.</div>
               </div>
 
               <div>
-                <label class="block text-xs text-gray-400 mb-1">Auto week selection</label>
-                <select id="settingsWeekMode" class="w-full rounded-xl bg-gray-950/60 border border-gray-800 px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-600/40">
+                <label class="block text-xs text-accent mb-1" >AUTO WEEK SELECTION</label>
+                <select id="settingsWeekMode" class="w-full rounded-xl bg-black/50 border border-accent/20 px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-accent/40">
                   <option value="max_week">Use max week (latest available)</option>
                   <option value="last_scored">Use last scored week</option>
                 </select>
@@ -683,7 +1002,7 @@
       </section>
 
       <!-- Player modal -->
-      <div id="playerModal" class="fixed inset-0 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4 z-50">
+      <div id="playerModal" class="fixed inset-0 hidden items-center justify-center bg-black/80  p-4 z-50">
         <div class="w-full max-w-5xl max-h-[95vh] bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden flex flex-col">
           <div class="p-4 border-b border-gray-800 flex items-start justify-between gap-4">
             <div>
@@ -747,7 +1066,7 @@
       </div>
       
       <!-- Matchup modal -->
-      <div id="matchupModal" class="fixed inset-0 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4 z-[60]">
+      <div id="matchupModal" class="fixed inset-0 hidden items-center justify-center bg-black/80  p-4 z-[60]">
         <div class="w-full max-w-6xl max-h-[95vh] bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden flex flex-col">
           <div class="p-4 border-b border-gray-800 flex items-start justify-between gap-4">
             <div class="min-w-0">
@@ -756,14 +1075,14 @@
                 <div class="bg-gray-950 border border-gray-800 rounded-xl p-3">
                   <div class="flex items-center justify-between gap-2">
                     <div class="text-white font-bold truncate" id="mmTeamA">Team A</div>
-                    <div class="text-sleeper-teal font-black font-mono" id="mmTotalA">0.00</div>
+                    <div class="text-accent font-black font-mono" id="mmTotalA">0.00</div>
                   </div>
                   <div class="text-[11px] text-gray-500 font-mono">Starters hybrid total</div>
                 </div>
                 <div class="bg-gray-950 border border-gray-800 rounded-xl p-3">
                   <div class="flex items-center justify-between gap-2">
                     <div class="text-white font-bold truncate" id="mmTeamB">Team B</div>
-                    <div class="text-sleeper-teal font-black font-mono" id="mmTotalB">0.00</div>
+                    <div class="text-accent font-black font-mono" id="mmTotalB">0.00</div>
                   </div>
                   <div class="text-[11px] text-gray-500 font-mono">Starters hybrid total</div>
                 </div>
@@ -1069,170 +1388,255 @@ playersById: {},
     return m;
   },
 
-  buildPlayerCardElement: function(item, opts) {
+    buildPlayerCardElement: function(item, opts) {
     var self = this;
     opts = opts || {};
-    var card = document.createElement("div");
-    var borderColor = item.isOut ? "border-red-900/50" : "border-slate-800/70";
-    card.className = "player-card card-hover rounded-2xl overflow-hidden transition cursor-pointer " + borderColor + (item.isOut ? " opacity-70" : "");
-    card.onclick = function() { self.openPlayerModal(item.pid); };
+    var p = item.player || item.p || {};
+    var pid = String(item.pid || p.player_id || "");
 
-    var displaySlot = String(item.slot || "").toUpperCase() === "SUPER_FLEX" ? "SF" : (item.slot || "");
-    var slotBadge = opts.showSlot ? 
-      '<div class="w-7 h-7 rounded-lg bg-gray-800 border border-gray-700 flex items-center justify-center text-[9px] font-bold text-gray-400 shrink-0">' + self.escapeHtml(displaySlot) + '</div>' : '';
+    // --- helpers ---
+    function esc(x) { return self.escapeHtml(String(x == null ? "" : x)); }
+    function num(x) { var n = Number(x); return isFinite(n) ? n : null; }
+    function pct01(x) { var n = num(x); return (n == null) ? null : Math.max(0, Math.min(1, n)); }
+    function pctStr(x) { var n = pct01(x); return (n == null) ? "—" : Math.round(n * 100) + "%"; }
+    function fmt1(x) { var n = num(x); return (n == null) ? "0.0" : n.toFixed(1); }
+    function fmt2signed(x) {
+      var n = num(x);
+      if (n == null) return "—";
+      return (n >= 0 ? "+" : "") + n.toFixed(2);
+    }
+    function safeUpper(x){ return String(x || "").toUpperCase(); }
 
-    var proj = isFinite(item.proj) ? item.proj : 0;
-    var act = isFinite(item.act) ? item.act : (isFinite(item.actual) ? item.actual : null);
-    var hasPlayed = (typeof item.hasPlayed === "boolean") ? item.hasPlayed : (act !== null && act !== undefined && act !== 0);
-    var scoreToShow = isFinite(item.scoreToShow) ? item.scoreToShow : (isFinite(item.score) ? item.score : (hasPlayed ? act : proj));
-    var scoreCls = item.scoreCls || (hasPlayed ? "text-gray-200" : "text-gray-200");
+    // --- display name ---
+    var disp = item.disp || {};
+    var fullName = (disp && disp.name) ? disp.name : ((p.first_name || p.last_name) ? ((p.first_name || "") + " " + (p.last_name || "")).trim() : (p.full_name || ""));
+    fullName = String(fullName || "").trim();
+    var first = fullName.split(" ")[0] || fullName || "";
+    var last = fullName.split(" ").slice(1).join(" ").trim();
+    if (!last && p.last_name) last = p.last_name;
 
-    var oppText = item.opp ? '<span class="text-gray-500">@' + self.escapeHtml(item.opp) + '</span>' : '';
+    // --- team / pos / age ---
+    var team = safeUpper(p.team || disp.team || item.team);
+    var pos = safeUpper(p.position || (p.fantasy_positions && p.fantasy_positions[0]) || disp.pos || item.pos);
+    var teamPos = (team ? team : "—") + (pos ? (" " + pos) : "");
 
-    var muBadge = '';
-    var muStatLine = '';
-    try {
-      if (item.enhancedMU && isFinite(item.enhancedMU.matchScore)) {
-        var mu = item.enhancedMU;
-        var scMU = Math.round(mu.matchScore);
-        var clsMU = (scMU >= 70) ? 'bg-sleeper-teal/20 text-sleeper-teal border-sleeper-teal/40' : (scMU >= 50) ? 'bg-gray-800 text-gray-300 border-gray-700' : 'bg-red-900/20 text-red-300 border-red-900/40';
-        muBadge = '<span class="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded ' + clsMU + '">MU ' + scMU + '</span>';
-        if (mu.keyMetric && item.opp) {
-          var ceilPct = mu.ceilRate ? (mu.ceilRate * 100).toFixed(0) : 0;
-          muStatLine = '<div class="text-[9px] font-mono text-gray-500 mt-0.5">' +
-            '<span class="text-gray-400">vs ' + self.escapeHtml(item.opp) + ':</span> ' +
-            '<span class="text-gray-300">' + self.escapeHtml(mu.keyMetric.name) + ' ' + self.escapeHtml(mu.keyMetric.value) + '</span>' +
-            '<span class="text-gray-600 ml-1">Ceil ' + ceilPct + '%</span>' +
-          '</div>';
+    var age = num(p.age);
+    if (age == null && p.birth_date) {
+      try {
+        var bd = new Date(p.birth_date);
+        if (!isNaN(bd.getTime())) {
+          var now = new Date();
+          var a = now.getFullYear() - bd.getFullYear();
+          var m = now.getMonth() - bd.getMonth();
+          if (m < 0 || (m === 0 && now.getDate() < bd.getDate())) a--;
+          if (isFinite(a)) age = a;
         }
-      } else if (isFinite(item.muScore)) {
-        var scMU2 = Math.round(item.muScore);
-        var clsMU2 = (scMU2 >= 70) ? 'bg-sleeper-teal/20 text-sleeper-teal border-sleeper-teal/40' : (scMU2 >= 50) ? 'bg-gray-800 text-gray-300 border-gray-700' : 'bg-red-900/20 text-red-300 border-red-900/40';
-        muBadge = '<span class="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded ' + clsMU2 + '">MU ' + scMU2 + '</span>';
-      }
-    } catch (e) {}
+      } catch(e) {}
+    }
+    age = (age == null) ? "" : String(Math.floor(age));
 
-    var fitBadge = '';
-    try {
-      if (isFinite(item.fit)) {
-        var ft = Math.round(item.fit || 0);
-        var clsFT = (ft >= 75) ? 'bg-[#d303fc]/20 text-[#d303fc] border-[#d303fc]/40' : (ft >= 60) ? 'bg-gray-800 text-gray-300 border-gray-700' : 'bg-orange-900/20 text-orange-300 border-orange-900/40';
-        fitBadge = '<span class="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded ' + clsFT + '">FIT ' + ft + '</span>';
-      }
-    } catch (e) {}
+    // --- scores ---
+    var proj = num(item.proj);
+    var act = num(item.act);
+    var hasPlayed = (typeof item.hasPlayed === "boolean") ? item.hasPlayed : (act != null && act !== 0);
 
-    var valBadge = '';
-    try {
-      if (item.valueScore !== null && item.valueScore !== undefined) {
-        valBadge = self.valueBadgeHtml(item.valueScore);
-      }
-    } catch (e) {}
+    var muScore = num(item.muScore);
+    if (item.enhancedMU && num(item.enhancedMU.matchScore) != null) muScore = num(item.enhancedMU.matchScore);
 
-    var posRankValue = (item.posRank && isFinite(item.posRank.rank)) ? ("#" + item.posRank.rank) : "—";
-    var ppgRankValue = (item.ppgRank && isFinite(item.ppgRank.rank)) ? ("#" + item.ppgRank.rank) : "—";
-    var deltaRankValue = (item.deltaRank && isFinite(item.deltaRank.rank)) ? ((item.deltaRank.rank > 0 ? "+" : "") + item.deltaRank.rank) : "—";
+    // --- status (boom/bust) ---
+    var status = item.status || self.boomBustStatus(proj || 0, act || 0, !!hasPlayed, muScore == null ? 50 : muScore);
+    var statusLabel = (status && status.label) ? String(status.label) : "In Range";
+    var statusKey = statusLabel.toLowerCase();
 
-    var effRow = '';
-    if (item.effMetrics && item.effMetrics.games > 0) {
-      var eff = item.effMetrics;
-      var labels = [];
-      if (eff.label1) labels.push('<span class="text-gray-400">' + eff.label1.name + ':</span><span class="text-white">' + eff.label1.value + '</span>');
-      if (eff.label2) labels.push('<span class="text-gray-400">' + eff.label2.name + ':</span><span class="text-white">' + eff.label2.value + '</span>');
-      if (eff.label3) labels.push('<span class="text-gray-400">' + eff.label3.name + ':</span><span class="text-white">' + eff.label3.value + '</span>');
-      if (labels.length > 0) {
-        effRow = '<div class="flex items-center gap-2 text-[9px] font-mono bg-gray-900/60 rounded-xl px-2 py-1.5 mt-2">' + labels.join('<span class="text-gray-700">|</span>') + '</div>';
-      }
+    function statusPillClasses() {
+      if (statusKey === "major bust") return "bg-sleeper-majorBust/10 text-sleeper-majorBust border border-sleeper-majorBust/20 shadow-[0_0_10px_rgba(249,115,22,0.4)]";
+      if (statusKey === "bust") return "bg-sleeper-bust/10 text-sleeper-bust border border-sleeper-bust/20 shadow-[0_0_10px_rgba(239,68,68,0.35)]";
+      if (statusKey === "major boom") return "bg-sleeper-majorBoom/10 text-sleeper-majorBoom border border-sleeper-majorBoom/20 shadow-[0_0_10px_rgba(211,3,252,0.45)]";
+      if (statusKey === "boom") return "bg-sleeper-boom/10 text-sleeper-boom border border-sleeper-boom/20 shadow-[0_0_10px_rgba(34,197,94,0.35)]";
+      if (statusKey === "in range") return "bg-sleeper-mid/10 text-sleeper-mid border border-sleeper-mid/20 shadow-[0_0_10px_rgba(59,130,246,0.35)]";
+      return "bg-gray-800/40 text-gray-400 border border-gray-700/50";
+    }
+    function statusArrow() {
+      if (statusKey.indexOf("boom") !== -1) return "↗";
+      if (statusKey.indexOf("bust") !== -1) return "↘";
+      if (statusKey === "in range") return "→";
+      return "•";
     }
 
-    var seasonTotal = isFinite(item.seasonTotal) ? item.seasonTotal : null;
-    var statusPill = '';
-    if (item.status && item.status.label) {
-      statusPill = '<span class="bb-pill shrink-0 whitespace-nowrap min-w-[84px] text-center ' + item.status.bg + ' ' + item.status.color + ' ' + (item.status.label === "Major Boom" ? "glow-majorBoom" : (item.status.label === "Major Bust" ? "glow-majorBust" : "")) + '">' + item.status.label + '</span>';
+    // --- availability pill ---
+    var injury = safeUpper(p.injury_status || p.status || "");
+    var slot = safeUpper(item.slot || "");
+    var avail = "ACTIVE";
+    if (slot === "IR") avail = "IR";
+    if (injury) avail = injury;
+    if (item.isOut) avail = "OUT";
+    var availCls = "bg-emerald-900/20 text-emerald-200 border-emerald-900/40";
+    var availKey = avail.toLowerCase();
+    if (availKey.indexOf("ir") !== -1) availCls = "bg-amber-900/20 text-amber-200 border-amber-900/40";
+    else if (availKey.indexOf("out") !== -1) availCls = "bg-red-900/20 text-red-200 border-red-900/40";
+    else if (availKey === "d" || availKey.indexOf("doubt") !== -1) availCls = "bg-yellow-900/20 text-yellow-200 border-yellow-900/40";
+    else if (availKey === "q" || availKey.indexOf("quest") !== -1) availCls = "bg-sky-900/20 text-sky-200 border-sky-900/40";
+
+    // --- opponent & matchup rates ---
+    var opp = String(item.opp || item.opponent || disp.opp || "").trim();
+    opp = opp.replace(/^vs\s+/i, "").replace(/^@\s*/i, "").toUpperCase();
+
+    var ceilRate = (item.enhancedMU && item.enhancedMU.ceilRate != null) ? item.enhancedMU.ceilRate : item.ceilRate;
+    var flrRate = (item.enhancedMU && item.enhancedMU.floorRate != null) ? item.enhancedMU.floorRate : item.floorRate;
+    var t10Rate = (item.enhancedMU && item.enhancedMU.top10Rate != null) ? item.enhancedMU.top10Rate : item.top10Rate;
+
+    // --- ranks ---
+    var rankTotal = (item.posRank && item.posRank.rank != null) ? ("#" + item.posRank.rank) : (disp.totalRank ? ("#" + disp.totalRank) : "—");
+    var rankPPG = (item.ppgRank && item.ppgRank.rank != null) ? ("#" + item.ppgRank.rank) : (disp.ppgRank ? ("#" + disp.ppgRank) : "—");
+    var deltaVal = (item.deltaRank && item.deltaRank.rank != null) ? item.deltaRank.rank : (item.delta != null ? item.delta : null);
+
+    // --- value / MU / FIT ---
+    var valueScore = num(item.valueScore);
+    var valStr = (valueScore == null) ? "—" : String(Math.round(valueScore));
+
+    var muStr = (muScore == null) ? "—" : String(Math.round(muScore));
+
+    var fit = num(item.fit);
+    if ((fit == null || fit === 0) && self.data && self.data.fitById && pid && self.data.fitById[pid] != null) {
+      fit = num(self.data.fitById[pid]);
+    }
+    if (fit == null || fit === 0) {
+      // fallback: blend MU + value + projection to a 0-100 scale
+      var muN = (muScore == null) ? 50 : muScore;
+      var valN = (valueScore == null) ? 500 : valueScore;
+      var projN = (proj == null) ? 0 : proj;
+      fit = (0.55 * muN) + (0.25 * (valN / 10)) + (0.20 * Math.max(0, Math.min(100, projN * 4)));
+      if (item.isOut || avail === "OUT") fit *= 0.25;
+      if (avail === "IR") fit *= 0.45;
+      fit = Math.max(0, Math.min(100, fit));
+    }
+    var fitStr = String(Math.round(fit));
+
+    // --- image URLs ---
+    var head = self.playerHeadshotUrl(pid);
+    var teamLogo = self.teamLogoUrl(team);
+    var fallback = teamLogo ? ("this.onerror=null;this.src='" + teamLogo + "';") : "this.onerror=null;";
+
+    // --- tier class based on value score (2K MyTeam style, 0-1000 scale) ---
+    var tierClass = "";
+    if (valueScore != null) {
+      var vs = Math.round(valueScore);
+      if (vs >= 950) tierClass = "tier-goat";
+      else if (vs >= 900) tierClass = "tier-darkmatter";
+      else if (vs >= 850) tierClass = "tier-pinkdiamond";
+      else if (vs >= 780) tierClass = "tier-diamond";
+      else if (vs >= 700) tierClass = "tier-amethyst";
+      else if (vs >= 600) tierClass = "tier-ruby";
+      else if (vs >= 500) tierClass = "tier-sapphire";
+      else if (vs >= 400) tierClass = "tier-gold";
+      else if (vs >= 280) tierClass = "tier-silver";
+      else tierClass = "tier-bronze";
     }
 
-    var muValue = "—";
-    if (item.enhancedMU && isFinite(item.enhancedMU.matchScore)) {
-      muValue = Math.round(item.enhancedMU.matchScore);
-    } else if (isFinite(item.muScore)) {
-      muValue = Math.round(item.muScore);
-    }
+    // --- card element ---
+    var card = document.createElement("div");
+    var border = item.isOut ? "border-red-900/50" : "";
+    card.className = "player-card card-hover rounded-lg cursor-pointer w-full min-w-[400px] max-w-[520px] h-[160px] overflow-hidden " + tierClass + (item.isOut ? " opacity-70" : "");
+    card.setAttribute("data-pid", pid);
+    card.onclick = function() { self.openPlayerModal(pid); };
 
-    var fitValue = isFinite(item.fit) ? Math.round(item.fit) : "—";
-    var seasonValue = (seasonTotal !== null) ? seasonTotal.toFixed(1) : "—";
-    var projValue = proj.toFixed(1);
-    var scoreValue = Number.isFinite(scoreToShow) ? scoreToShow.toFixed(1) : "0.0";
-    var scoreLabel = hasPlayed ? "Actual" : "Proj";
-    var oppDisplay = item.opp ? ("vs " + self.escapeHtml(item.opp)) : "Opponent —";
-
-    var rankRowsHtml =
-      '<div class="space-y-1.5 mt-3">' +
-        '<div class="flex items-center justify-between text-[10px] font-mono uppercase tracking-wider text-gray-400 bg-gray-900/60 rounded-lg px-2 py-1 border border-gray-800/50">' +
-          '<span class="text-gray-500">Pos total rank</span>' +
-          '<span class="font-black text-sleeper-teal">' + posRankValue + '</span>' +
-        '</div>' +
-        '<div class="flex items-center justify-between text-[10px] font-mono uppercase tracking-wider text-gray-400 bg-gray-900/60 rounded-lg px-2 py-1 border border-gray-800/50">' +
-          '<span class="text-gray-500">Pos PPG rank</span>' +
-          '<span class="font-black text-[#d303fc]">' + ppgRankValue + '</span>' +
-        '</div>' +
-        '<div class="flex items-center justify-between text-[10px] font-mono uppercase tracking-wider text-gray-400 bg-gray-900/60 rounded-lg px-2 py-1 border border-gray-800/50">' +
-          '<span class="text-gray-500">Delta rank</span>' +
-          '<span class="font-black text-[#00ff66]">' + deltaRankValue + '</span>' +
-        '</div>' +
-      '</div>';
-
-    var badgeRow =
-      '<div class="mt-3 flex flex-wrap items-center gap-1.5">' +
-        (valBadge ? valBadge.replace('ml-2','') : '') +
-        (muBadge ? muBadge : '') +
-        (fitBadge ? fitBadge : '') +
-        statusPill +
-      '</div>';
-
-    card.innerHTML = 
-      '<div class="grid gap-0 md:grid-cols-[1.8fr_1fr_0.85fr]">' +
-        '<div class="p-4">' +
-          '<div class="flex items-start gap-3">' +
-            slotBadge +
-            '<div class="shrink-0">' + self.playerImg(item.pid, item.player || item.p || {}, "w-12 h-12") + '</div>' +
-            '<div class="min-w-0">' +
-              '<div class="flex items-center gap-2">' +
-                '<div class="font-black italic tracking-wide text-white text-lg leading-tight line-clamp-2 uppercase">' + self.escapeHtml(item.disp && item.disp.name ? item.disp.name : "") + '</div>' +
-                self.injuryTag(item.player || item.p || {}) +
+    card.innerHTML =
+      '<div class="w-full h-full flex gap-0.5 p-1">' +
+        // LEFT IMAGE PANEL
+        '<div class="w-[36%] rounded-2xl overflow-hidden relative bg-[#10172a] border border-white/5">' +
+          '<img src="' + esc(head) + '" class="absolute inset-0 w-full h-full object-cover opacity-90" onerror="' + esc(fallback) + '" loading="lazy" alt="">' +
+          '<div class="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(255,255,255,0.1),transparent_70%)]"></div>' +
+          '<div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>' +
+          '<div class="p-3 flex flex-col justify-between h-full relative z-10">' +
+            '<div class="absolute top-3 right-3">' +
+              '<div class="text-[10px] font-mono font-bold text-white tracking-widest bg-black/10 px-1.5 py-0.5 rounded border border-white/10">' +
+                'AGE <span class="text-white">' + esc(age || "—") + '</span>' +
               '</div>' +
-              '<div class="text-[10px] text-gray-500 font-mono flex items-center gap-1 flex-wrap mt-1">' +
-                '<span class="text-gray-400">' + self.escapeHtml((item.disp && item.disp.pos) ? item.disp.pos : "") + '</span>' +
-                '<span>•</span>' +
-                '<span>' + self.escapeHtml((item.disp && item.disp.team) ? item.disp.team : "") + '</span>' +
-                ((item.disp && item.disp.age) ? '<span>•</span><span>Age ' + self.escapeHtml(item.disp.age) + '</span>' : '') +
-                (oppText ? '<span>•</span>' + oppText : '') +
+            '</div>' +
+            '<div></div>' +
+            '<div class="leading-none">' +
+              '<div class="text-[11px] font-black tracking-widest text-yellow-400/90 mb-1 truncate">' + esc(teamPos) + '</div>' +
+              '<div class="flex items-end flex-wrap gap-x-4">' +
+                '<div class="min-w-0">' +
+                  '<div class="text-[22px] font-black italic text-white leading-[0.9] truncate">' + esc(first) + '</div>' +
+                  '<div class="text-[22px] font-black italic text-white leading-[0.9] truncate">' + esc(last) + '</div>' +
+                '</div>' +
+                '<div class="text-[22px] font-black italic text-emerald-400 leading-[0.9] drop-shadow-[0_0_8px_rgba(52,211,153,0.6)] shrink-0">' +
+                  '<span class="text-[12px] align-top font-black italic text-emerald-400 leading-[0.9] drop-shadow-[0_0_8px_rgba(52,211,153,0.6)]">VAL</span>' + esc(valStr) +
+                '</div>' +
               '</div>' +
             '</div>' +
           '</div>' +
-          rankRowsHtml +
-          badgeRow +
-          effRow +
         '</div>' +
-        '<div class="p-4 border-t border-gray-800/60 md:border-t-0 md:border-l flex flex-col items-center text-center">' +
-          '<div class="text-[10px] uppercase tracking-[0.25em] text-gray-500 font-semibold">Opponent</div>' +
-          '<div class="text-lg font-black text-white mt-1">' + oppDisplay + '</div>' +
-          '<div class="mt-3 w-full max-w-[220px] space-y-2 text-[11px] font-mono">' +
-            '<div class="grid grid-cols-2 items-center text-gray-400"><span>MU</span><span class="text-white">' + muValue + '</span></div>' +
-            '<div class="grid grid-cols-2 items-center text-gray-400"><span>Fit</span><span class="text-white">' + fitValue + '</span></div>' +
-            '<div class="grid grid-cols-2 items-center text-gray-400"><span>Szn Pts</span><span class="text-white">' + seasonValue + '</span></div>' +
+        // RIGHT DETAILS PANEL
+        '<div class="flex-1 min-w-0 rounded-2xl border border-white/5 bg-[#0f111a] p-2 flex flex-col justify-between">' +
+          '<div class="flex items-start justify-between gap-2 border-b border-white/5 pb-2">' +
+            '<div class="flex items-start gap-4">' +
+              '<div class="text-[9px] uppercase tracking-widest text-gray-400 font-bold">' +
+                '<div class="text-[9px] text-gray-500">RANK</div>' +
+                '<div class="text-emerald-400 text-[12px] font-black mt-0.5">' + esc(rankTotal) + '</div>' +
+              '</div>' +
+              '<div class="text-[9px] uppercase tracking-widest text-gray-400 font-bold">' +
+                '<div class="text-[9px] text-gray-500">PPG</div>' +
+                '<div class="text-fuchsia-400 text-[12px] font-black mt-0.5">' + esc(rankPPG) + '</div>' +
+              '</div>' +
+              '<div class="text-[9px] uppercase tracking-widest text-gray-400 font-bold">' +
+                '<div class="text-[9px] text-gray-500">DELTA</div>' +
+                '<div class="text-green-400 text-[12px] font-black mt-0.5">' + esc(fmt2signed(deltaVal)) + '</div>' +
+              '</div>' +
+            '</div>' +
+            '<span class="shrink-0 px-2 py-1 rounded-lg border font-mono text-[10px] font-bold ' + esc(availCls) + '">' + esc(avail) + '</span>' +
           '</div>' +
-        '</div>' +
-        '<div class="p-4 border-t border-gray-800/60 md:border-t-0 md:border-l flex flex-col items-center justify-between text-center">' +
-          '<div class="flex justify-center w-full">' + (statusPill || '') + '</div>' +
-          '<div>' +
-            '<div class="text-2xl font-black ' + scoreCls + '">' + scoreValue + '</div>' +
-            '<div class="text-[10px] uppercase tracking-widest text-gray-500 font-mono">' + self.escapeHtml(scoreLabel) + '</div>' +
+
+          '<div class="flex items-center justify-between gap-2 py-1">' +
+            '<div class="min-w-0">' +
+              '<div class="text-[9px] uppercase tracking-widest text-gray-500 font-bold mb-0.5">Opponent</div>' +
+              '<div class="text-[14px] font-black text-white leading-none truncate">' + esc(opp || "—") + '</div>' +
+            '</div>' +
+
+            '<div class="flex gap-3 text-[9px] font-mono shrink-0">' +
+              '<div class="text-center">' +
+                '<div class="text-gray-500 text-[10px] uppercase">Ceil</div>' +
+                '<div class="font-bold text-[10px] text-green-400">' + esc(pctStr(ceilRate)) + '</div>' +
+              '</div>' +
+              '<div class="text-center">' +
+                '<div class="text-gray-500 text-[10px] uppercase">Flr</div>' +
+                '<div class="font-bold text-[10px] text-red-400">' + esc(pctStr(flrRate)) + '</div>' +
+              '</div>' +
+              '<div class="text-center">' +
+                '<div class="text-gray-500 text-[10px] uppercase">T10</div>' +
+                '<div class="font-bold text-[10px] text-yellow-400">' + esc(pctStr(t10Rate)) + '</div>' +
+              '</div>' +
+            '</div>' +
+
+            '<div class="shrink-0 px-2 py-1 rounded-lg text-[10px] font-bold flex items-center gap-1 ' + esc(statusPillClasses()) + '">' +
+              '<span>' + esc(statusArrow()) + '</span><span>' + esc(statusLabel.toUpperCase()) + '</span>' +
+            '</div>' +
           '</div>' +
-          '<div class="text-[11px] font-mono text-sleeper-teal uppercase">' + projValue + ' Proj</div>' +
+
+          '<div class="mt-auto rounded-xl bg-gradient-to-r from-blue-900/30 to-indigo-900/20 border border-white/5 px-2 py-2 flex items-center justify-between gap-3 min-w-0 relative">' +
+            '<div class="flex flex-col gap-1 shrink-0">' +
+              '<div class="px-1.5 py-0.5 rounded bg-fuchsia-900/40 border border-fuchsia-500/30 text-[9px] font-mono font-bold text-fuchsia-200 leading-none text-center">FIT ' + esc(fitStr) + '</div>' +
+              '<div class="px-1.5 py-0.5 rounded bg-sky-900/40 border border-sky-500/30 text-[9px] font-mono font-bold text-sky-200 leading-none text-center">MU ' + esc(muStr) + '</div>' +
+            '</div>' +
+
+            '<div class="flex-1 flex flex-col items-center justify-center border-r border-white/10 pr-2 min-w-0">' +
+              '<div class="text-[8px] uppercase tracking-widest text-blue-200/50 font-bold mb-0.5">Projected</div>' +
+              '<div class="text-[18px] font-black text-blue-100 leading-none truncate">' + esc(fmt1(proj)) + '</div>' +
+            '</div>' +
+
+            '<div class="flex-1 flex flex-col items-center justify-center pl-2 min-w-0">' +
+              '<div class="text-[8px] uppercase tracking-widest text-blue-200/50 font-bold mb-0.5">Actual</div>' +
+              '<div class="text-[18px] font-black leading-none truncate ' + esc((status && status.color) ? status.color : "text-white") + '">' + esc(fmt1(act)) + '</div>' +
+            '</div>' +
+          '</div>' +
+
         '</div>' +
       '</div>';
 
     return card;
   },
+
 
   scoreFromStats: function(statsObj, playerId) {
     if (!statsObj) return 0;
@@ -1652,6 +2056,7 @@ playersById: {},
       rank: info.rankMost || 16,
       ceilRate: info.ceilRate || 0,
       floorRate: info.floorRate || 0,
+      top10Rate: info.top10Rate || 0,
       breakdown: info.matchScoreBreakdown || {},
       role: role
     };
@@ -2233,179 +2638,6 @@ var roleTopN = function(role) {
     return info || null;
   },
 
-  debugDefenseRoleInfo: function(oppTeam, roleKey) {
-    // Returns per-week starter-equivalent values used in Defense vs Role Effectiveness,
-    // so you can sanity-check calculations in the browser console.
-    // Usage: APP.debugDefenseRoleInfo("CIN", "RB")
-    var m = this.data.defRoleMetrics;
-    if (!m || !m.weeklyRole || !oppTeam || !roleKey) return null;
-    var role = String(roleKey).toUpperCase();
-    var team = String(oppTeam).toUpperCase();
-    var series = [];
-    var schedule = this.nflSchedule || {};
-    var teamSched = schedule[team] || [];
-    var wkMap = (m.weeklyRole[role] && m.weeklyRole[role][team]) ? m.weeklyRole[role][team] : null;
-    
-    // Collect all weeks with data, tracking schedule info
-    for (var w = 1; w <= (m.maxWeek || 18); w++) {
-      var schedOpp = teamSched[w - 1] || null;
-      var isBye = schedOpp === "BYE";
-      var v = wkMap ? wkMap[w] : null;
-      if (v == null) v = wkMap ? wkMap[String(w)] : null; // Try string key too
-      series.push({ 
-        week: w, 
-        value: (v != null && isFinite(v)) ? Math.round(v * 100) / 100 : null,
-        schedOpp: schedOpp,
-        isBye: isBye,
-        hasData: v != null && isFinite(v)
-      });
-    }
-    
-    // Calculate PPG and L4 the same way the render function does
-    var gamePts = [];
-    for (var i = 0; i < series.length; i++) {
-      if (series[i].hasData && !series[i].isBye) {
-        gamePts.push(series[i].value);
-      }
-    }
-    
-    var ppg = 0, last4 = 0;
-    if (gamePts.length > 0) {
-      var total = 0;
-      for (var j = 0; j < gamePts.length; j++) total += gamePts[j];
-      ppg = total / gamePts.length;
-      
-      var start = Math.max(0, gamePts.length - 4);
-      var slice = gamePts.slice(start);
-      var s = 0;
-      for (var k = 0; k < slice.length; k++) s += slice[k];
-      last4 = s / slice.length;
-    }
-    
-    var info = this.getDefenseRoleInfo(team, role);
-    var topN = 1; // Default
-    
-    // Get raw player data for last 4 weeks for verification
-    var rawL4Data = [];
-    var weeksWithData = series.filter(function(s) { return s.hasData && !s.isBye; });
-    var last4Weeks = weeksWithData.slice(-4);
-    var rawStats = (m.weeklyRoleStats && m.weeklyRoleStats[role] && m.weeklyRoleStats[role][team]) || {};
-    
-    for (var l = 0; l < last4Weeks.length; l++) {
-      var wk = last4Weeks[l].week;
-      var weekPlayers = rawStats[wk] || rawStats[String(wk)] || [];
-      rawL4Data.push({
-        week: wk,
-        topValue: last4Weeks[l].value,
-        allPlayers: weekPlayers.slice().sort(function(a,b) { return b.pts - a.pts; }).map(function(p) {
-          return { pid: p.pid, pts: Math.round(p.pts * 100) / 100 };
-        })
-      });
-    }
-    
-    return {
-      team: team,
-      role: role,
-      topN: topN,
-      gamesWithData: gamePts.length,
-      ppg: Math.round(ppg * 100) / 100,
-      last4: Math.round(last4 * 100) / 100,
-      last4Games: gamePts.slice(-4),
-      info: info,
-      series: series,
-      rawL4Data: rawL4Data
-    };
-  },
-  
-  // Verify defense role calculations - use this to check accuracy
-  // Usage: APP.verifyDefenseRole("CIN", "RB") 
-  verifyDefenseRole: function(defTeam, roleKey) {
-    var self = this;
-    var m = this.data.defRoleMetrics;
-    if (!m) return { error: "Defense role metrics not loaded" };
-    
-    defTeam = String(defTeam).toUpperCase();
-    roleKey = String(roleKey).toUpperCase();
-    
-    var schedule = this.nflSchedule || {};
-    var teamSched = schedule[defTeam] || [];
-    var maxWeek = m.maxWeek || 17;
-    
-    // Get weekly data
-    var wkMap = (m.weeklyRole[roleKey] && m.weeklyRole[roleKey][defTeam]) || {};
-    var rawMap = (m.weeklyRoleStats && m.weeklyRoleStats[roleKey] && m.weeklyRoleStats[roleKey][defTeam]) || {};
-    
-    var weeklyBreakdown = [];
-    var validWeeks = [];
-    
-    for (var w = 1; w <= maxWeek; w++) {
-      var opp = teamSched[w - 1];
-      var isBye = !opp || opp === "BYE";
-      var starterVal = wkMap[w];
-      var rawPlayers = rawMap[w] || [];
-      
-      var weekInfo = {
-        week: w,
-        opponent: opp || "(no data)",
-        isBye: isBye,
-        starterValue: starterVal != null ? Math.round(starterVal * 100) / 100 : null,
-        playerCount: rawPlayers.length,
-        topPlayer: null,
-        allPlayersSum: 0
-      };
-      
-      if (rawPlayers.length > 0) {
-        var sorted = rawPlayers.slice().sort(function(a,b) { return b.pts - a.pts; });
-        weekInfo.topPlayer = {
-          pid: sorted[0].pid,
-          pts: Math.round(sorted[0].pts * 100) / 100,
-          name: self.data.playersById[sorted[0].pid] ? self.data.playersById[sorted[0].pid].full_name : "Unknown"
-        };
-        for (var p = 0; p < rawPlayers.length; p++) {
-          weekInfo.allPlayersSum += rawPlayers[p].pts;
-        }
-        weekInfo.allPlayersSum = Math.round(weekInfo.allPlayersSum * 100) / 100;
-      }
-      
-      weeklyBreakdown.push(weekInfo);
-      
-      if (!isBye && starterVal != null) {
-        validWeeks.push({ week: w, value: starterVal });
-      }
-    }
-    
-    // Calculate stats
-    var total = 0;
-    for (var v = 0; v < validWeeks.length; v++) {
-      total += validWeeks[v].value;
-    }
-    var ppg = validWeeks.length > 0 ? total / validWeeks.length : 0;
-    
-    var last4 = 0;
-    var last4Weeks = validWeeks.slice(-4);
-    if (last4Weeks.length > 0) {
-      var l4sum = 0;
-      for (var l = 0; l < last4Weeks.length; l++) {
-        l4sum += last4Weeks[l].value;
-      }
-      last4 = l4sum / last4Weeks.length;
-    }
-    
-    return {
-      defense: defTeam,
-      role: roleKey,
-      totalGames: validWeeks.length,
-      ppg: Math.round(ppg * 100) / 100,
-      last4: Math.round(last4 * 100) / 100,
-      last4WeeksUsed: last4Weeks.map(function(w) { return { week: w.week, pts: Math.round(w.value * 100) / 100 }; }),
-      weeklyBreakdown: weeklyBreakdown,
-      calculation: {
-        ppgFormula: "Sum of top-" + 1 + " " + roleKey + " pts per game / " + validWeeks.length + " games = " + Math.round(ppg * 100) / 100,
-        l4Formula: "(" + last4Weeks.map(function(w) { return Math.round(w.value * 100) / 100; }).join(" + ") + ") / " + last4Weeks.length + " = " + Math.round(last4 * 100) / 100
-      }
-    };
-  },
-
   primaryRoleKeyForPlayer: function(p) {
     // Returns the primary fantasy position category: QB, RB, WR, TE, K, DL, LB, DB
     if (!p) return null;
@@ -2473,11 +2705,11 @@ var roleTopN = function(role) {
     if (this.dom.defRoleModeMost && this.dom.defRoleModeLeast) {
       var mostActive = this.ui.defRoleSort === "most";
       this.dom.defRoleModeMost.className = mostActive
-        ? "px-3 py-2 rounded-lg bg-gray-800 text-xs font-mono text-white border border-gray-700 hover:bg-gray-700 transition"
-        : "px-3 py-2 rounded-lg bg-gray-900 text-xs font-mono text-gray-300 border border-gray-800 hover:bg-gray-800 hover:text-white transition";
+        ? "px-3 py-2 rounded-lg bg-gray-800 text-xs font-mono text-white border border-gray-700 hover:bg-gray-700"
+        : "px-3 py-2 rounded-lg bg-gray-900 text-xs font-mono text-gray-300 border border-gray-800 hover:bg-gray-800 hover:text-white";
       this.dom.defRoleModeLeast.className = (!mostActive)
-        ? "px-3 py-2 rounded-lg bg-gray-800 text-xs font-mono text-white border border-gray-700 hover:bg-gray-700 transition"
-        : "px-3 py-2 rounded-lg bg-gray-900 text-xs font-mono text-gray-300 border border-gray-800 hover:bg-gray-800 hover:text-white transition";
+        ? "px-3 py-2 rounded-lg bg-gray-800 text-xs font-mono text-white border border-gray-700 hover:bg-gray-700"
+        : "px-3 py-2 rounded-lg bg-gray-900 text-xs font-mono text-gray-300 border border-gray-800 hover:bg-gray-800 hover:text-white";
     }
 
     var roleKey = this.ui.defRoleKey;
@@ -2620,8 +2852,8 @@ var roleTopN = function(role) {
       
       // MU score color coding
       var muScore = row.matchScore || 0;
-      var muCls = muScore >= 70 ? 'text-sleeper-teal font-bold' : muScore >= 50 ? 'text-gray-300' : 'text-red-400';
-      var muBg = muScore >= 70 ? 'bg-sleeper-teal/10' : muScore >= 50 ? '' : 'bg-red-900/10';
+      var muCls = muScore >= 70 ? 'text-accent font-bold' : muScore >= 50 ? 'text-gray-300' : 'text-red-400';
+      var muBg = muScore >= 70 ? 'bg-accent/10' : muScore >= 50 ? '' : 'bg-red-900/10';
       
       // Get detailed stats for this row
       var d = row.detailed || {};
@@ -2687,7 +2919,7 @@ var roleTopN = function(role) {
 
   rosterColor: function(rosterId) {
     // Keep chart colors consistent across League Analysis visuals
-    var colors = ['#00ceb8', '#22c55e', '#3b82f6', '#a855f7', '#ec4899', '#f97316', '#06b6d4', '#84cc16', '#6366f1', '#14b8a6'];
+    var colors = ['#10b981', '#22c55e', '#3b82f6', '#a855f7', '#ec4899', '#f97316', '#06b6d4', '#84cc16', '#6366f1', '#14b8a6'];
     var rid = String(rosterId);
     var idx = 0;
     var rosters = this.data.rosters || [];
@@ -4368,32 +4600,53 @@ self.data.playerDeltaRanks = deltaRanks;
       return out;
     };
 
+    // Position scarcity multipliers (TE/QB more valuable due to fewer elite options)
+    var positionScarcity = {
+      "TE": 1.12,
+      "QB": 1.08,
+      "RB": 1.04,
+      "WR": 1.00,
+      "K": 1.00,
+      "DEF": 1.00,
+      "DL": 1.00,
+      "LB": 1.00,
+      "DB": 1.00
+    };
+
     var values = {}; // pid -> {score, breakdown}
     Object.keys(byGroup).forEach(function(group) {
       var pids = byGroup[group];
 
-      var pctPPG  = buildPercentiles(pids, function(m){ return m.ppg; });
-      var pctL4   = buildPercentiles(pids, function(m){ return m.l4; });
-      var pctDlt  = buildPercentiles(pids, function(m){ return m.deltaAvg; });
+      var pctPPG   = buildPercentiles(pids, function(m){ return m.ppg; });
+      var pctTotal = buildPercentiles(pids, function(m){ return m.total; });
+      var pctL4    = buildPercentiles(pids, function(m){ return m.l4; });
+      var pctDlt   = buildPercentiles(pids, function(m){ return m.deltaAvg; });
+
+      var scarcityMult = positionScarcity[group] || 1.00;
 
       for (var i2 = 0; i2 < pids.length; i2++) {
         var pid = pids[i2];
         var m3 = metrics[pid];
         if (!m3) continue;
 
-        var ppgP = (pctPPG[pid] !== undefined) ? pctPPG[pid] : 0.5;
-        var l4P  = (pctL4[pid]  !== undefined) ? pctL4[pid]  : 0.5;
-        var dltP = (pctDlt[pid] !== undefined) ? pctDlt[pid] : 0.5;
+        var ppgP   = (pctPPG[pid] !== undefined) ? pctPPG[pid] : 0.5;
+        var totalP = (pctTotal[pid] !== undefined) ? pctTotal[pid] : 0.5;
+        var l4P    = (pctL4[pid]  !== undefined) ? pctL4[pid]  : 0.5;
+        var dltP   = (pctDlt[pid] !== undefined) ? pctDlt[pid] : 0.5;
 
         // Weighted season value (0..1)
+        // Emphasizes: consistency, PPG, total points, boom/bust, delta, snap share
+        // De-emphasizes: recent games (L4)
         var raw =
-          0.55 * ppgP +
-          0.15 * l4P +
-          0.10 * m3.bbAdj +
-          0.05 * dltP +
-          0.07 * m3.consistency +
-          0.05 * m3.snapAdj +
-          0.03 * m3.ageAdj;
+          0.28 * ppgP +
+          0.15 * totalP +
+          0.16 * m3.consistency +
+          0.12 * m3.bbAdj +
+          0.10 * dltP +
+          0.08 * m3.snapAdj +
+          0.05 * l4P +
+          0.03 * m3.ageAdj +
+          0.03 * (scarcityMult - 1.0) * 5; // scarcity bonus (0..0.03 range for TE)
 
         raw = self.clamp01(raw);
         var score = Math.round(raw * 1000);
@@ -4405,13 +4658,15 @@ self.data.playerDeltaRanks = deltaRanks;
             group: group,
             games: m3.games,
             ppg: m3.ppg,
+            total: m3.total,
             l4: m3.l4,
             boom: m3.boomRate,
             bust: m3.bustRate,
             snap: m3.snap,
             deltaAvg: m3.deltaAvg,
             consistency: m3.consistency,
-            age: m3.age
+            age: m3.age,
+            scarcity: scarcityMult
           }
         };
       }
@@ -4502,15 +4757,62 @@ getPlayerDeltaRank: function(pid) {
   return (this.data.playerDeltaRanks && this.data.playerDeltaRanks[pid]) ? this.data.playerDeltaRanks[pid] : null;
 },
 
-  // HTML badge for value score.
+  // HTML badge for value score (2K MyTeam style, 0-1000 scale).
   valueBadgeHtml: function(score) {
     if (!isFinite(score)) return "";
     var s = Math.round(score);
-    var cls = (s >= 850) ? "bg-sleeper-teal/10 text-sleeper-teal border-sleeper-teal/30"
-            : (s >= 700) ? "bg-emerald-900/10 text-emerald-300 border-emerald-900/30"
-            : (s >= 550) ? "bg-gray-800 text-gray-300 border-gray-700"
-            : "bg-red-900/10 text-red-300 border-red-900/30";
-    return '<span class="text-[9px] font-mono px-1.5 py-0.5 rounded ml-2 ' + cls + '">VAL ' + s + '</span>';
+    var tier, cls;
+    
+    if (s >= 950) {
+      tier = "GOAT";
+      cls = "myteam-badge-goat";
+    } else if (s >= 900) {
+      tier = "DM";
+      cls = "myteam-badge-darkmatter";
+    } else if (s >= 850) {
+      tier = "PD";
+      cls = "myteam-badge-pinkdiamond";
+    } else if (s >= 780) {
+      tier = "💎";
+      cls = "myteam-badge-diamond";
+    } else if (s >= 700) {
+      tier = "AMY";
+      cls = "myteam-badge-amethyst";
+    } else if (s >= 600) {
+      tier = "RBY";
+      cls = "myteam-badge-ruby";
+    } else if (s >= 500) {
+      tier = "SPH";
+      cls = "myteam-badge-sapphire";
+    } else if (s >= 400) {
+      tier = "GLD";
+      cls = "myteam-badge-gold";
+    } else if (s >= 280) {
+      tier = "SLV";
+      cls = "myteam-badge-silver";
+    } else {
+      tier = "BRZ";
+      cls = "myteam-badge-bronze";
+    }
+    
+    return '<span class="myteam-badge ' + cls + '">' + s + ' <span class="myteam-tier">' + tier + '</span></span>';
+  },
+
+  // Get tier info for a score (2K MyTeam style, 0-1000 scale)
+  getTierInfo: function(score) {
+    if (!isFinite(score)) return { tier: "BRZ", name: "Bronze", color: "#CD7F32" };
+    var s = Math.round(score);
+    
+    if (s >= 950) return { tier: "GOAT", name: "G.O.A.T", color: "#FFD700", glow: "rainbow" };
+    if (s >= 900) return { tier: "DM", name: "Dark Matter", color: "#1a0033", glow: "#9400D3" };
+    if (s >= 850) return { tier: "PD", name: "Pink Diamond", color: "#FF69B4", glow: "#FF1493" };
+    if (s >= 780) return { tier: "DIA", name: "Diamond", color: "#B9F2FF", glow: "#00BFFF" };
+    if (s >= 700) return { tier: "AMY", name: "Amethyst", color: "#9966CC", glow: "#8B008B" };
+    if (s >= 600) return { tier: "RBY", name: "Ruby", color: "#E0115F", glow: "#DC143C" };
+    if (s >= 500) return { tier: "SPH", name: "Sapphire", color: "#0F52BA", glow: "#1E90FF" };
+    if (s >= 400) return { tier: "GLD", name: "Gold", color: "#FFD700", glow: "#FFA500" };
+    if (s >= 280) return { tier: "SLV", name: "Silver", color: "#C0C0C0", glow: "#A9A9A9" };
+    return { tier: "BRZ", name: "Bronze", color: "#CD7F32", glow: "#8B4513" };
   },
 
   openMatchupModal: function(matchupIdLabel, rosterAId, rosterBId) {
@@ -4975,7 +5277,7 @@ getPlayerDeltaRank: function(pid) {
           '<div class="text-gray-400 text-sm mb-4">' + (err.message || "The selected league could not be loaded.") + '</div>' +
           '<div class="text-gray-500 text-xs mb-4">League ID: ' + self.cfg.leagueId + '</div>' +
           '<div class="flex gap-2 justify-center">' +
-          '<button onclick="APP.switchSeason(\'2025\')" class="px-4 py-2 bg-sleeper-teal text-black rounded-lg hover:bg-teal-400 font-semibold">Switch to 2025</button>' +
+          '<button onclick="APP.switchSeason(\'2025\')" class="px-4 py-2 bg-accent text-black rounded-lg hover:bg-emerald-400 font-semibold">Switch to 2025</button>' +
           '<button onclick="APP.switchSeason(\'2024\')" class="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600">Switch to 2024</button>' +
           '</div></div></div>';
         
@@ -5135,8 +5437,8 @@ getPlayerDeltaRank: function(pid) {
         if (!el) return;
         var baseSize = "text-[10px]";
         el.className = v === view
-          ? "w-11 h-11 rounded-xl nav-btn-active transition-all duration-200 font-bold " + baseSize
-          : "w-11 h-11 rounded-xl bg-gray-800/60 text-gray-400 hover:bg-gray-700 hover:text-white transition-all duration-200 font-bold " + baseSize;
+          ? "w-11 h-11 rounded-xl ui2k-navbtn nav-btn-active font-bold " + baseSize
+          : "w-11 h-11 rounded-xl ui2k-navbtn bg-gray-800/60 text-gray-400 hover:bg-gray-700 hover:text-white font-bold " + baseSize;
       });
     };
 
@@ -5186,7 +5488,7 @@ getPlayerDeltaRank: function(pid) {
     if (this.dom.defTabAFC) {
       this.dom.defTabAFC.onclick = function() { 
         self.ui.selectedConference = "AFC"; 
-        if (self.dom.defTabAFC) self.dom.defTabAFC.className = "px-4 py-2 rounded-xl bg-sleeper-teal text-black font-bold";
+        if (self.dom.defTabAFC) self.dom.defTabAFC.className = "px-4 py-2 rounded-xl bg-accent text-black font-bold";
         if (self.dom.defTabNFC) self.dom.defTabNFC.className = "px-4 py-2 rounded-xl bg-gray-900 border border-gray-800 text-gray-300 hover:bg-gray-800 font-bold";
         self.renderDefenses(); 
       };
@@ -5194,7 +5496,7 @@ getPlayerDeltaRank: function(pid) {
     if (this.dom.defTabNFC) {
       this.dom.defTabNFC.onclick = function() { 
         self.ui.selectedConference = "NFC"; 
-        if (self.dom.defTabNFC) self.dom.defTabNFC.className = "px-4 py-2 rounded-xl bg-sleeper-teal text-black font-bold";
+        if (self.dom.defTabNFC) self.dom.defTabNFC.className = "px-4 py-2 rounded-xl bg-accent text-black font-bold";
         if (self.dom.defTabAFC) self.dom.defTabAFC.className = "px-4 py-2 rounded-xl bg-gray-900 border border-gray-800 text-gray-300 hover:bg-gray-800 font-bold";
         self.renderDefenses(); 
       };
@@ -5306,8 +5608,8 @@ getPlayerDeltaRank: function(pid) {
       var btn = document.createElement("button");
       var active = String(r.roster_id) === String(self.ui.selectedRosterId);
       btn.className = active
-        ? "px-4 py-2 rounded-xl bg-sleeper-teal text-black font-bold whitespace-nowrap"
-        : "px-4 py-2 rounded-xl bg-gray-900 border border-gray-800 text-gray-300 hover:bg-gray-800 font-bold whitespace-nowrap";
+        ? "px-4 py-2 rounded-xl font-bold whitespace-nowrap madden-tab madden-tab-active"
+        : "px-4 py-2 rounded-xl font-bold whitespace-nowrap madden-tab text-gray-300";
       btn.textContent = name;
       btn.onclick = function() {
         self.ui.selectedRosterId = r.roster_id;
@@ -5469,8 +5771,8 @@ var benchPlayers = Object.keys(benchByPid).map(function(pid) {
       var header = document.createElement("div");
       header.className = "flex items-center gap-2 mb-3 mt-6 first:mt-0";
       header.innerHTML = 
-        '<div class="w-8 h-8 rounded-lg bg-gradient-to-br from-sleeper-teal/20 to-teal-900/20 border border-sleeper-teal/30 flex items-center justify-center">' +
-          '<span class="text-sleeper-teal text-xs font-bold">' + icon + '</span>' +
+        '<div class="w-8 h-8 rounded-lg bg-gradient-to-br from-accent/20 to-gray-800/20 border border-accent/30 flex items-center justify-center">' +
+          '<span class="text-accent text-xs font-bold">' + icon + '</span>' +
         '</div>' +
         '<div>' +
           '<div class="text-sm font-bold text-white">' + title + '</div>' +
@@ -5488,7 +5790,7 @@ var benchPlayers = Object.keys(benchByPid).map(function(pid) {
     mainHeader.className = "flex items-center justify-between pb-2 border-b border-gray-800 mb-4";
     mainHeader.innerHTML = 
       '<div class="flex items-center gap-2">' +
-        '<div class="w-2 h-2 rounded-full bg-sleeper-teal"></div>' +
+        '<div class="w-2 h-2 rounded-full bg-accent"></div>' +
         '<span class="text-xs font-bold text-gray-300 uppercase tracking-wider">Active Starters</span>' +
       '</div>' +
       '<div class="text-[10px] text-gray-500 font-mono">Actual shown after play; projection otherwise</div>';
@@ -5516,13 +5818,13 @@ var benchPlayers = Object.keys(benchByPid).map(function(pid) {
       posHeader.className = "text-[11px] font-bold text-gray-500 uppercase tracking-wider mt-4 mb-2 flex items-center justify-between gap-2";
       posHeader.innerHTML =
         '<div class="flex items-center gap-2 min-w-0">' +
-          '<span class="w-1 h-3 rounded bg-sleeper-teal/50"></span>' +
+          '<span class="w-1 h-3 rounded bg-accent/50"></span>' +
           '<span class="truncate">' + posLabel + '</span>' +
         '</div>';
       startersSection.appendChild(posHeader);
 
       var posGrid = document.createElement("div");
-      posGrid.className = "grid grid-cols-1 lg:grid-cols-2 gap-2";
+      posGrid.className = "ui2k-card-grid";
       players.forEach(function(p) {
         posGrid.appendChild(renderPlayerCard(p, true));
       });
@@ -5547,7 +5849,7 @@ var benchPlayers = Object.keys(benchByPid).map(function(pid) {
       benchSection.appendChild(benchHeader);
 
       var benchGrid = document.createElement("div");
-      benchGrid.className = "grid grid-cols-1 lg:grid-cols-2 gap-2";
+      benchGrid.className = "ui2k-card-grid";
       
       // Sort bench by position then score
       activeBench.sort(function(a, b) {
@@ -5583,7 +5885,7 @@ var benchPlayers = Object.keys(benchByPid).map(function(pid) {
       irSection.appendChild(irHeader);
 
       var irGrid = document.createElement("div");
-      irGrid.className = "grid grid-cols-1 lg:grid-cols-2 gap-2 opacity-60";
+      irGrid.className = "ui2k-card-grid opacity-60";
       irPlayers.forEach(function(p) {
         irGrid.appendChild(renderPlayerCard(p, false));
       });
@@ -5596,11 +5898,11 @@ var benchPlayers = Object.keys(benchByPid).map(function(pid) {
     insightsSection.className = "mt-8";
     
     var insightsHeader = document.createElement("div");
-    insightsHeader.className = "flex items-center justify-between pb-2 border-b border-sleeper-teal/30 mb-4";
+    insightsHeader.className = "flex items-center justify-between pb-2 border-b border-accent/30 mb-4";
     insightsHeader.innerHTML = 
       '<div class="flex items-center gap-2">' +
-        '<div class="w-2 h-2 rounded-full bg-sleeper-teal"></div>' +
-        '<span class="text-xs font-bold text-sleeper-teal uppercase tracking-wider">Smart Insights</span>' +
+        '<div class="w-2 h-2 rounded-full bg-accent"></div>' +
+        '<span class="text-xs font-bold text-accent uppercase tracking-wider">Smart Insights</span>' +
       '</div>';
     insightsSection.appendChild(insightsHeader);
 
@@ -6100,7 +6402,7 @@ var wrap = document.createElement("div");
       var pillsB = self.statusPillsFromCounts(countsB);
 
       var card = document.createElement("div");
-      card.className = "bg-gray-900 border border-gray-800 rounded-2xl p-4 hover:bg-gray-850 transition cursor-pointer";
+      card.className = "bg-gray-900 border border-gray-800 rounded-2xl p-4 hover:bg-gray-850 cursor-pointer";
       card.setAttribute("data-matchup-card", "1");
       card.dataset.label = p.label;
       card.dataset.rosterA = String(rosterA.roster_id);
@@ -6118,7 +6420,7 @@ var wrap = document.createElement("div");
           '<div class="bg-gray-950 border border-gray-800 rounded-xl p-3">' +
             '<div class="flex items-center justify-between gap-2">' +
               '<div class="text-gray-300 text-sm truncate">' + self.escapeHtml(teamAName) + '</div>' +
-              '<div class="text-sleeper-teal font-black font-mono">' + A.toFixed(2) + '</div>' +
+              '<div class="text-accent font-black font-mono">' + A.toFixed(2) + '</div>' +
             '</div>' +
             '<div class="text-[11px] text-gray-500 font-mono">Proj ' + projA.toFixed(2) + ' • Act ' + actA.toFixed(2) + '</div>' +
           (pillsA ? '<div class=\"mt-2\">' + pillsA + '</div>' : '') +
@@ -6126,7 +6428,7 @@ var wrap = document.createElement("div");
           '<div class="bg-gray-950 border border-gray-800 rounded-xl p-3">' +
             '<div class="flex items-center justify-between gap-2">' +
               '<div class="text-gray-300 text-sm truncate">' + self.escapeHtml(teamBName) + '</div>' +
-              '<div class="text-sleeper-teal font-black font-mono">' + B.toFixed(2) + '</div>' +
+              '<div class="text-accent font-black font-mono">' + B.toFixed(2) + '</div>' +
             '</div>' +
             '<div class="text-[11px] text-gray-500 font-mono">Proj ' + projB.toFixed(2) + ' • Act ' + actB.toFixed(2) + '</div>' +
           (pillsB ? '<div class=\"mt-2\">' + pillsB + '</div>' : '') +
@@ -6142,15 +6444,15 @@ var wrap = document.createElement("div");
   renderFATabs: function() {
     var self = this;
     var tabs = [
-      { id: "ALL", label: "Best Available (Overall)", limit: 100, pos: null },
-      { id: "QB", label: "Top QBs", limit: 30, pos: ["QB"] },
-      { id: "RB", label: "Top RBs", limit: 50, pos: ["RB"] },
-      { id: "WR", label: "Top WRs", limit: 50, pos: ["WR"] },
-      { id: "TE", label: "Top TEs", limit: 30, pos: ["TE"] },
-      { id: "K", label: "Top Ks", limit: 30, pos: ["K"] },
-      { id: "DL", label: "Top DL", limit: 50, pos: ["DL", "DE", "DT", "NT"] },
-      { id: "LB", label: "Top LB", limit: 50, pos: ["LB", "ILB", "OLB", "MLB"] },
-      { id: "DB", label: "Top DB", limit: 50, pos: ["DB", "CB", "S", "SS", "FS"] }
+      { id: "ALL", label: "Best Available", limit: 100, pos: null },
+      { id: "QB", label: "QBs", limit: 30, pos: ["QB"] },
+      { id: "RB", label: "RBs", limit: 50, pos: ["RB"] },
+      { id: "WR", label: "WRs", limit: 50, pos: ["WR"] },
+      { id: "TE", label: "TEs", limit: 30, pos: ["TE"] },
+      { id: "K", label: "Ks", limit: 30, pos: ["K"] },
+      { id: "DL", label: "DL", limit: 50, pos: ["DL", "DE", "DT", "NT"] },
+      { id: "LB", label: "LB", limit: 50, pos: ["LB", "ILB", "OLB", "MLB"] },
+      { id: "DB", label: "DB", limit: 50, pos: ["DB", "CB", "S", "SS", "FS"] }
     ];
 
     var bar = this.dom.faTabs;
@@ -6161,8 +6463,8 @@ var wrap = document.createElement("div");
       var active = t.id === self.ui.selectedFA;
       var btn = document.createElement("button");
       btn.className = active
-        ? "px-4 py-2 rounded-xl bg-sleeper-teal text-black font-bold whitespace-nowrap"
-        : "px-4 py-2 rounded-xl bg-gray-900 border border-gray-800 text-gray-300 hover:bg-gray-800 font-bold whitespace-nowrap";
+        ? "px-4 py-2 rounded-xl font-bold whitespace-nowrap madden-tab madden-tab-active"
+        : "px-4 py-2 rounded-xl font-bold whitespace-nowrap madden-tab text-gray-300";
       btn.textContent = t.label;
       btn.onclick = function() {
         self.ui.selectedFA = t.id;
@@ -6185,41 +6487,36 @@ renderFA: function() {
 
     var doRender = function() {
       var totals = self.data.seasonTotals || {};
+      var week = String(self.ui.selectedWeek);
+      var statsMap = self.data.weekStats[week] || {};
+      var projMap = self.data.weekProj[week] || {};
       
       // 1. Get ALL players (Rostered + FA)
       var allPlayers = Object.values(self.data.playersById);
 
       // 2. Sort ALL players by Season Total Points (Descending)
-      // This establishes the true league-wide hierarchy
       allPlayers.sort(function(a, b) {
         var ta = totals[String(a.player_id)] || 0;
         var tb = totals[String(b.player_id)] || 0;
-        return tb - ta; // Highest points first
+        return tb - ta;
       });
 
       // 3. Assign League-Wide Ranks
-      // We map every player ID to their Overall Rank and Position Rank
       var rankMap = {};
-      var posCounters = {}; // Helper to track rank within each position
+      var posCounters = {};
 
       allPlayers.forEach(function(p, index) {
         var pid = String(p.player_id);
         var pos = p.position || "UNK";
-        
-        // Initialize position counter if new
         if (!posCounters[pos]) posCounters[pos] = 0;
         posCounters[pos]++;
-
         rankMap[pid] = {
-          overall: index + 1,      // 1 is highest scorer in league
-          posRank: posCounters[pos] // 1 is highest scorer at that position
+          overall: index + 1,
+          posRank: posCounters[pos]
         };
       });
 
-      // 4. Identify Rostered Players (to hide them)
       // 4. Identify Rostered Players (hide them from the Free Agent list)
-      // Sleeper may store players in multiple lists depending on league settings (taxi, reserve/IR, etc).
-      // If we only use `roster.players`, recently-added taxi/IR stashes can incorrectly appear as "available".
       var rostered = new Set();
       self.data.rosters.forEach(function(r) {
         var buckets = [];
@@ -6239,12 +6536,9 @@ renderFA: function() {
         if (!p) return false;
         var notRostered = !rostered.has(String(p.player_id));
         var posOk = cfg.pos ? cfg.pos.indexOf(p.position) >= 0 : true;
-        
-        // Activity Check: Has points OR is active status
         var hasStats = totals[String(p.player_id)] > 0;
         var isMarkedActive = p.active === true || p.active === 1 || p.active === "true" || p.status === "Active";
         var includePlayer = hasStats || (isMarkedActive && (cfg.pos || nvl(p.search_rank, 999999) <= 5000));
-        
         return notRostered && posOk && includePlayer;
       });
 
@@ -6252,58 +6546,63 @@ renderFA: function() {
       var top = candidates.slice(0, cfg.limit);
 
       if (!top.length) {
-        list.innerHTML = '<div class="p-6 text-gray-500">No available players found for ' + cfg.id + '.</div>';
+        list.innerHTML = '<div class="p-6 text-gray-500 text-center">No available players found for ' + cfg.id + '.</div>';
         return;
       }
 
-      // 7. Render
-      top.forEach(function(p) {
+      // Create 2-column grid container
+      var gridContainer = document.createElement("div");
+      gridContainer.className = "ui2k-card-grid";
+
+      // 7. Render as player cards
+      top.forEach(function(p, index) {
         var pid = String(p.player_id);
         var disp = self.playerDisplay(p);
         var tot = totals[pid] || 0;
+        
+        // Get week stats for this player
+        var projStats = projMap[pid] || {};
+        var actStats = statsMap[pid] || {};
+        var proj = self.scoreFromStats(projStats, pid);
+        var act = self.scoreFromStats(actStats, pid);
+        var hasPlayed = Object.keys(actStats).length > 0;
+        var opp = self.getOpponent(actStats, projStats, p, self.ui.selectedWeek);
+        var enhancedMU = self.getEnhancedMatchupInfo(pid, opp);
+        var muScore = (enhancedMU && enhancedMU.matchScore !== undefined) ? enhancedMU.matchScore : null;
+        var status = self.boomBustStatus(proj, act, hasPlayed, muScore);
         
         // Get the pre-calculated league-wide rank
         var ranks = rankMap[pid] || { overall: 999, posRank: 999 };
         var ppgRankFA = self.getPlayerPpgRank(pid);
         var deltaRankFA = self.getPlayerDeltaRank(pid);
-        
-        // Decide what to display:
-        // If tab is specific (e.g., QB), show "#15 QB". 
-        // If tab is ALL, show "#27 OVR".
-        var rankLabel = "#" + (cfg.pos ? ranks.posRank : ranks.overall);
-
-        // Value score badge (0-1000)
         var valObjFA = self.getPlayerValue(pid);
-        var valBadgeFA = (valObjFA && isFinite(valObjFA.score)) ? self.valueBadgeHtml(valObjFA.score) : '';
 
-        var row = document.createElement("div");
-        row.className = "grid grid-cols-12 gap-3 px-4 py-3 items-center hover:bg-gray-950 transition cursor-pointer border-b border-gray-800";
-        
-        row.innerHTML = 
-          '<div class="col-span-2 pr-2 text-gray-400 font-mono text-sm whitespace-nowrap"><div><span class="text-sleeper-teal font-mono font-black">' + rankLabel + '</span>' + (ppgRankFA && isFinite(ppgRankFA.rank) ? (' <span class="text-[#d303fc] font-mono font-black">(' + ppgRankFA.rank + ')</span>') : '') + (deltaRankFA && isFinite(deltaRankFA.rank) ? (' <span class="text-[#00ff66] font-mono font-black">[' + deltaRankFA.rank + ']</span>') : '') + '</div></div>' +
-          '<div class="col-span-4 min-w-0">' +
-            '<div class="flex items-center gap-1 min-w-0">' +
-              '<div class="min-w-0 flex-1">' +
-                '<div class="font-bold text-white text-sm leading-tight line-clamp-2">' + disp.name + '</div>' +
-                '<div class="text-[10px] text-gray-500 font-mono flex items-center gap-1 flex-wrap mt-0.5">' +
-                  '<span class="text-gray-400">' + disp.pos + '</span>' +
-                  '<span>•</span>' +
-                  '<span>' + disp.team + '</span>' +
-                  (disp.age ? '<span>•</span><span>Age ' + disp.age + '</span>' : '') +
-                  self.injuryTag(p) +
-                '</div>' +
-              '</div>' +
-              (valBadgeFA ? valBadgeFA : '') +
-            '</div>' +
-            '<div class="text-[10px] text-gray-600 font-mono mt-0.5">ID ' + pid + '</div>' +
-          '</div>' +
-          '<div class="col-span-1 text-gray-300 font-mono">' + disp.pos + '</div>' +
-          '<div class="col-span-2 text-gray-400 font-mono">' + disp.team + '</div>' +
-          '<div class="col-span-3 text-right font-black text-sleeper-teal">' + tot.toFixed(2) + '</div>';
-        
-        row.onclick = function() { self.openPlayerModal(pid); };
-        list.appendChild(row);
+        var item = {
+          pid: pid,
+          slot: "FA",
+          isStarter: false,
+          player: p,
+          disp: disp,
+          proj: proj,
+          act: act,
+          hasPlayed: hasPlayed,
+          status: status,
+          scoreToShow: hasPlayed ? act : proj,
+          opp: opp,
+          enhancedMU: enhancedMU,
+          valueScore: valObjFA ? valObjFA.score : null,
+          posRank: { rank: cfg.pos ? ranks.posRank : ranks.overall },
+          ppgRank: ppgRankFA,
+          deltaRank: deltaRankFA,
+          seasonTotal: tot,
+          isOut: false
+        };
+
+        var card = self.buildPlayerCardElement(item, { showSlot: false });
+        gridContainer.appendChild(card);
       });
+
+      list.appendChild(gridContainer);
     };
 
     if (!this.data.seasonTotals) {
@@ -6352,41 +6651,41 @@ renderFA: function() {
         
         // Position-specific metrics
         if (role === 'QB') {
-          effHtml += this.effMetricCard('Cmp%', eff.cmpRate.toFixed(0) + '%', 'text-sleeper-teal');
+          effHtml += this.effMetricCard('Cmp%', eff.cmpRate.toFixed(0) + '%', 'text-accent');
           effHtml += this.effMetricCard('Pass Yd/G', eff.passYdPerGame.toFixed(0), 'text-white');
           effHtml += this.effMetricCard('Pass TD/G', eff.passTdPerGame.toFixed(1), 'text-green-400');
           effHtml += this.effMetricCard('INT/G', eff.intPerGame.toFixed(1), 'text-red-400');
           effHtml += this.effMetricCard('Rush Yd/G', eff.rushYdPerGame.toFixed(0), 'text-gray-300');
         } else if (role === 'RB') {
-          effHtml += this.effMetricCard('YPC', eff.ypc.toFixed(1), 'text-sleeper-teal');
+          effHtml += this.effMetricCard('YPC', eff.ypc.toFixed(1), 'text-accent');
           effHtml += this.effMetricCard('Rush Yd/G', eff.rushYdPerGame.toFixed(0), 'text-white');
           effHtml += this.effMetricCard('Rush TD/G', eff.rushTdPerGame.toFixed(1), 'text-green-400');
           effHtml += this.effMetricCard('Tgt/G', eff.tgtPerGame.toFixed(1), 'text-yellow-400');
           effHtml += this.effMetricCard('Catch%', eff.catchRate.toFixed(0) + '%', 'text-gray-300');
         } else if (role === 'WR' || role === 'TE') {
-          effHtml += this.effMetricCard('Tgt/G', eff.tgtPerGame.toFixed(1), 'text-sleeper-teal');
+          effHtml += this.effMetricCard('Tgt/G', eff.tgtPerGame.toFixed(1), 'text-accent');
           effHtml += this.effMetricCard('Catch%', eff.catchRate.toFixed(0) + '%', 'text-white');
           effHtml += this.effMetricCard('YPR', eff.ypr.toFixed(1), 'text-yellow-400');
           effHtml += this.effMetricCard('Rec Yd/G', eff.recYdPerGame.toFixed(0), 'text-gray-300');
           effHtml += this.effMetricCard('TD/G', eff.tdRate.toFixed(1), 'text-green-400');
         } else if (role === 'K') {
-          effHtml += this.effMetricCard('FGM/G', eff.fgmPerGame.toFixed(1), 'text-sleeper-teal');
+          effHtml += this.effMetricCard('FGM/G', eff.fgmPerGame.toFixed(1), 'text-accent');
           effHtml += this.effMetricCard('FG%', eff.fgPct.toFixed(0) + '%', 'text-white');
           effHtml += this.effMetricCard('XPM/G', eff.xpmPerGame.toFixed(1), 'text-green-400');
         } else if (role === 'DL') {
-          effHtml += this.effMetricCard('Sack/G', eff.sackPerGame.toFixed(2), 'text-sleeper-teal');
+          effHtml += this.effMetricCard('Sack/G', eff.sackPerGame.toFixed(2), 'text-accent');
           effHtml += this.effMetricCard('QBHit/G', eff.qbHitPerGame.toFixed(1), 'text-white');
           effHtml += this.effMetricCard('TFL/G', eff.tflPerGame.toFixed(1), 'text-yellow-400');
           effHtml += this.effMetricCard('Tkl/G', eff.tklPerGame.toFixed(1), 'text-gray-300');
           effHtml += this.effMetricCard('Disrupt', eff.disruptionScore.toFixed(1), 'text-red-400 font-bold');
         } else if (role === 'LB') {
-          effHtml += this.effMetricCard('Tkl/G', eff.tklPerGame.toFixed(1), 'text-sleeper-teal');
+          effHtml += this.effMetricCard('Tkl/G', eff.tklPerGame.toFixed(1), 'text-accent');
           effHtml += this.effMetricCard('Solo/G', eff.tklSoloPerGame.toFixed(1), 'text-white');
           effHtml += this.effMetricCard('TFL/G', eff.tflPerGame.toFixed(1), 'text-yellow-400');
           effHtml += this.effMetricCard('Sack/G', eff.sackPerGame.toFixed(2), 'text-gray-300');
           effHtml += this.effMetricCard('BigPlay/G', eff.bigPlayRate.toFixed(1), 'text-red-400 font-bold');
         } else if (role === 'DB') {
-          effHtml += this.effMetricCard('INT/G', eff.intPerGame.toFixed(2), 'text-sleeper-teal');
+          effHtml += this.effMetricCard('INT/G', eff.intPerGame.toFixed(2), 'text-accent');
           effHtml += this.effMetricCard('PD/G', eff.passDefPerGame.toFixed(1), 'text-white');
           effHtml += this.effMetricCard('Tkl/G', eff.tklPerGame.toFixed(1), 'text-yellow-400');
           effHtml += this.effMetricCard('FF/G', eff.ffPerGame.toFixed(2), 'text-gray-300');
@@ -6409,8 +6708,8 @@ renderFA: function() {
         var enhMU = this.getEnhancedMatchupInfo(pid, opp);
         if (enhMU) {
           // Left side - MU Score breakdown
-          var muCls = enhMU.matchScore >= 70 ? 'text-sleeper-teal' : enhMU.matchScore >= 50 ? 'text-gray-300' : 'text-red-400';
-          var muBg = enhMU.matchScore >= 70 ? 'bg-sleeper-teal/10 border-sleeper-teal/30' : enhMU.matchScore >= 50 ? 'bg-gray-800 border-gray-700' : 'bg-red-900/10 border-red-900/30';
+          var muCls = enhMU.matchScore >= 70 ? 'text-accent' : enhMU.matchScore >= 50 ? 'text-gray-300' : 'text-red-400';
+          var muBg = enhMU.matchScore >= 70 ? 'bg-accent/10 border-accent/30' : enhMU.matchScore >= 50 ? 'bg-gray-800 border-gray-700' : 'bg-red-900/10 border-red-900/30';
           
           muHtml += '<div class="' + muBg + ' border rounded-lg p-4">' +
             '<div class="text-xs text-gray-500 uppercase mb-2">vs ' + opp + ' - MU Score</div>' +
@@ -6617,8 +6916,8 @@ renderFA: function() {
             tension: 0.25, 
             borderDash: [6, 6], 
             pointRadius: 3,
-            pointBackgroundColor: "#00ceb8",
-            borderColor: "#00ceb8",
+            pointBackgroundColor: "#10b981",
+            borderColor: "#10b981",
             backgroundColor: "rgba(0, 206, 184, 0.1)"
           }
         ]
@@ -6849,7 +7148,7 @@ renderFA: function() {
     sourceIndicator.className = "col-span-2 mb-4 px-4 py-2 bg-gray-900/50 border border-gray-800 rounded-lg flex items-center justify-between";
     sourceIndicator.innerHTML = 
       '<div class="flex items-center gap-2">' +
-        '<div class="w-2 h-2 rounded-full bg-sleeper-teal"></div>' +
+        '<div class="w-2 h-2 rounded-full bg-accent"></div>' +
         '<span class="text-xs text-gray-400 font-mono">Data source: <span class="text-white">' + dataSource + '</span></span>' +
       '</div>' +
       '<div class="text-[10px] text-gray-500 font-mono">Rankings across all 32 NFL teams</div>';
@@ -6866,8 +7165,8 @@ renderFA: function() {
       header.className = "p-4 border-b border-gray-800 bg-gray-950 rounded-t-2xl";
       header.innerHTML = 
         '<div class="flex items-center gap-3">' +
-          '<div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sleeper-teal/30 to-teal-900/30 flex items-center justify-center">' +
-            '<span class="text-sleeper-teal font-bold text-sm">' + conf.charAt(0) + '</span>' +
+          '<div class="w-10 h-10 rounded-xl bg-gradient-to-br from-accent/30 to-gray-800/30 flex items-center justify-center">' +
+            '<span class="text-accent font-bold text-sm">' + conf.charAt(0) + '</span>' +
           '</div>' +
           '<div>' +
             '<div class="text-white font-bold">' + conf + ' ' + divName + '</div>' +
@@ -6882,7 +7181,7 @@ renderFA: function() {
       teams.forEach(function(teamAbbr) {
         var stats = statsLookup[teamAbbr] || {};
         var teamRow = document.createElement("div");
-        teamRow.className = "p-4 hover:bg-gray-950/50 transition";
+        teamRow.className = "p-4 hover:bg-gray-950/50";
 
         // Color coding for rankings (1-8 green, 9-16 yellow, 17-32 red for 32 teams)
         var getRankColor = function(rank) {
@@ -6922,11 +7221,11 @@ renderFA: function() {
             '<div class="mt-2 grid grid-cols-3 gap-2">' +
               '<div class="bg-gray-950/50 rounded p-1.5 text-center">' +
                 '<div class="text-[9px] text-gray-600 uppercase">Sacks</div>' +
-                '<div class="text-sm font-bold text-sleeper-teal">' + (stats.sacks || 0) + '</div>' +
+                '<div class="text-sm font-bold text-accent">' + (stats.sacks || 0) + '</div>' +
               '</div>' +
               '<div class="bg-gray-950/50 rounded p-1.5 text-center">' +
                 '<div class="text-[9px] text-gray-600 uppercase">INTs</div>' +
-                '<div class="text-sm font-bold text-sleeper-teal">' + (stats.interceptions || 0) + '</div>' +
+                '<div class="text-sm font-bold text-accent">' + (stats.interceptions || 0) + '</div>' +
               '</div>' +
               '<div class="bg-gray-950/50 rounded p-1.5 text-center">' +
                 '<div class="text-[9px] text-gray-600 uppercase">TDs Allow</div>' +
@@ -7088,8 +7387,8 @@ renderFA: function() {
       var btn = document.createElement("button");
       var active = String(r.roster_id) === String(self.ui.historySelectedRosterId);
       btn.className = active
-        ? "px-4 py-2 rounded-xl bg-sleeper-teal text-black font-bold whitespace-nowrap"
-        : "px-4 py-2 rounded-xl bg-gray-900 border border-gray-800 text-gray-300 hover:bg-gray-800 font-bold whitespace-nowrap";
+        ? "px-4 py-2 rounded-xl font-bold whitespace-nowrap madden-tab madden-tab-active"
+        : "px-4 py-2 rounded-xl font-bold whitespace-nowrap madden-tab text-gray-300";
       btn.textContent = name;
       btn.onclick = function() {
         self.ui.historySelectedRosterId = r.roster_id;
@@ -7154,7 +7453,7 @@ renderFA: function() {
     startersHeader.className = "flex items-center justify-between pb-2 border-b border-gray-800 mb-4";
     startersHeader.innerHTML = 
       '<div class="flex items-center gap-2">' +
-        '<div class="w-2 h-2 rounded-full bg-sleeper-teal"></div>' +
+        '<div class="w-2 h-2 rounded-full bg-accent"></div>' +
         '<span class="text-xs font-bold text-gray-300 uppercase tracking-wider">Active Starters</span>' +
       '</div>' +
       '<div class="text-[10px] text-gray-500 font-mono">Week ' + week + ' lineup</div>';
@@ -7256,7 +7555,7 @@ renderFA: function() {
       section.appendChild(header);
 
       var grid = document.createElement("div");
-      grid.className = "grid grid-cols-1 lg:grid-cols-2 gap-2";
+      grid.className = "ui2k-card-grid";
       arr.forEach(function(item) { grid.appendChild(renderHistoryCard(item, true)); });
       section.appendChild(grid);
 
@@ -7279,7 +7578,7 @@ renderFA: function() {
       list.appendChild(benchHeader);
 
       var benchGrid = document.createElement("div");
-      benchGrid.className = "grid grid-cols-1 lg:grid-cols-2 gap-2";
+      benchGrid.className = "ui2k-card-grid";
 
       bench.forEach(function(pid) {
         if (!pid || pid === "0") return;
@@ -7992,7 +8291,7 @@ actualStarters: actualStarters,
       section.appendChild(header);
 
       var grid = document.createElement("div");
-      grid.className = "grid grid-cols-1 lg:grid-cols-2 gap-3";
+      grid.className = "ui2k-card-grid";
       arr.map(makeItem).forEach(function(item) { grid.appendChild(renderCard(item, false)); });
 
       section.appendChild(grid);
@@ -8014,7 +8313,7 @@ actualStarters: actualStarters,
       section.appendChild(header);
 
       var grid = document.createElement("div");
-      grid.className = "grid grid-cols-1 lg:grid-cols-2 gap-3";
+      grid.className = "ui2k-card-grid";
       arr.map(makeItem).forEach(function(item) { grid.appendChild(renderCard(item, false)); });
 
       section.appendChild(grid);
@@ -8030,7 +8329,7 @@ actualStarters: actualStarters,
       benchSection.appendChild(bh);
 
       var bgrid = document.createElement("div");
-      bgrid.className = "grid grid-cols-1 lg:grid-cols-2 gap-3";
+      bgrid.className = "ui2k-card-grid";
       data.benchPids
         .map(function(pid){ return { pid: pid, slot: "BN", isStarter: false }; })
         .map(makeItem)
@@ -8110,7 +8409,7 @@ var fmtPid = function(pid) {
         '<div class="grid grid-cols-4 gap-3 mt-4">' +
           '<div class="bg-gray-900/50 border border-gray-800 rounded-xl p-3">' +
             '<div class="text-[10px] text-gray-500 font-mono">Avg MU</div>' +
-            '<div class="text-lg font-black text-sleeper-teal">' + data.bestMuAvg.toFixed(1) + '</div>' +
+            '<div class="text-lg font-black text-accent">' + data.bestMuAvg.toFixed(1) + '</div>' +
           '</div>' +
           '<div class="bg-gray-900/50 border border-gray-800 rounded-xl p-3">' +
             '<div class="text-[10px] text-gray-500 font-mono">Used Proj Score</div>' +
@@ -8122,7 +8421,7 @@ var fmtPid = function(pid) {
           '</div>' +
           '<div class="bg-gray-900/50 border border-gray-800 rounded-xl p-3">' +
             '<div class="text-[10px] text-gray-500 font-mono">Delta (Opt − Used)</div>' +
-            '<div class="text-lg font-black ' + (deltaAct === null ? 'text-gray-500' : (deltaAct >= 0 ? 'text-sleeper-teal' : 'text-red-400')) + '">' +
+            '<div class="text-lg font-black ' + (deltaAct === null ? 'text-gray-500' : (deltaAct >= 0 ? 'text-accent' : 'text-red-400')) + '">' +
               (deltaAct === null ? '—' : ((deltaAct >= 0 ? '+' : '') + deltaAct.toFixed(2))) +
             '</div>' +
           '</div>' +
@@ -8258,7 +8557,7 @@ var fmtPid = function(pid) {
       consistentSorted.slice(0, 5).forEach(function(t, i) {
         var item = document.createElement('div');
         item.className = 'flex items-center justify-between p-2 bg-gray-950 rounded-lg';
-        item.innerHTML = '<span class="text-white text-sm">' + (i + 1) + '. ' + t.name + '</span><span class="text-sleeper-teal font-mono text-sm">±' + t.stddev.toFixed(1) + '</span>';
+        item.innerHTML = '<span class="text-white text-sm">' + (i + 1) + '. ' + t.name + '</span><span class="text-accent font-mono text-sm">±' + t.stddev.toFixed(1) + '</span>';
         consistentContainer.appendChild(item);
       });
     }
