@@ -417,6 +417,27 @@
     .player-card.tier-darkmatter { border-left: 3px solid #581c87; }
     .player-card.tier-goat { border-left: 3px solid #d97706; }
 
+    /* Gem Glow Animation */
+    @keyframes gemPulse {
+      0% { box-shadow: 0 0 5px var(--gem-color), 0 0 10px var(--gem-color); }
+      50% { box-shadow: 0 0 20px var(--gem-color), 0 0 35px var(--gem-color); }
+      100% { box-shadow: 0 0 5px var(--gem-color), 0 0 10px var(--gem-color); }
+    }
+
+    .player-card.gem-tier-high .gem-side {
+      animation: gemPulse 3s infinite ease-in-out;
+      border-color: rgba(255, 255, 255, 0.4);
+      z-index: 10;
+    }
+
+    .player-card.tier-sapphire { --gem-color: #0f52ba; }
+    .player-card.tier-ruby { --gem-color: #e0115f; }
+    .player-card.tier-amethyst { --gem-color: #9966cc; }
+    .player-card.tier-diamond { --gem-color: #b9f2ff; }
+    .player-card.tier-pinkdiamond { --gem-color: #ff69b4; }
+    .player-card.tier-darkmatter { --gem-color: #ffffff; }
+    .player-card.tier-goat { --gem-color: #ffd700; }
+
 </style>
 </head>
 
@@ -1532,11 +1553,12 @@ playersById: {},
       else if (vs >= 280) tierClass = "tier-silver";
       else tierClass = "tier-bronze";
     }
+    var isHighTier = (valueScore != null && Math.round(valueScore) >= 500);
 
     // --- card element ---
     var card = document.createElement("div");
     var border = item.isOut ? "border-red-900/50" : "";
-    card.className = "player-card card-hover rounded-lg cursor-pointer w-full min-w-[400px] max-w-[520px] h-[160px] overflow-hidden " + tierClass + (item.isOut ? " opacity-70" : "");
+    card.className = "player-card card-hover rounded-lg cursor-pointer w-full min-w-[400px] max-w-[520px] h-[160px] overflow-hidden " + tierClass + (isHighTier ? " gem-tier-high" : "") + (item.isOut ? " opacity-70" : "");
     card.setAttribute("data-pid", pid);
     card.onclick = function() { self.openPlayerModal(pid); };
 
@@ -1569,7 +1591,7 @@ playersById: {},
           '</div>' +
         '</div>' +
         // RIGHT DETAILS PANEL
-        '<div class="flex-1 min-w-0 rounded-2xl border border-white/5 bg-[#0f111a] p-2 flex flex-col justify-between">' +
+        '<div class="gem-side flex-1 min-w-0 rounded-2xl border border-white/5 bg-[#0f111a] p-2 flex flex-col justify-between">' +
           '<div class="flex items-start justify-between gap-2 border-b border-white/5 pb-2">' +
             '<div class="flex items-start gap-4">' +
               '<div class="text-[9px] uppercase tracking-widest text-gray-400 font-bold">' +
@@ -4600,17 +4622,36 @@ self.data.playerDeltaRanks = deltaRanks;
       return out;
     };
 
-    // Position scarcity multipliers (TE/QB more valuable due to fewer elite options)
-    var positionScarcity = {
-      "TE": 1.12,
-      "QB": 1.08,
-      "RB": 1.04,
+    // CONFIGURATION: Weights & Multipliers
+    var VALUE_WEIGHTS = {
+      recent_games: 0.25,    // L4 Trend
+      snap_share: 0.20,      // Volume/Opportunity
+      ppg_percentile: 0.15,  // Dominance
+      consistency: 0.10,     // Reliability
+      delta_proj: 0.10,      // Efficiency vs Projection
+      boom_bust: 0.10,       // Ceiling
+      total_points: 0.05,    // Health/Past
+      age: 0.05              // Dynasty Tie-breaker
+    };
+
+    var POS_MULTIPLIERS = {
+      "TE": 1.45,
+      "RB": 1.30,
+      "QB": 1.15,
       "WR": 1.00,
       "K": 1.00,
       "DEF": 1.00,
       "DL": 1.00,
       "LB": 1.00,
       "DB": 1.00
+    };
+
+    // HELPER: Normalize stats to 0-100 scale
+    var normalize = function(val, min, max) {
+      if (val === undefined || val === null || !isFinite(val)) return 0;
+      if (max === min) return 0;
+      var n = (val - min) / (max - min);
+      return Math.max(0, Math.min(1, n)) * 100;
     };
 
     var values = {}; // pid -> {score, breakdown}
@@ -4622,7 +4663,7 @@ self.data.playerDeltaRanks = deltaRanks;
       var pctL4    = buildPercentiles(pids, function(m){ return m.l4; });
       var pctDlt   = buildPercentiles(pids, function(m){ return m.deltaAvg; });
 
-      var scarcityMult = positionScarcity[group] || 1.00;
+      var positionMult = POS_MULTIPLIERS[group] || 1.00;
 
       for (var i2 = 0; i2 < pids.length; i2++) {
         var pid = pids[i2];
@@ -4634,22 +4675,29 @@ self.data.playerDeltaRanks = deltaRanks;
         var l4P    = (pctL4[pid]  !== undefined) ? pctL4[pid]  : 0.5;
         var dltP   = (pctDlt[pid] !== undefined) ? pctDlt[pid] : 0.5;
 
-        // Weighted season value (0..1)
-        // Emphasizes: consistency, PPG, total points, boom/bust, delta, snap share
-        // De-emphasizes: recent games (L4)
-        var raw =
-          0.28 * ppgP +
-          0.15 * totalP +
-          0.16 * m3.consistency +
-          0.12 * m3.bbAdj +
-          0.10 * dltP +
-          0.08 * m3.snapAdj +
-          0.05 * l4P +
-          0.03 * m3.ageAdj +
-          0.03 * (scarcityMult - 1.0) * 5; // scarcity bonus (0..0.03 range for TE)
+        var scores = {
+          recent: normalize(m3.l4, 0, 30),
+          snap: (m3.snap != null && isFinite(m3.snap)) ? m3.snap : 0,
+          ppg: ppgP * 100,
+          const: m3.consistency * 100,
+          delta: normalize(m3.deltaAvg, -5, 10),
+          boom: m3.bbAdj * 100,
+          total: totalP * 100,
+          age: normalize((group === "QB" ? 40 : 30) - m3.age, 0, (group === "QB" ? 15 : 10))
+        };
 
-        raw = self.clamp01(raw);
-        var score = Math.round(raw * 1000);
+        var weightedScore =
+          (scores.recent * VALUE_WEIGHTS.recent_games) +
+          (scores.snap * VALUE_WEIGHTS.snap_share) +
+          (scores.ppg * VALUE_WEIGHTS.ppg_percentile) +
+          (scores.const * VALUE_WEIGHTS.consistency) +
+          (scores.delta * VALUE_WEIGHTS.delta_proj) +
+          (scores.boom * VALUE_WEIGHTS.boom_bust) +
+          (scores.total * VALUE_WEIGHTS.total_points) +
+          (scores.age * VALUE_WEIGHTS.age);
+
+        var finalValue = weightedScore * positionMult;
+        var score = Math.round(Math.min(finalValue * 10, 999));
 
         m3.value = score;
         values[pid] = {
@@ -4666,7 +4714,7 @@ self.data.playerDeltaRanks = deltaRanks;
             deltaAvg: m3.deltaAvg,
             consistency: m3.consistency,
             age: m3.age,
-            scarcity: scarcityMult
+            scarcity: positionMult
           }
         };
       }
