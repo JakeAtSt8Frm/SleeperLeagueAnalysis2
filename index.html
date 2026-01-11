@@ -28,20 +28,7 @@
               gold: '#FFD700',
               goldDark: '#C9A227',
               red: '#E31837'
-            },
-            myteam: {
-              bronze: '#CD7F32',
-              silver: '#C0C0C0',
-              gold: '#FFD700',
-              sapphire: '#0F52BA',
-              ruby: '#E0115F',
-              amethyst: '#9966CC',
-              diamond: '#B9F2FF',
-              pinkdiamond: '#FF69B4',
-              darkmatter: '#1a0033',
-              goat: '#FFD700'
-            }
-          }
+            }}
         }
       }
     }
@@ -90,7 +77,7 @@
     .ui2k-card-grid{
       display:grid;
       grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-      gap: 10px;
+      gap: 1rem;
       align-items: start;
       justify-items: center;
       width: 100%;
@@ -295,11 +282,11 @@
     .ui2k-card-grid{
       display:grid;
       grid-template-columns: repeat(2, minmax(420px, 1fr));
-      gap: 10px;
+      gap: 1rem;
       align-items: start;
       justify-items: center;
       width: 100%;
-      max-width: calc(2 * 540px + 10px);
+      max-width: calc(2 * 540px + 1rem);
       margin-inline: auto;
     }
     @media (max-width: 960px){
@@ -324,120 +311,6 @@
     .text-accent{
       color: var(--accent) !important;
     }
-
-    /* ===========================
-       GEM TIER BADGES (Simplified)
-       =========================== */
-    .myteam-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 3px;
-      padding: 2px 6px;
-      border-radius: 3px;
-      font-family: inherit;
-      font-size: 11px;
-      font-weight: 600;
-    }
-
-    .myteam-tier {
-      font-size: 9px;
-      opacity: 0.8;
-    }
-
-    /* Bronze */
-    .myteam-badge-bronze {
-      background: #92400e;
-      color: #fef3c7;
-    }
-
-    /* Silver */
-    .myteam-badge-silver {
-      background: #6b7280;
-      color: #f9fafb;
-    }
-
-    /* Gold */
-    .myteam-badge-gold {
-      background: #b45309;
-      color: #fef3c7;
-    }
-
-    /* Sapphire */
-    .myteam-badge-sapphire {
-      background: #1d4ed8;
-      color: #dbeafe;
-    }
-
-    /* Ruby */
-    .myteam-badge-ruby {
-      background: #be123c;
-      color: #fce7f3;
-    }
-
-    /* Amethyst */
-    .myteam-badge-amethyst {
-      background: #7c3aed;
-      color: #ede9fe;
-    }
-
-    /* Diamond */
-    .myteam-badge-diamond {
-      background: #0891b2;
-      color: #ecfeff;
-    }
-
-    /* Pink Diamond */
-    .myteam-badge-pinkdiamond {
-      background: #db2777;
-      color: #fce7f3;
-    }
-
-    /* Dark Matter */
-    .myteam-badge-darkmatter {
-      background: #581c87;
-      color: #f3e8ff;
-    }
-
-    /* G.O.A.T */
-    .myteam-badge-goat {
-      background: linear-gradient(135deg, #b45309 0%, #d97706 50%, #b45309 100%);
-      color: #fef3c7;
-      font-weight: 700;
-    }
-
-    /* Card tier borders - subtle colored left border */
-    .player-card.tier-bronze { border-left: 3px solid #92400e; }
-    .player-card.tier-silver { border-left: 3px solid #6b7280; }
-    .player-card.tier-gold { border-left: 3px solid #b45309; }
-    .player-card.tier-sapphire { border-left: 3px solid #1d4ed8; }
-    .player-card.tier-ruby { border-left: 3px solid #be123c; }
-    .player-card.tier-amethyst { border-left: 3px solid #7c3aed; }
-    .player-card.tier-diamond { border-left: 3px solid #0891b2; }
-    .player-card.tier-pinkdiamond { border-left: 3px solid #db2777; }
-    .player-card.tier-darkmatter { border-left: 3px solid #581c87; }
-    .player-card.tier-goat { border-left: 3px solid #d97706; }
-
-    /* Gem Glow Animation */
-    @keyframes gemPulse {
-      0% { box-shadow: 0 0 5px var(--gem-color), 0 0 10px var(--gem-color); }
-      50% { box-shadow: 0 0 20px var(--gem-color), 0 0 35px var(--gem-color); }
-      100% { box-shadow: 0 0 5px var(--gem-color), 0 0 10px var(--gem-color); }
-    }
-
-    .player-card.gem-tier-high .gem-side {
-      animation: gemPulse 3s infinite ease-in-out;
-      border-color: rgba(255, 255, 255, 0.4);
-      z-index: 10;
-    }
-
-    .player-card.tier-sapphire { --gem-color: #0f52ba; }
-    .player-card.tier-ruby { --gem-color: #e0115f; }
-    .player-card.tier-amethyst { --gem-color: #9966cc; }
-    .player-card.tier-diamond { --gem-color: #b9f2ff; }
-    .player-card.tier-pinkdiamond { --gem-color: #ff69b4; }
-    .player-card.tier-darkmatter { --gem-color: #ffffff; }
-    .player-card.tier-goat { --gem-color: #ffd700; }
-
 </style>
 </head>
 
@@ -474,18 +347,18 @@
     <!-- Sidebar -->
     <aside class="w-20 border-r border-gray-800/50 flex flex-col items-center py-7 gap-3 shrink-0 ui2k-sidebar">
       <div class="flex flex-col items-center gap-1">
-        <button class="w-10 h-10 rounded-lg text-gray-400 font-medium text-[9px] ui2k-navbtn" id="btnTabTeams" title="Current Rosters">ROST</button>
-        <button class="w-10 h-10 rounded-lg text-gray-500 font-medium text-[9px] ui2k-navbtn" id="btnTabOptimal" title="Optimal Lineups">OPT</button>
-        <button class="w-10 h-10 rounded-lg text-gray-500 font-medium text-[9px] ui2k-navbtn" id="btnTabHistory" title="Historical Rosters">HIST</button>
+        <button class="w-20 h-10 rounded-lg text-gray-400 font-medium text-[9px] ui2k-navbtn" id="btnTabTeams" title="Current Rosters">ROST</button>
+        <button class="w-20 h-10 rounded-lg text-gray-500 font-medium text-[9px] ui2k-navbtn" id="btnTabOptimal" title="Optimal Lineups">OPT</button>
+        <button class="w-20 h-10 rounded-lg text-gray-500 font-medium text-[9px] ui2k-navbtn" id="btnTabHistory" title="Historical Rosters">HIST</button>
       </div>
 
       <div class="w-8 h-px my-2 bg-gray-800"></div>
 
       <div class="flex flex-col items-center gap-1">
-        <button class="w-10 h-10 rounded-lg text-gray-500 font-medium text-[9px] ui2k-navbtn" id="btnTabMatchups" title="Weekly Matchups">VS</button>
-        <button class="w-10 h-10 rounded-lg text-gray-500 font-medium text-[9px] ui2k-navbtn" id="btnTabFA" title="Free Agents">FA</button>
-        <button class="w-10 h-10 rounded-lg text-gray-500 font-medium text-[9px] ui2k-navbtn" id="btnTabTrades" title="Recent Trades">TRD</button>
-        <button class="w-10 h-10 rounded-lg text-gray-500 font-medium text-[9px] ui2k-navbtn" id="btnTabDef" title="NFL Defense Rankings">DEF</button>
+        <button class="w-20 h-10 rounded-lg text-gray-500 font-medium text-[9px] ui2k-navbtn" id="btnTabMatchups" title="Weekly Matchups">VS</button>
+        <button class="w-20 h-10 rounded-lg text-gray-500 font-medium text-[9px] ui2k-navbtn" id="btnTabFA" title="Free Agents">FA</button>
+        <button class="w-20 h-10 rounded-lg text-gray-500 font-medium text-[9px] ui2k-navbtn" id="btnTabTrades" title="Recent Trades">TRD</button>
+        <button class="w-20 h-10 rounded-lg text-gray-500 font-medium text-[9px] ui2k-navbtn" id="btnTabDef" title="NFL Defense Rankings">DEF</button>
       </div>
       
       <div class="w-8 h-px my-2 bg-gray-800"></div>
@@ -502,7 +375,7 @@
     <!-- Main -->
     <main class="flex-1 overflow-hidden relative bg-gradient-to-br from-gray-950 via-gray-950 to-gray-900/50 ui2k-main">
       <!-- Tabs: Teams -->
-      <section id="viewTeams" class="h-full flex flex-col p-5 gap-3">
+      <section id="viewTeams" class="h-full flex flex-col p-4 gap-2">
         <div class="flex items-end justify-between gap-4">
           <div>
             <div class="text-2xl font-bold text-white tracking-tight">CURRENT ROSTERS</div>
@@ -1538,27 +1411,10 @@ playersById: {},
     var teamLogo = self.teamLogoUrl(team);
     var fallback = teamLogo ? ("this.onerror=null;this.src='" + teamLogo + "';") : "this.onerror=null;";
 
-    // --- tier class based on value score (2K MyTeam style, 0-1000 scale) ---
-    var tierClass = "";
-    if (valueScore != null) {
-      var vs = Math.round(valueScore);
-      if (vs >= 950) tierClass = "tier-goat";
-      else if (vs >= 900) tierClass = "tier-darkmatter";
-      else if (vs >= 850) tierClass = "tier-pinkdiamond";
-      else if (vs >= 780) tierClass = "tier-diamond";
-      else if (vs >= 700) tierClass = "tier-amethyst";
-      else if (vs >= 600) tierClass = "tier-ruby";
-      else if (vs >= 500) tierClass = "tier-sapphire";
-      else if (vs >= 400) tierClass = "tier-gold";
-      else if (vs >= 280) tierClass = "tier-silver";
-      else tierClass = "tier-bronze";
-    }
-    var isHighTier = (valueScore != null && Math.round(valueScore) >= 500);
-
     // --- card element ---
     var card = document.createElement("div");
     var border = item.isOut ? "border-red-900/50" : "";
-    card.className = "player-card card-hover rounded-lg cursor-pointer w-full min-w-[400px] max-w-[520px] h-[160px] overflow-hidden " + tierClass + (isHighTier ? " gem-tier-high" : "") + (item.isOut ? " opacity-70" : "");
+    card.className = "player-card card-hover rounded-lg cursor-pointer w-full min-w-[400px] max-w-[520px] h-[160px] overflow-hidden " + (item.isOut ? " opacity-70" : "");
     card.setAttribute("data-pid", pid);
     card.onclick = function() { self.openPlayerModal(pid); };
 
@@ -1591,7 +1447,7 @@ playersById: {},
           '</div>' +
         '</div>' +
         // RIGHT DETAILS PANEL
-        '<div class="gem-side flex-1 min-w-0 rounded-2xl border border-white/5 bg-[#0f111a] p-2 flex flex-col justify-between">' +
+        '<div class="flex-1 min-w-0 rounded-2xl border border-white/5 bg-[#0f111a] p-2 flex flex-col justify-between">' +
           '<div class="flex items-start justify-between gap-2 border-b border-white/5 pb-2">' +
             '<div class="flex items-start gap-4">' +
               '<div class="text-[9px] uppercase tracking-widest text-gray-400 font-bold">' +
@@ -4622,36 +4478,17 @@ self.data.playerDeltaRanks = deltaRanks;
       return out;
     };
 
-    // CONFIGURATION: Weights & Multipliers
-    var VALUE_WEIGHTS = {
-      recent_games: 0.25,    // L4 Trend
-      snap_share: 0.20,      // Volume/Opportunity
-      ppg_percentile: 0.15,  // Dominance
-      consistency: 0.10,     // Reliability
-      delta_proj: 0.10,      // Efficiency vs Projection
-      boom_bust: 0.10,       // Ceiling
-      total_points: 0.05,    // Health/Past
-      age: 0.05              // Dynasty Tie-breaker
-    };
-
-    var POS_MULTIPLIERS = {
-      "TE": 1.45,
-      "RB": 1.30,
-      "QB": 1.15,
+    // Position scarcity multipliers (TE/QB more valuable due to fewer elite options)
+    var positionScarcity = {
+      "TE": 1.12,
+      "QB": 1.08,
+      "RB": 1.04,
       "WR": 1.00,
       "K": 1.00,
       "DEF": 1.00,
       "DL": 1.00,
       "LB": 1.00,
       "DB": 1.00
-    };
-
-    // HELPER: Normalize stats to 0-100 scale
-    var normalize = function(val, min, max) {
-      if (val === undefined || val === null || !isFinite(val)) return 0;
-      if (max === min) return 0;
-      var n = (val - min) / (max - min);
-      return Math.max(0, Math.min(1, n)) * 100;
     };
 
     var values = {}; // pid -> {score, breakdown}
@@ -4663,7 +4500,7 @@ self.data.playerDeltaRanks = deltaRanks;
       var pctL4    = buildPercentiles(pids, function(m){ return m.l4; });
       var pctDlt   = buildPercentiles(pids, function(m){ return m.deltaAvg; });
 
-      var positionMult = POS_MULTIPLIERS[group] || 1.00;
+      var scarcityMult = positionScarcity[group] || 1.00;
 
       for (var i2 = 0; i2 < pids.length; i2++) {
         var pid = pids[i2];
@@ -4675,29 +4512,22 @@ self.data.playerDeltaRanks = deltaRanks;
         var l4P    = (pctL4[pid]  !== undefined) ? pctL4[pid]  : 0.5;
         var dltP   = (pctDlt[pid] !== undefined) ? pctDlt[pid] : 0.5;
 
-        var scores = {
-          recent: normalize(m3.l4, 0, 30),
-          snap: (m3.snap != null && isFinite(m3.snap)) ? m3.snap : 0,
-          ppg: ppgP * 100,
-          const: m3.consistency * 100,
-          delta: normalize(m3.deltaAvg, -5, 10),
-          boom: m3.bbAdj * 100,
-          total: totalP * 100,
-          age: normalize((group === "QB" ? 40 : 30) - m3.age, 0, (group === "QB" ? 15 : 10))
-        };
+        // Weighted season value (0..1)
+        // Emphasizes: consistency, PPG, total points, boom/bust, delta, snap share
+        // De-emphasizes: recent games (L4)
+        var raw =
+          0.28 * ppgP +
+          0.15 * totalP +
+          0.16 * m3.consistency +
+          0.12 * m3.bbAdj +
+          0.10 * dltP +
+          0.08 * m3.snapAdj +
+          0.05 * l4P +
+          0.03 * m3.ageAdj +
+          0.03 * (scarcityMult - 1.0) * 5; // scarcity bonus (0..0.03 range for TE)
 
-        var weightedScore =
-          (scores.recent * VALUE_WEIGHTS.recent_games) +
-          (scores.snap * VALUE_WEIGHTS.snap_share) +
-          (scores.ppg * VALUE_WEIGHTS.ppg_percentile) +
-          (scores.const * VALUE_WEIGHTS.consistency) +
-          (scores.delta * VALUE_WEIGHTS.delta_proj) +
-          (scores.boom * VALUE_WEIGHTS.boom_bust) +
-          (scores.total * VALUE_WEIGHTS.total_points) +
-          (scores.age * VALUE_WEIGHTS.age);
-
-        var finalValue = weightedScore * positionMult;
-        var score = Math.round(Math.min(finalValue * 10, 999));
+        raw = self.clamp01(raw);
+        var score = Math.round(raw * 1000);
 
         m3.value = score;
         values[pid] = {
@@ -4714,7 +4544,7 @@ self.data.playerDeltaRanks = deltaRanks;
             deltaAvg: m3.deltaAvg,
             consistency: m3.consistency,
             age: m3.age,
-            scarcity: positionMult
+            scarcity: scarcityMult
           }
         };
       }
@@ -4804,65 +4634,6 @@ getPlayerDeltaRank: function(pid) {
   pid = String(pid);
   return (this.data.playerDeltaRanks && this.data.playerDeltaRanks[pid]) ? this.data.playerDeltaRanks[pid] : null;
 },
-
-  // HTML badge for value score (2K MyTeam style, 0-1000 scale).
-  valueBadgeHtml: function(score) {
-    if (!isFinite(score)) return "";
-    var s = Math.round(score);
-    var tier, cls;
-    
-    if (s >= 950) {
-      tier = "GOAT";
-      cls = "myteam-badge-goat";
-    } else if (s >= 900) {
-      tier = "DM";
-      cls = "myteam-badge-darkmatter";
-    } else if (s >= 850) {
-      tier = "PD";
-      cls = "myteam-badge-pinkdiamond";
-    } else if (s >= 780) {
-      tier = "💎";
-      cls = "myteam-badge-diamond";
-    } else if (s >= 700) {
-      tier = "AMY";
-      cls = "myteam-badge-amethyst";
-    } else if (s >= 600) {
-      tier = "RBY";
-      cls = "myteam-badge-ruby";
-    } else if (s >= 500) {
-      tier = "SPH";
-      cls = "myteam-badge-sapphire";
-    } else if (s >= 400) {
-      tier = "GLD";
-      cls = "myteam-badge-gold";
-    } else if (s >= 280) {
-      tier = "SLV";
-      cls = "myteam-badge-silver";
-    } else {
-      tier = "BRZ";
-      cls = "myteam-badge-bronze";
-    }
-    
-    return '<span class="myteam-badge ' + cls + '">' + s + ' <span class="myteam-tier">' + tier + '</span></span>';
-  },
-
-  // Get tier info for a score (2K MyTeam style, 0-1000 scale)
-  getTierInfo: function(score) {
-    if (!isFinite(score)) return { tier: "BRZ", name: "Bronze", color: "#CD7F32" };
-    var s = Math.round(score);
-    
-    if (s >= 950) return { tier: "GOAT", name: "G.O.A.T", color: "#FFD700", glow: "rainbow" };
-    if (s >= 900) return { tier: "DM", name: "Dark Matter", color: "#1a0033", glow: "#9400D3" };
-    if (s >= 850) return { tier: "PD", name: "Pink Diamond", color: "#FF69B4", glow: "#FF1493" };
-    if (s >= 780) return { tier: "DIA", name: "Diamond", color: "#B9F2FF", glow: "#00BFFF" };
-    if (s >= 700) return { tier: "AMY", name: "Amethyst", color: "#9966CC", glow: "#8B008B" };
-    if (s >= 600) return { tier: "RBY", name: "Ruby", color: "#E0115F", glow: "#DC143C" };
-    if (s >= 500) return { tier: "SPH", name: "Sapphire", color: "#0F52BA", glow: "#1E90FF" };
-    if (s >= 400) return { tier: "GLD", name: "Gold", color: "#FFD700", glow: "#FFA500" };
-    if (s >= 280) return { tier: "SLV", name: "Silver", color: "#C0C0C0", glow: "#A9A9A9" };
-    return { tier: "BRZ", name: "Bronze", color: "#CD7F32", glow: "#8B4513" };
-  },
-
   openMatchupModal: function(matchupIdLabel, rosterAId, rosterBId) {
     var self = this;
     var week = String(this.ui.selectedWeek);
@@ -5485,8 +5256,8 @@ getPlayerDeltaRank: function(pid) {
         if (!el) return;
         var baseSize = "text-[10px]";
         el.className = v === view
-          ? "w-11 h-11 rounded-xl ui2k-navbtn nav-btn-active font-bold " + baseSize
-          : "w-11 h-11 rounded-xl ui2k-navbtn bg-gray-800/60 text-gray-400 hover:bg-gray-700 hover:text-white font-bold " + baseSize;
+          ? "w-20 h-11 rounded-xl ui2k-navbtn nav-btn-active font-bold " + baseSize
+          : "w-20 h-11 rounded-xl ui2k-navbtn bg-gray-800/60 text-gray-400 hover:bg-gray-700 hover:text-white font-bold " + baseSize;
       });
     };
 
