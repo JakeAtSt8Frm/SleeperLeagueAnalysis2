@@ -1517,10 +1517,18 @@ playersById: {},
 
 
   scoreFromStats: function(statsObj, playerId) {
-    if (!statsObj) return 0;
+    if (!statsObj || typeof statsObj !== "object") return 0;
     var s = (this.data.league && this.data.league.scoring_settings) || {};
+    if (this._scoringSettings !== s) {
+      this._scoringSettings = s;
+      this._scoringEntries = Object.entries(s);
+      this._scoreCache = new WeakMap();
+    }
+    if (this._scoreCache && this._scoreCache.has(statsObj)) {
+      return this._scoreCache.get(statsObj);
+    }
     var total = 0;
-    var entries = Object.entries(s);
+    var entries = this._scoringEntries || Object.entries(s);
     for (var i = 0; i < entries.length; i++) {
       var k = entries[i][0];
       var mult = entries[i][1];
@@ -1528,7 +1536,9 @@ playersById: {},
       var v = statsObj[k];
       if (typeof v === "number") total += v * mult;
     }
-    return Math.round((total + Number.EPSILON) * 100) / 100;
+    total = Math.round((total + Number.EPSILON) * 100) / 100;
+    if (this._scoreCache) this._scoreCache.set(statsObj, total);
+    return total;
   },
 
   boomBustStatus: function(proj, actual, hasPlayed, muScore) {
@@ -4296,7 +4306,7 @@ renderLineupInsights: function() {
 
     var initAgg = function() {
       return {
-        total: 0, games: 0, ppgSum: 0, ppgGames: 0,
+        total: 0, games: 0,
         lastActs: [],
         boom: 0, bust: 0, within: 0, bbN: 0,
         deltaSum: 0, deltaN: 0,
@@ -4334,8 +4344,6 @@ renderLineupInsights: function() {
         var projStats = projMap[pid] || {};
         var proj = self.scoreFromStats(projStats, pid);
         if (proj > 0) {
-          a.ppgSum += act;
-          a.ppgGames += 1;
           a.bbN += 1;
           a.deltaSum += (act - proj);
           a.deltaN += 1;
@@ -4367,7 +4375,7 @@ renderLineupInsights: function() {
       var group = self.positionGroupForPlayer(p);
       if (!group) continue;
 
-      var ppg = (a2.ppgGames ? (a2.ppgSum / a2.ppgGames) : (a2.games ? (a2.total / a2.games) : 0));
+      var ppg = (a2.games ? (a2.total / a2.games) : 0);
       var l4 = a2.lastActs.length ? (a2.lastActs.reduce(function(x,y){return x+y;},0) / a2.lastActs.length) : ppg;
 
       var stdev = (a2.games > 1) ? Math.sqrt(a2.m2 / (a2.games - 1)) : 0;
@@ -4389,7 +4397,7 @@ renderLineupInsights: function() {
       metrics[pid2] = {
         pid: pid2, group: group,
         games: a2.games,
-        ppgGames: a2.ppgGames || 0,
+        ppgGames: a2.games || 0,
         total: a2.total,
         ppg: ppg,
         l4: l4,
