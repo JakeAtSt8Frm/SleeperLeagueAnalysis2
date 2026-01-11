@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sleeper League Analytics</title>
 
+  <!-- Preconnect for faster Sleeper API handshakes -->
+  <link rel="preconnect" href="https://api.sleeper.app" crossorigin>
+  <link rel="preconnect" href="https://api.sleeper.com" crossorigin>
+  <link rel="dns-prefetch" href="https://api.sleeper.app">
+  <link rel="dns-prefetch" href="https://api.sleeper.com">
+
   <!-- Chart.js 3.x for broader browser compatibility -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
 
@@ -46,6 +52,10 @@
     .glow-majorBoom{box-shadow:0 0 6px rgba(211,3,252,.4)}
     .glow-majorBust{box-shadow:0 0 6px rgba(249,115,22,.4)}
     .bb-pill{display:inline-block;white-space:nowrap;min-width:84px;text-align:center;font-size:9px;line-height:1.1;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;padding:0.25rem 0.625rem;border-radius:0.5rem}
+    .gpu-accelerated{will-change:transform;transform:translateZ(0)}
+    .skeleton{position:relative;overflow:hidden;background:rgba(148,163,184,0.08)}
+    .skeleton::after{content:"";position:absolute;inset:0;transform:translateX(-100%);background:linear-gradient(90deg,transparent,rgba(148,163,184,0.2),transparent);animation:skeleton-loading 1.2s infinite}
+    @keyframes skeleton-loading{100%{transform:translateX(100%)}}
 
     /* Sidebar Active States */
     .nav-btn-active {
@@ -58,6 +68,10 @@
     /* Card Hover */
     .card-hover:hover {
       border-color: rgba(16,185,129,0.3);
+    }
+    .card-hover {
+      will-change: transform;
+      transform: translateZ(0);
     }
     
     /* Backgrounds */
@@ -425,11 +439,11 @@
 
       <!-- Tabs: Matchups -->
       <section id="viewMatchups" class="h-full hidden flex flex-col p-6 gap-4">
-        <div class="flex items-end justify-between gap-4">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
             <div class="text-2xl font-bold text-white tracking-tight">MATCHUPS</div>
           </div>
-          <div class="flex items-center gap-2 bg-gray-800/50 rounded-lg px-3 py-1.5 border border-accent/30 ui2k-panel">
+          <div class="flex items-center gap-2 bg-gray-800/50 rounded-lg px-3 py-1.5 border border-accent/30 ui2k-panel w-full sm:w-auto justify-between sm:justify-start">
             <span class="text-[10px] font-semibold text-accent uppercase tracking-wider" >Week</span>
             <select id="matchupsWeekSelect" class="bg-transparent border-none text-sm text-accent font-medium focus:outline-none cursor-pointer"></select>
           </div>
@@ -439,10 +453,17 @@
 
       <!-- Tabs: Free Agents -->
       <section id="viewFA" class="h-full hidden flex flex-col p-6 gap-4">
-        <div class="flex items-end justify-between gap-4">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
             <div class="text-2xl font-bold text-white tracking-tight">FREE AGENTS</div>
             <div class="text-sm text-accent" >TOP UNROSTERED PLAYERS BY SEASON TOTAL</div>
+          </div>
+          <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+            <input id="faSearch" placeholder="Search free agents…" class="bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-sm text-white w-full sm:w-56" />
+            <label class="flex items-center gap-2 text-xs text-gray-300 bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 w-full sm:w-auto">
+              <input id="faActiveOnly" type="checkbox" class="accent-accent">
+              Active only
+            </label>
           </div>
         </div>
 
@@ -476,22 +497,22 @@
 
       <!-- Tabs: Trades -->
       <section id="viewTrades" class="h-full flex flex-col p-3 gap-2 hidden">
-        <div class="flex items-end justify-between gap-4">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
             <div class="text-2xl font-bold text-white">TRANSACTIONS</div>
             <div class="text-sm text-accent" >COMPLETED TRADES & MOVES</div>
           </div>
-          <div class="flex items-center gap-2">
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
             <div class="text-xs text-accent font-bold" id="tradeWeekLabel" >Week —</div>
-            <input id="tradeSearch" placeholder="Search player/team…" class="bg-gray-900 border border-accent/20 rounded-lg px-3 py-2 text-sm text-white w-56" />
-            <select id="tradeType" class="bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-sm text-white">
+            <input id="tradeSearch" placeholder="Search player/team…" class="bg-gray-900 border border-accent/20 rounded-lg px-3 py-2 text-sm text-white w-full sm:w-56" />
+            <select id="tradeType" class="bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-sm text-white w-full sm:w-auto">
               <option value="all" selected>All Transactions</option>
               <option value="trade">Trades</option>
               <option value="add_drop">Adds/Drops</option>
               <option value="waiver">Waivers</option>
               <option value="free_agent">Free Agent Adds</option>
             </select>
-            <button id="btnTradeRefresh" class="bg-gray-800 hover:bg-gray-700 text-white rounded-lg px-3 py-2 text-sm font-bold">Refresh</button>
+            <button id="btnTradeRefresh" class="bg-gray-800 hover:bg-gray-700 text-white rounded-lg px-3 py-2 text-sm font-bold w-full sm:w-auto">Refresh</button>
           </div>
         </div>
 
@@ -502,11 +523,12 @@
 
       <!-- Tabs: League Analysis -->
       <section id="viewInsights" class="h-full flex flex-col p-6 gap-4 hidden overflow-hidden">
-        <div class="flex items-end justify-between gap-4 shrink-0">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 shrink-0">
           <div>
             <div class="text-2xl font-bold text-white flex items-center gap-2"><span>📊</span> LEAGUE ANALYSIS</div>
             <div class="text-sm text-accent" >ADVANCED ANALYTICS: ALL-PLAY, EXPECTED WINS, LUCK & MORE</div>
           </div>
+          <button id="btnInsightsExport" class="px-3 py-2 rounded-lg bg-gray-800 text-gray-100 text-sm font-semibold hover:bg-gray-700 w-full sm:w-auto">Export CSV</button>
         </div>
 
         <div class="flex-1 overflow-y-auto space-y-6">
@@ -523,6 +545,7 @@
                     <th class="px-4 py-2 text-left text-accent font-bold uppercase cursor-pointer hover:text-white" data-sort="name" >Team</th>
                     <th class="px-4 py-2 text-right text-accent font-bold uppercase cursor-pointer hover:text-white" data-sort="record" >W-L</th>
                     <th class="px-4 py-2 text-right text-accent font-bold uppercase cursor-pointer hover:text-white" data-sort="pf" >PF</th>
+                    <th class="px-4 py-2 text-right text-accent font-bold uppercase cursor-pointer hover:text-white" data-sort="ppg" >PPG</th>
                     <th class="px-4 py-2 text-right text-accent font-bold uppercase cursor-pointer hover:text-white" data-sort="pa" >PA</th>
                     <th class="px-4 py-2 text-right text-accent font-bold uppercase cursor-pointer hover:text-white" data-sort="allplay" >All-Play</th>
                     <th class="px-4 py-2 text-right text-accent font-bold uppercase cursor-pointer hover:text-white" data-sort="xw" >xW</th>
@@ -880,6 +903,18 @@
                 </div>
                 <div class="col-span-2 text-xs text-gray-500">Only applied when Auto setup is off.</div>
               </div>
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs text-gray-400 mb-1">Boom threshold</label>
+                  <input id="settingsBoomPct" type="number" step="0.01" min="0.5" max="2" class="w-full rounded-xl bg-gray-950/60 border border-gray-800 px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-600/40" />
+                  <div class="text-xs text-gray-500 mt-1">Multiplier over projection (e.g., 1.20 = 120%).</div>
+                </div>
+                <div>
+                  <label class="block text-xs text-gray-400 mb-1">Bust threshold</label>
+                  <input id="settingsBustPct" type="number" step="0.01" min="0" max="1.2" class="w-full rounded-xl bg-gray-950/60 border border-gray-800 px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-600/40" />
+                  <div class="text-xs text-gray-500 mt-1">Multiplier under projection (e.g., 0.80 = 80%).</div>
+                </div>
+              </div>
             </div>
 
             <div class="flex items-center gap-3 mt-5 flex-wrap">
@@ -1110,6 +1145,8 @@ playersById: {},
     historyMode: "roster",
     faConfig: [],
     optSettingsOpen: false,
+    leagueSortKey: "xw",
+    leagueSortDir: "desc",
     optWeights: null
   },
 
@@ -1118,18 +1155,18 @@ playersById: {},
   cacheDom: function() {
     var ids = ['hdrStatus', 'hdrProgress', 'seasonSelect', 'hdrLeague', 'hdrMeta', 'weekSelect', 
                'teamTabs', 'teamTitle', 'teamSubtitle', 'btnRosterRefresh', 'rosterList', 'compareBox',
-               'matchupGrid', 'matchupsWeekSelect', 'faTabs', 'faList', 'playerModal', 'matchupModal',
+               'matchupGrid', 'matchupsWeekSelect', 'faTabs', 'faList', 'faSearch', 'faActiveOnly', 'playerModal', 'matchupModal',
                'pmName', 'pmMeta', 'pmRank', 'pmBoomBustOverall', 'pmChart', 'pmTable',
                'pmEfficiencySection', 'pmEfficiencyGrid', 'pmValueSection', 'pmValueGrid', 'pmMatchupSection', 'pmMatchupGrid',
                'mmTitle', 'mmTeamA', 'mmTeamB', 'mmTotalA', 'mmTotalB', 'mmListA', 'mmListB',
                'viewTeams', 'viewMatchups', 'viewFA', 'viewDef', 'btnTabTeams', 'btnTabMatchups', 
                'btnTabFA', 'btnTabDef', 'pmClose', 'mmClose', 'defContent', 'defTabAFC', 'defTabNFC', 'viewTrades', 'btnTabTrades', 'tradeContent', 'tradeSearch', 'tradeType', 'btnTradeRefresh', 'tradeWeekLabel', 'leagueInsights',
              'viewInsights', 'btnTabInsights', 'insightsPFChart', 'insightsLuckChart', 'insightsLucky', 'insightsUnlucky', 'insightsConsistent', 'insightsTrendsChart',
-             'viewHistory', 'btnTabHistory', 'btnTabOptimal', 'historyHeaderTitle', 'historyHeaderSubtitle', 'historyWeekSelect', 'optSettingsToggle', 'optSettingsPanel', 'optSettingsReset', 'historyTeamTabs', 'historyTeamTitle', 'historyTeamSubtitle', 'historyRosterList', 'historyCompareBox', 'historyCompareSubtitle', 'historyLoading', 'historyMainContent', 'currentWeekLabel', 'leagueLineupInsights', 'posBaselineTable', 'insightsBestEfficiency', 'insightsMostRegret', 'insightsBenchLeaders',
+             'viewHistory', 'btnTabHistory', 'btnTabOptimal', 'historyHeaderTitle', 'historyHeaderSubtitle', 'historyWeekSelect', 'optSettingsToggle', 'optSettingsPanel', 'optSettingsReset', 'historyTeamTabs', 'historyTeamTitle', 'historyTeamSubtitle', 'historyRosterList', 'historyCompareBox', 'historyCompareSubtitle', 'historyLoading', 'historyMainContent', 'currentWeekLabel', 'leagueLineupInsights', 'posBaselineTable', 'insightsBestEfficiency', 'insightsMostRegret', 'insightsBenchLeaders', 'btnInsightsExport',
                'defRoleSelect',
                'defRoleModeMost',
                'defRoleModeLeast',
-               'defRoleTableBody', 'viewSettings', 'btnTabSettings', 'settingsAutoSetup', 'settingsLeagueId', 'settingsSeason', 'settingsSeasonType', 'settingsWeekMode', 'settingsCurrentWeek', 'settingsMaxWeek', 'settingsApply', 'settingsReset', 'settingsEffective'];
+               'defRoleTableBody', 'viewSettings', 'btnTabSettings', 'settingsAutoSetup', 'settingsLeagueId', 'settingsSeason', 'settingsSeasonType', 'settingsWeekMode', 'settingsCurrentWeek', 'settingsMaxWeek', 'settingsBoomPct', 'settingsBustPct', 'settingsApply', 'settingsReset', 'settingsEffective'];
     var self = this;
     ids.forEach(function(id) { self.dom[id] = document.getElementById(id); });
   },
@@ -1246,6 +1283,16 @@ playersById: {},
     var div = document.createElement('div');
     div.textContent = str;
     return div.innerHTML;
+  },
+
+  debounce: function(fn, wait) {
+    var timer;
+    return function() {
+      var ctx = this;
+      var args = arguments;
+      clearTimeout(timer);
+      timer = setTimeout(function() { fn.apply(ctx, args); }, wait || 250);
+    };
   },
 
   arrToMap: function(arr) {
@@ -2767,18 +2814,21 @@ var roleTopN = function(role) {
       var trendCls = row.last4 > row.ppg ? 'text-green-400' : row.last4 < row.ppg ? 'text-red-400' : 'text-gray-400';
       
       // Build L4 tooltip showing individual games
-      var l4Tooltip = 'L4 Breakdown: ';
+      var l4Count = row.last4Vals.length;
+      var l4Label = "L" + (l4Count || 0);
+      var l4Tooltip = l4Label + ' Breakdown: ';
       for (var lt = 0; lt < row.last4Vals.length; lt++) {
         l4Tooltip += 'Wk' + row.last4Wks[lt] + ': ' + row.last4Vals[lt].toFixed(1);
         if (lt < row.last4Vals.length - 1) l4Tooltip += ', ';
       }
       l4Tooltip += ' | Avg: ' + row.last4.toFixed(2);
+      var l4Text = (l4Count && l4Count < 4) ? (l4Label + " " + row.last4.toFixed(1)) : row.last4.toFixed(1);
       
       html += '<tr class="border-b border-gray-800 hover:bg-gray-800/30 ' + cls + '">' +
         '<td class="px-3 py-2 font-mono text-gray-200 text-xs font-bold">' + row.team + '</td>' +
         '<td class="px-2 py-2 text-right font-mono text-gray-400 text-xs">' + row.games + '</td>' +
         '<td class="px-2 py-2 text-right font-mono text-white text-xs font-semibold">' + row.ppg.toFixed(1) + '</td>' +
-        '<td class="px-2 py-2 text-right font-mono text-xs ' + trendCls + ' cursor-help" title="' + l4Tooltip + '">' + row.last4.toFixed(1) + ' ' + trendIcon + '</td>' +
+        '<td class="px-2 py-2 text-right font-mono text-xs ' + trendCls + ' cursor-help" title="' + l4Tooltip + '">' + l4Text + ' ' + trendIcon + '</td>' +
         '<td class="px-2 py-2 text-right font-mono text-gray-400 text-xs">' + row.vol.toFixed(1) + '</td>' +
         '<td class="px-2 py-2 text-right font-mono text-gray-300 text-xs">#' + (row.rank || (r+1)) + '</td>' +
         '<td class="px-2 py-2 text-right font-mono text-green-400 text-xs">' + (row.ceil ? (row.ceil*100).toFixed(0) + '%' : '0%') + '</td>' +
@@ -3057,18 +3107,34 @@ var roleTopN = function(role) {
 
   ensureMatchupsLoadedUpTo: function(week) {
     var self = this;
-    var loadNext = function(w) {
-      if (w > week) return Promise.resolve();
+    var target = Number(week);
+    if (!isFinite(target) || target < 1) return Promise.resolve();
+
+    var missing = [];
+    for (var w = 1; w <= target; w++) {
       var wk = String(w);
-      if (!self.data.weekMatchups[wk]) {
-        return self.fetchJson("https://api.sleeper.app/v1/league/" + self.cfg.leagueId + "/matchups/" + w)
-          .then(function(arr) { self.data.weekMatchups[wk] = arr || []; })
-          .catch(function() { self.data.weekMatchups[wk] = []; })
-          .then(function() { return loadNext(w + 1); });
-      }
-      return loadNext(w + 1);
+      if (!self.data.weekMatchups[wk]) missing.push(w);
+    }
+    if (!missing.length) return Promise.resolve();
+
+    var fetchOne = function(w) {
+      var wk = String(w);
+      return self.fetchJson("https://api.sleeper.app/v1/league/" + self.cfg.leagueId + "/matchups/" + w)
+        .then(function(arr) { self.data.weekMatchups[wk] = arr || []; })
+        .catch(function() { self.data.weekMatchups[wk] = []; });
     };
-    return loadNext(1);
+
+    var CONCURRENCY = 6;
+    var idx = 0;
+    var worker = function() {
+      if (idx >= missing.length) return Promise.resolve();
+      var w = missing[idx++];
+      return fetchOne(w).then(worker);
+    };
+
+    var workers = [];
+    for (var i = 0; i < Math.min(CONCURRENCY, missing.length); i++) workers.push(worker());
+    return Promise.all(workers).then(function() {});
   },
 
   getMatchupForRoster: function(weekNum, rosterId) {
@@ -3116,6 +3182,9 @@ var roleTopN = function(role) {
           expW: 0,
           luck: 0,
           sos: 0,
+          sosWeight: 0,
+          gamesPlayed: 0,
+          pfActual: 0,
           scores: [], optPf: 0, benchPf: 0, regret: 0
         };
       });
@@ -3254,11 +3323,26 @@ var roleTopN = function(role) {
           var starters = (mu && Array.isArray(mu.starters)) ? mu.starters : (rosterObj.starters || []);
           var players = (mu && Array.isArray(mu.players)) ? mu.players : (rosterObj.players || []);
 
-          // Starter total
+          // Starter total (hybrid) + actual-only tracking for PPG
           var starterTotal = self.startersHybridTotal(null, w, starters);
           scoresThisWeek[rid] = starterTotal;
           teams[rid].pf += starterTotal;
           teams[rid].scores.push(starterTotal);
+
+          var actualTotal = 0;
+          var hasPlayedWeek = false;
+          for (var stIdx = 0; stIdx < starters.length; stIdx++) {
+            var pidActual = String(starters[stIdx]);
+            var stObj = statsMap[pidActual] || {};
+            if (Object.keys(stObj).length > 0) {
+              hasPlayedWeek = true;
+              actualTotal += self.scoreFromStats(stObj, pidActual);
+            }
+          }
+          if (hasPlayedWeek) {
+            teams[rid].gamesPlayed += 1;
+            teams[rid].pfActual += actualTotal;
+          }
 
           // Build points map for roster pool
           var ptsById = {};
@@ -3343,9 +3427,13 @@ if (!isFinite(posPts)) continue;
           teams[aRid].pa += bScore;
           teams[bRid].pa += aScore;
 
-          // SoS proxy: average opponent score
-          teams[aRid].sos += bScore;
-          teams[bRid].sos += aScore;
+          // SoS weighted by opponent all-play strength
+          var oppStrengthA = teams[bRid].allPlayG ? (teams[bRid].allPlayW / teams[bRid].allPlayG) : 0.5;
+          var oppStrengthB = teams[aRid].allPlayG ? (teams[aRid].allPlayW / teams[aRid].allPlayG) : 0.5;
+          teams[aRid].sos += bScore * oppStrengthA;
+          teams[bRid].sos += aScore * oppStrengthB;
+          teams[aRid].sosWeight += oppStrengthA;
+          teams[bRid].sosWeight += oppStrengthB;
 
           if (aScore > bScore) { teams[aRid].w++; teams[bRid].l++; }
           else if (bScore > aScore) { teams[bRid].w++; teams[aRid].l++; }
@@ -3374,8 +3462,10 @@ if (!isFinite(posPts)) continue;
         tm.stddev = Math.sqrt(variance);
         tm.stddev = Math.round(tm.stddev * 100) / 100;
 
-        tm.sos = n ? (tm.sos / n) : 0;
+        tm.sos = tm.sosWeight ? (tm.sos / tm.sosWeight) : 0;
         tm.sos = Math.round(tm.sos * 100) / 100;
+        tm.ppg = tm.gamesPlayed ? (tm.pfActual / tm.gamesPlayed) : 0;
+        tm.ppg = Math.round(tm.ppg * 100) / 100;
       });
 
       // Finalize lineup metrics + build positional baselines
@@ -3411,7 +3501,7 @@ if (!isFinite(posPts)) continue;
   // Endpoint: GET https://api.sleeper.com/schedule/nfl/regular/{year}
   loadNFLSchedule: function() {
     var self = this;
-    var season = "2025";
+    var season = String(this.getSeason());
     // Use api.sleeper.com (NOT api.sleeper.app) for undocumented endpoints
     var url = "https://api.sleeper.com/schedule/nfl/regular/" + season;
     
@@ -3769,92 +3859,70 @@ if (!isFinite(posPts)) continue;
 
   _loadDefenseStatsFallback: function() {
     var self = this;
-    var season = this.getSeason();
-    var currentWeek = this.getMaxWeek() || 1;
-    
-    // NFL team abbreviations
-    var nflTeams = ["ARI","ATL","BAL","BUF","CAR","CHI","CIN","CLE","DAL","DEN","DET","GB","HOU","IND","JAX","KC","LAC","LAR","LV","MIA","MIN","NE","NO","NYG","NYJ","PHI","PIT","SEA","SF","TB","TEN","WAS"];
-    
-    // Real 2025 NFL defensive stats from NFL.com (through Week 17)
-    // Pass Yds = passing yards allowed, Rush Yds = rushing yards allowed
-    var nflDefenseStats2025 = {
-      ARI: { passYds: 3540, rushYds: 1895, passTD: 25, rushTD: 16, int: 10, sacks: 26, games: 17 },
-      ATL: { passYds: 3245, rushYds: 1923, passTD: 24, rushTD: 11, int: 12, sacks: 50, games: 17 },
-      BAL: { passYds: 3813, rushYds: 1634, passTD: 21, rushTD: 14, int: 10, sacks: 26, games: 17 },
-      BUF: { passYds: 2724, rushYds: 2164, passTD: 17, rushTD: 24, int: 13, sacks: 34, games: 17 },
-      CAR: { passYds: 3307, rushYds: 1793, passTD: 18, rushTD: 18, int: 13, sacks: 25, games: 17 },
-      CHI: { passYds: 3433, rushYds: 1965, passTD: 28, rushTD: 12, int: 21, sacks: 31, games: 17 },
-      CIN: { passYds: 3852, rushYds: 2340, passTD: 31, rushTD: 18, int: 13, sacks: 25, games: 17 },
-      CLE: { passYds: 2816, rushYds: 1706, passTD: 22, rushTD: 14, int: 10, sacks: 49, games: 17 },
-      DAL: { passYds: 4291, rushYds: 1972, passTD: 33, rushTD: 23, int: 6, sacks: 31, games: 17 },
-      DEN: { passYds: 3470, rushYds: 1435, passTD: 18, rushTD: 11, int: 9, sacks: 64, games: 17 },
-      DET: { passYds: 3815, rushYds: 1882, passTD: 29, rushTD: 16, int: 12, sacks: 48, games: 17 },
-      GB:  { passYds: 3170, rushYds: 1557, passTD: 23, rushTD: 10, int: 7, sacks: 33, games: 17 },
-      HOU: { passYds: 2964, rushYds: 1443, passTD: 17, rushTD: 11, int: 17, sacks: 41, games: 17 },
-      IND: { passYds: 3994, rushYds: 1477, passTD: 23, rushTD: 13, int: 13, sacks: 37, games: 17 },
-      JAX: { passYds: 3662, rushYds: 1309, passTD: 24, rushTD: 11, int: 19, sacks: 29, games: 17 },
-      KC:  { passYds: 3382, rushYds: 1679, passTD: 18, rushTD: 14, int: 9, sacks: 32, games: 17 },
-      LAC: { passYds: 2929, rushYds: 1557, passTD: 14, rushTD: 16, int: 17, sacks: 41, games: 17 },
-      LAR: { passYds: 3591, rushYds: 1586, passTD: 23, rushTD: 7, int: 15, sacks: 41, games: 17 },
-      LV:  { passYds: 3291, rushYds: 1747, passTD: 23, rushTD: 19, int: 8, sacks: 27, games: 17 },
-      MIA: { passYds: 3360, rushYds: 1955, passTD: 26, rushTD: 14, int: 7, sacks: 36, games: 17 },
-      MIN: { passYds: 2987, rushYds: 1982, passTD: 15, rushTD: 13, int: 8, sacks: 45, games: 17 },
-      NE:  { passYds: 3220, rushYds: 1502, passTD: 24, rushTD: 10, int: 8, sacks: 30, games: 17 },
-      NO:  { passYds: 2905, rushYds: 1893, passTD: 22, rushTD: 12, int: 9, sacks: 37, games: 17 },
-      NYG: { passYds: 3573, rushYds: 2264, passTD: 24, rushTD: 19, int: 6, sacks: 35, games: 17 },
-      NYJ: { passYds: 3304, rushYds: 2005, passTD: 27, rushTD: 18, int: 0, sacks: 25, games: 17 },
-      PHI: { passYds: 3083, rushYds: 1852, passTD: 13, rushTD: 16, int: 11, sacks: 37, games: 17 },
-      PIT: { passYds: 4013, rushYds: 1707, passTD: 26, rushTD: 10, int: 12, sacks: 43, games: 17 },
-      SEA: { passYds: 3438, rushYds: 1411, passTD: 20, rushTD: 8, int: 16, sacks: 42, games: 17 },
-      SF:  { passYds: 3582, rushYds: 1543, passTD: 27, rushTD: 10, int: 6, sacks: 18, games: 17 },
-      TB:  { passYds: 3894, rushYds: 1520, passTD: 26, rushTD: 16, int: 12, sacks: 35, games: 17 },
-      TEN: { passYds: 3617, rushYds: 1781, passTD: 25, rushTD: 19, int: 6, sacks: 38, games: 17 },
-      WAS: { passYds: 4130, rushYds: 2331, passTD: 32, rushTD: 17, int: 7, sacks: 39, games: 17 }
-    };
-    
-    // Initialize stats for all teams using real data
-    var processedStats = {};
-    nflTeams.forEach(function(team) {
-      var stats = nflDefenseStats2025[team];
-      if (stats) {
-        var g = stats.games || 17;
+    var season = String(this.getSeason());
+    var scheduleUrl = "https://api.sleeper.com/schedule/nfl/regular/" + season;
+
+    var buildStatsFromGames = function(games) {
+      var totals = {};
+      (games || []).forEach(function(game) {
+        if (!game) return;
+        var home = game.home;
+        var away = game.away;
+        if (!home || !away) return;
+        var hs = game.home_score;
+        var as = game.away_score;
+        if (hs == null || as == null) return;
+
+        var hScore = Number(hs);
+        var aScore = Number(as);
+        if (!isFinite(hScore) || !isFinite(aScore)) return;
+
+        totals[home] = totals[home] || { games: 0, pts: 0 };
+        totals[away] = totals[away] || { games: 0, pts: 0 };
+        totals[home].games += 1;
+        totals[away].games += 1;
+        totals[home].pts += aScore;
+        totals[away].pts += hScore;
+      });
+
+      var processedStats = {};
+      Object.keys(totals).forEach(function(team) {
+        var entry = totals[team];
+        var g = entry.games || 0;
         processedStats[team] = {
           team: team,
           games: g,
-          totalPts: Math.round((stats.passTD + stats.rushTD) * 7 / 1.2), // Estimate pts from TDs
-          totalPassYds: stats.passYds,
-          totalRushYds: stats.rushYds,
-          passYdsPerGame: (stats.passYds / g).toFixed(1),
-          rushYdsPerGame: (stats.rushYds / g).toFixed(1),
-          ptsPerGame: ((stats.passTD + stats.rushTD) * 7 / g / 1.2).toFixed(1),
-          hasRealPassRushData: true,
-          sacks: stats.sacks,
-          interceptions: stats.int,
-          passTD: stats.passTD,
-          rushTD: stats.rushTD
-        };
-      } else {
-        processedStats[team] = {
-          team: team,
-          games: 0,
-          totalPts: 0,
+          totalPts: entry.pts || 0,
           totalPassYds: 0,
           totalRushYds: 0,
           passYdsPerGame: "N/A",
-          rushYdsPerGame: "N/A", 
-          ptsPerGame: "0.0",
+          rushYdsPerGame: "N/A",
+          ptsPerGame: g > 0 ? (entry.pts / g).toFixed(1) : "N/A",
+          passTD: 0,
+          rushTD: 0,
+          interceptions: 0,
+          sacks: 0,
           hasRealPassRushData: false
         };
-      }
-    });
-    
-    self.data.pfrDefenseStats = processedStats;
-    self.data.hasRealPassRushData = true; // We now have real data
-    
-    console.log("Loaded 2025 NFL defensive stats from NFL.com for all 32 teams");
-    
-    // Also try to get additional live data from Sleeper API (for current week updates)
-    this.loadSleeperDefenseStats(processedStats);
+      });
+
+      self.data.pfrDefenseStats = processedStats;
+      self.data.hasRealPassRushData = false;
+      self.loadSleeperDefenseStats(processedStats);
+    };
+
+    if (Array.isArray(this.nflScheduleGamesRaw) && this.nflScheduleGamesRaw.length) {
+      buildStatsFromGames(this.nflScheduleGamesRaw);
+      return;
+    }
+
+    this.fetchJson(scheduleUrl)
+      .then(function(games) { buildStatsFromGames(games); })
+      .catch(function(err) {
+        console.warn("Schedule-based defense stats unavailable:", err && err.message ? err.message : err);
+        self.data.pfrDefenseStats = {};
+        self.data.hasRealPassRushData = false;
+      });
   },
   
   // Secondary loader to merge any Sleeper API updates
@@ -3891,15 +3959,36 @@ if (!isFinite(posPts)) continue;
     if (!tbody) return;
     var metrics = this.data.leagueMetrics;
     if (!metrics || !metrics.teams) {
-      tbody.innerHTML = '<tr><td class="px-4 py-3 text-gray-400 text-sm" colspan="9">League metrics not ready yet.</td></tr>';
+      tbody.innerHTML = '<tr><td class="px-4 py-3 text-gray-400 text-sm" colspan="10">League metrics not ready yet.</td></tr>';
       return;
     }
 
     var teamsArr = Object.values(metrics.teams);
+    var sortKey = this.ui.leagueSortKey || "xw";
+    var sortDir = (this.ui.leagueSortDir === "asc") ? 1 : -1;
+    var getSortValue = function(team) {
+      switch (sortKey) {
+        case "name": return (team.name || "").toLowerCase();
+        case "record": return (team.w || 0) + (team.t || 0) * 0.5;
+        case "pf": return team.pf || 0;
+        case "ppg": return team.ppg || 0;
+        case "pa": return team.pa || 0;
+        case "allplay": return team.allPlayPct || 0;
+        case "xw": return team.expW || 0;
+        case "luck": return team.luck || 0;
+        case "stddev": return team.stddev || 0;
+        case "sos": return team.sos || 0;
+        default: return team.expW || 0;
+      }
+    };
     teamsArr.sort(function(a, b) {
-      // Sort by expected wins then PF
-      if (b.expW !== a.expW) return b.expW - a.expW;
-      return b.pf - a.pf;
+      var av = getSortValue(a);
+      var bv = getSortValue(b);
+      if (typeof av === "string" || typeof bv === "string") {
+        return String(av).localeCompare(String(bv)) * sortDir;
+      }
+      if (bv === av) return 0;
+      return (av - bv) * sortDir;
     });
 
     var rows = '';
@@ -3909,6 +3998,7 @@ if (!isFinite(posPts)) continue;
         '<td class="px-4 py-2 text-white font-bold">' + '<span class="inline-block w-2.5 h-2.5 rounded-full mr-2" style="background:' + this.rosterColor(t.roster_id) + '"></span>' + this.escapeHtml(t.name) + '</td>' +
         '<td class="px-4 py-2 text-right text-gray-200 font-mono">' + t.w + '-' + t.l + (t.t ? ('-' + t.t) : '') + '</td>' +
         '<td class="px-4 py-2 text-right text-gray-200 font-mono">' + t.pf.toFixed(2) + '</td>' +
+        '<td class="px-4 py-2 text-right text-gray-200 font-mono">' + t.ppg.toFixed(2) + '</td>' +
         '<td class="px-4 py-2 text-right text-gray-200 font-mono">' + t.pa.toFixed(2) + '</td>' +
         '<td class="px-4 py-2 text-right text-gray-200 font-mono">' + (t.allPlayPct * 100).toFixed(1) + '%</td>' +
         '<td class="px-4 py-2 text-right text-gray-200 font-mono">' + t.expW.toFixed(2) + '</td>' +
@@ -3917,7 +4007,51 @@ if (!isFinite(posPts)) continue;
         '<td class="px-4 py-2 text-right text-gray-200 font-mono">' + t.sos.toFixed(2) + '</td>' +
       '</tr>';
     }
-    tbody.innerHTML = rows || '<tr><td class="px-4 py-3 text-gray-400 text-sm" colspan="9">No teams.</td></tr>';
+    tbody.innerHTML = rows || '<tr><td class="px-4 py-3 text-gray-400 text-sm" colspan="10">No teams.</td></tr>';
+  },
+
+  exportLeagueInsightsCsv: function() {
+    var metrics = this.data.leagueMetrics;
+    if (!metrics || !metrics.teams) return;
+    var rows = Object.values(metrics.teams).map(function(t) {
+      return {
+        Team: t.name,
+        Record: (t.w + "-" + t.l + (t.t ? ("-" + t.t) : "")),
+        PF: t.pf != null ? t.pf.toFixed(2) : "0.00",
+        PPG: t.ppg != null ? t.ppg.toFixed(2) : "0.00",
+        PA: t.pa != null ? t.pa.toFixed(2) : "0.00",
+        AllPlayPct: t.allPlayPct != null ? (t.allPlayPct * 100).toFixed(1) + "%" : "0.0%",
+        xW: t.expW != null ? t.expW.toFixed(2) : "0.00",
+        Luck: t.luck != null ? t.luck.toFixed(2) : "0.00",
+        StdDev: t.stddev != null ? t.stddev.toFixed(2) : "0.00",
+        SoS: t.sos != null ? t.sos.toFixed(2) : "0.00"
+      };
+    });
+    if (!rows.length) return;
+
+    var headers = Object.keys(rows[0]);
+    var csv = [headers.join(",")];
+    rows.forEach(function(row) {
+      var line = headers.map(function(h) {
+        var val = row[h] != null ? String(row[h]) : "";
+        if (val.indexOf(",") >= 0 || val.indexOf("\"") >= 0) {
+          val = "\"" + val.replace(/\"/g, "\"\"") + "\"";
+        }
+        return val;
+      }).join(",");
+      csv.push(line);
+    });
+
+    var blob = new Blob([csv.join("\n")], { type: "text/csv;charset=utf-8;" });
+    var link = document.createElement("a");
+    var url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", "league-insights.csv");
+    link.style.display = "none";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   },
 
 renderLineupInsights: function() {
@@ -5036,15 +5170,8 @@ getPlayerDeltaRank: function(pid) {
         self.data.usersById = {};
         (users || []).forEach(function(u) { self.data.usersById[u.user_id] = u; });
         self.data.rosters = rosters || [];
-
-        return Promise.all([
-          self.fetchJson("https://api.sleeper.app/v1/league/" + self.cfg.leagueId + "/winners_bracket").catch(function() { return []; }),
-          self.fetchJson("https://api.sleeper.app/v1/league/" + self.cfg.leagueId + "/losers_bracket").catch(function() { return []; })
-        ]);
-      })
-      .then(function(brackets) {
-        self.data.winnersBracket = brackets[0] || [];
-        self.data.losersBracket = brackets[1] || [];
+        self.data.winnersBracket = results[4] || [];
+        self.data.losersBracket = results[5] || [];
 
         self.ui.selectedRosterId = (self.data.rosters[0] && self.data.rosters[0].roster_id) || null;
 
@@ -5214,8 +5341,9 @@ getPlayerDeltaRank: function(pid) {
       });
     };
 
-    if (sel) sel.onchange = function(e) { onChange(e && e.target ? e.target.value : null); };
-    if (selMatch) selMatch.onchange = function(e) { onChange(e && e.target ? e.target.value : null); };
+    var debouncedOnChange = self.debounce(onChange, 250);
+    if (sel) sel.onchange = function(e) { debouncedOnChange(e && e.target ? e.target.value : null); };
+    if (selMatch) selMatch.onchange = function(e) { debouncedOnChange(e && e.target ? e.target.value : null); };
   },
 
   loadWeek: function(week) {
@@ -5335,6 +5463,10 @@ getPlayerDeltaRank: function(pid) {
 
     setActiveBtn("teams");
 
+    if (this.dom.btnInsightsExport) {
+      this.dom.btnInsightsExport.onclick = function() { self.exportLeagueInsightsCsv(); };
+    }
+
     // History controls - auto-load on week change
     if (this.dom.historyWeekSelect) {
       this.buildHistoryWeekSelect();
@@ -5346,7 +5478,10 @@ getPlayerDeltaRank: function(pid) {
 
     // Trades controls
     if (this.dom.tradeSearch) {
-      this.dom.tradeSearch.oninput = function() { if (self.ui.currentView === "trades") self.renderTrades(); };
+      var debouncedTradeSearch = self.debounce(function() {
+        if (self.ui.currentView === "trades") self.renderTrades();
+      }, 250);
+      this.dom.tradeSearch.oninput = function() { debouncedTradeSearch(); };
     }
     if (this.dom.tradeType) {
       this.dom.tradeType.onchange = function() { if (self.ui.currentView === "trades") self.renderTrades(); };
@@ -5357,6 +5492,17 @@ getPlayerDeltaRank: function(pid) {
         if (self.dom.tradeContent) self.dom.tradeContent.innerHTML = '<div class="text-gray-400 text-sm">Refreshing transactions…</div>';
         self.refreshTransactions(wk).then(function() { self.renderTrades(); });
       };
+    }
+
+    // Free agent controls
+    if (this.dom.faSearch) {
+      var debouncedFASearch = self.debounce(function() {
+        if (self.ui.currentView === "fa") self.renderFA();
+      }, 250);
+      this.dom.faSearch.oninput = function() { debouncedFASearch(); };
+    }
+    if (this.dom.faActiveOnly) {
+      this.dom.faActiveOnly.onchange = function() { if (self.ui.currentView === "fa") self.renderFA(); };
     }
 
     // Defense conference tabs
@@ -5388,6 +5534,24 @@ getPlayerDeltaRank: function(pid) {
         var card = e.target.closest("[data-matchup-card]");
         if (card) self.openMatchupModal(card.dataset.label || "—", card.dataset.rosterA, card.dataset.rosterB);
       };
+    }
+
+    if (!this._insightsSortBound) {
+      this._insightsSortBound = true;
+      var sortHeaders = document.querySelectorAll("#viewInsights th[data-sort]");
+      sortHeaders.forEach(function(th) {
+        th.addEventListener("click", function() {
+          var key = th.getAttribute("data-sort");
+          if (!key) return;
+          if (self.ui.leagueSortKey === key) {
+            self.ui.leagueSortDir = (self.ui.leagueSortDir === "asc") ? "desc" : "asc";
+          } else {
+            self.ui.leagueSortKey = key;
+            self.ui.leagueSortDir = "desc";
+          }
+          self.renderLeagueInsights();
+        });
+      });
     }
   },
 
@@ -6284,6 +6448,9 @@ var wrap = document.createElement("div");
       var actB = sumFromMap(bStarters, statsMapW);
       var pillsA = self.statusPillsFromCounts(countsA);
       var pillsB = self.statusPillsFromCounts(countsB);
+      var totalScore = A + B;
+      var winProbA = totalScore > 0 ? (A / totalScore) : 0.5;
+      var winProbB = 1 - winProbA;
 
       var card = document.createElement("div");
       card.className = "bg-gray-900 border border-gray-800 rounded-2xl p-4 hover:bg-gray-850 cursor-pointer";
@@ -6317,6 +6484,12 @@ var wrap = document.createElement("div");
             '<div class="text-[11px] text-gray-500 font-mono">Proj ' + projB.toFixed(2) + ' • Act ' + actB.toFixed(2) + '</div>' +
           (pillsB ? '<div class=\"mt-2\">' + pillsB + '</div>' : '') +
             '</div>' +
+        '</div>' +
+        '<div class="mt-3 text-xs text-gray-400 font-mono flex flex-wrap items-center gap-2">' +
+          '<span class="text-gray-500">Win Prob:</span>' +
+          '<span class="text-emerald-300">' + self.escapeHtml(teamAName) + ' ' + Math.round(winProbA * 100) + '%</span>' +
+          '<span class="text-gray-600">|</span>' +
+          '<span class="text-emerald-300">' + self.escapeHtml(teamBName) + ' ' + Math.round(winProbB * 100) + '%</span>' +
         '</div>' +
         '<div class="mt-3 text-xs text-gray-500 font-mono">' +
           'Click to compare active starters (hybrid: actual if played, else projection).' +
@@ -6374,6 +6547,8 @@ renderFA: function() {
       var week = String(self.ui.selectedWeek);
       var statsMap = self.data.weekStats[week] || {};
       var projMap = self.data.weekProj[week] || {};
+      var searchTerm = (self.dom.faSearch && self.dom.faSearch.value) ? String(self.dom.faSearch.value).trim().toLowerCase() : "";
+      var activeOnly = !!(self.dom.faActiveOnly && self.dom.faActiveOnly.checked);
       
       // 1. Get ALL players (Rostered + FA)
       var allPlayers = Object.values(self.data.playersById);
@@ -6423,7 +6598,15 @@ renderFA: function() {
         var hasStats = totals[String(p.player_id)] > 0;
         var isMarkedActive = p.active === true || p.active === 1 || p.active === "true" || p.status === "Active";
         var includePlayer = hasStats || (isMarkedActive && (cfg.pos || nvl(p.search_rank, 999999) <= 5000));
-        return notRostered && posOk && includePlayer;
+        if (!notRostered || !posOk || !includePlayer) return false;
+        if (activeOnly && !isMarkedActive) return false;
+        if (searchTerm) {
+          var name = ((p.first_name || "") + " " + (p.last_name || "")).toLowerCase();
+          var team = String(p.team || "").toLowerCase();
+          var pos = String(p.position || "").toLowerCase();
+          return name.indexOf(searchTerm) >= 0 || team.indexOf(searchTerm) >= 0 || pos.indexOf(searchTerm) >= 0;
+        }
+        return true;
       });
 
       // 6. Limit list size for performance
@@ -6491,6 +6674,12 @@ renderFA: function() {
 
     if (!this.data.seasonTotals) {
       this.setProgress("Building season totals…", 75);
+      list.innerHTML = '<div class="grid grid-cols-1 md:grid-cols-2 gap-4">' +
+        '<div class="h-40 rounded-xl skeleton"></div>' +
+        '<div class="h-40 rounded-xl skeleton"></div>' +
+        '<div class="h-40 rounded-xl skeleton"></div>' +
+        '<div class="h-40 rounded-xl skeleton"></div>' +
+      '</div>';
       this.buildSeasonTotals().then(function() {
         self.setProgress("Ready", 100);
         doRender();
@@ -8577,6 +8766,8 @@ var fmtPid = function(pid) {
       }
       if (obj.weekSelectionMode) APP.cfg.weekSelectionMode = String(obj.weekSelectionMode);
       if (obj.selectedSeasonChoice) APP.cfg.selectedSeasonChoice = String(obj.selectedSeasonChoice);
+      if (obj.boomPct != null && isFinite(obj.boomPct)) APP.cfg.boomPct = Number(obj.boomPct);
+      if (obj.bustPct != null && isFinite(obj.bustPct)) APP.cfg.bustPct = Number(obj.bustPct);
       APP.cfg.seasonType = "regular";
       if (APP.cfg.manual) APP.cfg.manual.seasonType = "regular";
     } catch(e) {}
@@ -8589,7 +8780,9 @@ var fmtPid = function(pid) {
         manual: APP.cfg.manual || {},
         selectedSeasonChoice: String(APP.cfg.selectedSeasonChoice || ""),
         weekSelectionMode: String(APP.cfg.weekSelectionMode || "max_week"),
-        seasonType: "regular"
+        seasonType: "regular",
+        boomPct: APP.cfg.boomPct,
+        bustPct: APP.cfg.bustPct
       };
       localStorage.setItem(APP._settingsKey, JSON.stringify(out));
     } catch(e) {}
@@ -8629,6 +8822,8 @@ var fmtPid = function(pid) {
     if (!d.settingsWeekMode) d.settingsWeekMode = document.getElementById("settingsWeekMode");
     if (!d.settingsCurrentWeek) d.settingsCurrentWeek = document.getElementById("settingsCurrentWeek");
     if (!d.settingsMaxWeek) d.settingsMaxWeek = document.getElementById("settingsMaxWeek");
+    if (!d.settingsBoomPct) d.settingsBoomPct = document.getElementById("settingsBoomPct");
+    if (!d.settingsBustPct) d.settingsBustPct = document.getElementById("settingsBustPct");
     if (!d.settingsApply) d.settingsApply = document.getElementById("settingsApply");
     if (!d.settingsReset) d.settingsReset = document.getElementById("settingsReset");
     if (!d.settingsEffective) d.settingsEffective = document.getElementById("settingsEffective");
@@ -8663,6 +8858,8 @@ var fmtPid = function(pid) {
     try { if (d.settingsWeekMode) d.settingsWeekMode.value = String(APP.cfg.weekSelectionMode || "max_week"); } catch(e) {}
     try { if (d.settingsCurrentWeek) d.settingsCurrentWeek.value = Number((APP.cfg.manual && APP.cfg.manual.currentWeek) || (APP.ui && APP.ui.selectedWeek) || 1); } catch(e) {}
     try { if (d.settingsMaxWeek) d.settingsMaxWeek.value = Number((APP.cfg.manual && APP.cfg.manual.maxWeek) || (APP.data && APP.data.maxWeek) || 18); } catch(e) {}
+    try { if (d.settingsBoomPct) d.settingsBoomPct.value = Number(APP.cfg.boomPct || 1.2); } catch(e) {}
+    try { if (d.settingsBustPct) d.settingsBustPct.value = Number(APP.cfg.bustPct || 0.8); } catch(e) {}
 
     // Effective config preview
     try {
@@ -8672,6 +8869,8 @@ var fmtPid = function(pid) {
         selectedSeasonChoice: APP.cfg.selectedSeasonChoice,
         seasonType: APP.cfg.seasonType,
         weekSelectionMode: APP.cfg.weekSelectionMode || "max_week",
+        boomPct: APP.cfg.boomPct,
+        bustPct: APP.cfg.bustPct,
         selectedWeek: (APP.ui && APP.ui.selectedWeek) ? APP.ui.selectedWeek : null,
         maxWeek: (APP.data && APP.data.maxWeek) ? APP.data.maxWeek : null,
         manual: APP.cfg.manual || {}
@@ -8708,6 +8907,10 @@ var fmtPid = function(pid) {
         var mw = Number(d.settingsMaxWeek && d.settingsMaxWeek.value);
         if (isFinite(cw) && cw > 0) APP.cfg.manual.currentWeek = cw;
         if (isFinite(mw) && mw > 0) APP.cfg.manual.maxWeek = mw;
+        var boomPct = Number(d.settingsBoomPct && d.settingsBoomPct.value);
+        var bustPct = Number(d.settingsBustPct && d.settingsBustPct.value);
+        if (isFinite(boomPct) && boomPct > 0) APP.cfg.boomPct = boomPct;
+        if (isFinite(bustPct) && bustPct > 0) APP.cfg.bustPct = bustPct;
 
         // Resolve leagueId now
         APP.cfg.leagueId = APP.resolveLeagueId();
@@ -8730,6 +8933,8 @@ var fmtPid = function(pid) {
           APP.cfg.autoSetup = true;
           APP.cfg.manual = { leagueId: "", season: "", seasonType: "regular", currentWeek: 1, maxWeek: 18 };
           APP.cfg.weekSelectionMode = "max_week";
+          APP.cfg.boomPct = 1.2;
+          APP.cfg.bustPct = 0.8;
           APP.saveAppSettings();
         } catch(e) {}
         try { APP.data = APP.data || {}; APP.data.weekCache = {}; APP.data.statsByWeek = {}; APP.data.projByWeek = {}; } catch(e) {}
@@ -8740,6 +8945,11 @@ var fmtPid = function(pid) {
 
 
 document.addEventListener("DOMContentLoaded", function() {
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("./service-worker.js").catch(function(err) {
+      console.warn("Service worker registration failed:", err);
+    });
+  }
   APP.init();
 });
 </script>
