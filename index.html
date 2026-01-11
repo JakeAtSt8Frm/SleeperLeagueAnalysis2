@@ -917,6 +917,14 @@
                 <!-- Populated dynamically -->
               </div>
             </div>
+
+            <!-- Season Value Profile -->
+            <div class="bg-gray-950 border border-gray-800 rounded-xl p-4 mb-4" id="pmValueSection">
+              <div class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Season Value Profile</div>
+              <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3" id="pmValueGrid">
+                <!-- Populated dynamically -->
+              </div>
+            </div>
             
             <!-- Matchup Analysis Section -->
             <div class="bg-gray-950 border border-gray-800 rounded-xl p-4 mb-4" id="pmMatchupSection">
@@ -1112,7 +1120,7 @@ playersById: {},
                'teamTabs', 'teamTitle', 'teamSubtitle', 'btnRosterRefresh', 'rosterList', 'compareBox',
                'matchupGrid', 'matchupsWeekSelect', 'faTabs', 'faList', 'playerModal', 'matchupModal',
                'pmName', 'pmMeta', 'pmRank', 'pmBoomBustOverall', 'pmChart', 'pmTable',
-               'pmEfficiencySection', 'pmEfficiencyGrid', 'pmMatchupSection', 'pmMatchupGrid',
+               'pmEfficiencySection', 'pmEfficiencyGrid', 'pmValueSection', 'pmValueGrid', 'pmMatchupSection', 'pmMatchupGrid',
                'mmTitle', 'mmTeamA', 'mmTeamB', 'mmTotalA', 'mmTotalB', 'mmListA', 'mmListB',
                'viewTeams', 'viewMatchups', 'viewFA', 'viewDef', 'btnTabTeams', 'btnTabMatchups', 
                'btnTabFA', 'btnTabDef', 'pmClose', 'mmClose', 'defContent', 'defTabAFC', 'defTabNFC', 'viewTrades', 'btnTabTrades', 'tradeContent', 'tradeSearch', 'tradeType', 'btnTradeRefresh', 'tradeWeekLabel', 'leagueInsights',
@@ -4296,7 +4304,7 @@ renderLineupInsights: function() {
   },
 
   // ---------- Player Value (0-1000) ----------
-  // Builds a season-to-date per-player value score using: PPG, last-4, boom/bust, snap%, consistency, age, and over/under expectation.
+  // Builds a season-to-date per-player value score using: PPG, total points, availability, floor/ceiling, boom/bust, snap%, consistency, age, and over/under expectation.
   buildPlayerValueIndex: function() {
     var self = this;
     var currentWeek = Number(this.getMaxWeek());
@@ -4308,6 +4316,7 @@ renderLineupInsights: function() {
       return {
         total: 0, games: 0,
         lastActs: [],
+        weekScores: [],
         boom: 0, bust: 0, within: 0, bbN: 0,
         deltaSum: 0, deltaN: 0,
         snapSum: 0, snapN: 0,
@@ -4330,6 +4339,7 @@ renderLineupInsights: function() {
         var act = self.scoreFromStats(s, pid);
         a.total += act;
         a.games += 1;
+        a.weekScores.push(act);
 
         // Keep last-4 played games
         a.lastActs.push(act);
@@ -4361,6 +4371,18 @@ renderLineupInsights: function() {
       }
     }
 
+    var quantile = function(arr, q) {
+      if (!arr || !arr.length) return 0;
+      var sorted = arr.slice().sort(function(a, b) { return a - b; });
+      var pos = (sorted.length - 1) * q;
+      var base = Math.floor(pos);
+      var rest = pos - base;
+      if (sorted[base + 1] !== undefined) {
+        return sorted[base] + rest * (sorted[base + 1] - sorted[base]);
+      }
+      return sorted[base];
+    };
+
     // Compute per-player derived metrics
     var byGroup = {}; // group -> array of pids
     var metrics = {}; // pid -> computed
@@ -4377,6 +4399,11 @@ renderLineupInsights: function() {
 
       var ppg = (a2.games ? (a2.total / a2.games) : 0);
       var l4 = a2.lastActs.length ? (a2.lastActs.reduce(function(x,y){return x+y;},0) / a2.lastActs.length) : ppg;
+      var availability = (currentWeek > 0) ? (a2.games / currentWeek) : 0;
+      availability = self.clamp01(availability);
+
+      var floor = quantile(a2.weekScores, 0.25);
+      var ceiling = quantile(a2.weekScores, 0.85);
 
       var stdev = (a2.games > 1) ? Math.sqrt(a2.m2 / (a2.games - 1)) : 0;
       var cv = (ppg > 0) ? (stdev / (ppg + 1e-6)) : 0;
@@ -4401,6 +4428,9 @@ renderLineupInsights: function() {
         total: a2.total,
         ppg: ppg,
         l4: l4,
+        availability: availability,
+        floor: floor,
+        ceiling: ceiling,
         boomRate: boomRate,
         bustRate: bustRate,
         consistency: consistency,
@@ -4507,6 +4537,9 @@ self.data.playerDeltaRanks = deltaRanks;
       var pctTotal = buildPercentiles(pids, function(m){ return m.total; });
       var pctL4    = buildPercentiles(pids, function(m){ return m.l4; });
       var pctDlt   = buildPercentiles(pids, function(m){ return m.deltaAvg; });
+      var pctAvail = buildPercentiles(pids, function(m){ return m.availability; });
+      var pctFloor = buildPercentiles(pids, function(m){ return m.floor; });
+      var pctCeil  = buildPercentiles(pids, function(m){ return m.ceiling; });
 
       var scarcityMult = positionScarcity[group] || 1.00;
 
@@ -4519,20 +4552,27 @@ self.data.playerDeltaRanks = deltaRanks;
         var totalP = (pctTotal[pid] !== undefined) ? pctTotal[pid] : 0.5;
         var l4P    = (pctL4[pid]  !== undefined) ? pctL4[pid]  : 0.5;
         var dltP   = (pctDlt[pid] !== undefined) ? pctDlt[pid] : 0.5;
+        var availP = (pctAvail[pid] !== undefined) ? pctAvail[pid] : 0.5;
+        var floorP = (pctFloor[pid] !== undefined) ? pctFloor[pid] : 0.5;
+        var ceilP  = (pctCeil[pid]  !== undefined) ? pctCeil[pid]  : 0.5;
 
         // Weighted season value (0..1)
-        // Emphasizes: consistency, PPG, total points, boom/bust, delta, snap share
-        // De-emphasizes: recent games (L4)
+        // Emphasizes: PPG, total points, availability, floor/ceiling, consistency, and boom/bust balance.
+        // De-emphasizes: recent games (L4) and small age nudges.
+        var scarcityAdj = 0.02 * self.clamp01((scarcityMult - 1.0) / 0.12);
         var raw =
-          0.28 * ppgP +
-          0.15 * totalP +
-          0.16 * m3.consistency +
-          0.12 * m3.bbAdj +
-          0.10 * dltP +
-          0.08 * m3.snapAdj +
-          0.05 * l4P +
-          0.03 * m3.ageAdj +
-          0.03 * (scarcityMult - 1.0) * 5; // scarcity bonus (0..0.03 range for TE)
+          0.22 * ppgP +
+          0.18 * totalP +
+          0.12 * availP +
+          0.12 * m3.consistency +
+          0.10 * floorP +
+          0.08 * ceilP +
+          0.06 * m3.bbAdj +
+          0.05 * dltP +
+          0.03 * m3.snapAdj +
+          0.02 * l4P +
+          0.02 * m3.ageAdj +
+          scarcityAdj;
 
         raw = self.clamp01(raw);
         var score = Math.round(raw * 1000);
@@ -4546,6 +4586,9 @@ self.data.playerDeltaRanks = deltaRanks;
             ppg: m3.ppg,
             total: m3.total,
             l4: m3.l4,
+            availability: m3.availability,
+            floor: m3.floor,
+            ceiling: m3.ceiling,
             boom: m3.boomRate,
             bust: m3.bustRate,
             snap: m3.snap,
@@ -6523,6 +6566,37 @@ renderFA: function() {
       }
       
       this.dom.pmEfficiencyGrid.innerHTML = effHtml;
+    }
+
+    // Populate season value profile section
+    if (this.dom.pmValueGrid) {
+      var valObj = this.getPlayerValue(pid);
+      var valMetrics = (this.data.playerValueMetrics && this.data.playerValueMetrics[pid]) ? this.data.playerValueMetrics[pid] : null;
+      var valHtml = '';
+
+      var fmtNum = function(v, digits) {
+        var n = Number(v);
+        if (!isFinite(n)) return null;
+        return n.toFixed(digits || 0);
+      };
+
+      if (valObj && valMetrics && valMetrics.games > 0) {
+        var availabilityPct = fmtNum((valMetrics.availability || 0) * 100, 0);
+        var consistencyPct = fmtNum((valMetrics.consistency || 0) * 100, 0);
+
+        valHtml += this.effMetricCard('Value Score', String(valObj.score || 0), 'text-accent');
+        valHtml += this.effMetricCard('Availability', (availabilityPct !== null ? availabilityPct + '%' : '—'), 'text-white');
+        valHtml += this.effMetricCard('PPG', fmtNum(valMetrics.ppg, 1) || '—', 'text-gray-200');
+        valHtml += this.effMetricCard('Total', fmtNum(valMetrics.total, 1) || '—', 'text-gray-200');
+        valHtml += this.effMetricCard('Floor (P25)', fmtNum(valMetrics.floor, 1) || '—', 'text-yellow-400');
+        valHtml += this.effMetricCard('Ceiling (P85)', fmtNum(valMetrics.ceiling, 1) || '—', 'text-green-400');
+        valHtml += this.effMetricCard('Consistency', (consistencyPct !== null ? consistencyPct + '%' : '—'), 'text-accent');
+        valHtml += this.effMetricCard('Δ vs Proj', fmtNum(valMetrics.deltaAvg, 2) || '—', 'text-emerald-300');
+      } else {
+        valHtml = '<div class="col-span-full text-gray-500 text-sm">No season value profile available</div>';
+      }
+
+      this.dom.pmValueGrid.innerHTML = valHtml;
     }
     
     // Populate matchup analysis section
