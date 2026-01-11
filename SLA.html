@@ -1391,6 +1391,7 @@ playersById: {},
     var rankTotal = (item.posRank && item.posRank.rank != null) ? ("#" + item.posRank.rank) : (disp.totalRank ? ("#" + disp.totalRank) : "—");
     var rankPPG = (item.ppgRank && item.ppgRank.rank != null) ? ("#" + item.ppgRank.rank) : (disp.ppgRank ? ("#" + disp.ppgRank) : "—");
     var deltaVal = (item.deltaRank && item.deltaRank.rank != null) ? item.deltaRank.rank : (item.delta != null ? item.delta : null);
+    var totalPts = (item.seasonTotal != null && isFinite(item.seasonTotal)) ? fmt1(item.seasonTotal) : "—";
 
     // --- value / MU / FIT ---
     var valueScore = num(item.valueScore);
@@ -1430,7 +1431,7 @@ playersById: {},
       '<div class="w-full h-full flex gap-0.5 p-1">' +
         // LEFT IMAGE PANEL
         '<div class="w-[36%] rounded-2xl overflow-hidden relative bg-[#10172a] border border-white/5">' +
-          '<img src="' + esc(head) + '" class="absolute inset-0 w-full h-full object-cover opacity-90" onerror="' + esc(fallback) + '" loading="lazy" alt="">' +
+          '<img src="' + esc(head) + '" class="absolute inset-0 w-full h-full object-cover opacity-100" onerror="' + esc(fallback) + '" loading="lazy" alt="">' +
           '<div class="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(255,255,255,0.1),transparent_70%)]"></div>' +
           '<div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>' +
           '<div class="p-3 flex flex-col justify-between h-full relative z-10">' +
@@ -1458,17 +1459,21 @@ playersById: {},
         '<div class="flex-1 min-w-0 rounded-2xl border border-white/5 bg-[#0f111a] p-2 flex flex-col justify-between">' +
           '<div class="flex items-start justify-between gap-2 border-b border-white/5 pb-2">' +
             '<div class="flex items-start gap-4">' +
-              '<div class="text-[9px] uppercase tracking-widest text-gray-400 font-bold">' +
+              '<div class="text-[9px] uppercase tracking-widest text-gray-400 font-bold text-center">' +
                 '<div class="text-[9px] text-gray-500">RANK</div>' +
                 '<div class="text-emerald-400 text-[12px] font-black mt-0.5">' + esc(rankTotal) + '</div>' +
               '</div>' +
-              '<div class="text-[9px] uppercase tracking-widest text-gray-400 font-bold">' +
+              '<div class="text-[9px] uppercase tracking-widest text-gray-400 font-bold text-center">' +
                 '<div class="text-[9px] text-gray-500">PPG</div>' +
                 '<div class="text-fuchsia-400 text-[12px] font-black mt-0.5">' + esc(rankPPG) + '</div>' +
               '</div>' +
-              '<div class="text-[9px] uppercase tracking-widest text-gray-400 font-bold">' +
+              '<div class="text-[9px] uppercase tracking-widest text-gray-400 font-bold text-center">' +
                 '<div class="text-[9px] text-gray-500">DELTA</div>' +
                 '<div class="text-green-400 text-[12px] font-black mt-0.5">' + esc(fmt2signed(deltaVal)) + '</div>' +
+              '</div>' +
+              '<div class="text-[9px] uppercase tracking-widest text-gray-400 font-bold text-left">' +
+                '<div class="text-[9px] text-gray-500">TOTAL</div>' +
+                '<div class="text-sky-300 text-[12px] font-black mt-0.5">' + esc(totalPts) + '</div>' +
               '</div>' +
             '</div>' +
             '<span class="shrink-0 px-2 py-1 rounded-lg border font-mono text-[10px] font-bold ' + esc(availCls) + '">' + esc(avail) + '</span>' +
@@ -6065,6 +6070,12 @@ var benchPlayers = Object.keys(benchByPid).map(function(pid) {
       "DEF": "DL" // Team defense counts as DL for simplicity
     };
 
+    var isInjuredOut = function(p) {
+      var status = ((p && (p.injury_status || p.status)) || "").toString().trim().toUpperCase();
+      var outStatuses = ["OUT", "IR", "PUP", "NFI", "SUSP", "SUSPENDED", "COVID", "INACTIVE", "DNR"];
+      return outStatuses.indexOf(status) >= 0;
+    };
+
     var summarizePlayers = function(pids) {
       var posTotals = { QB: 0, RB: 0, WR: 0, TE: 0, K: 0, DL: 0, LB: 0, DB: 0 };
       (pids || []).forEach(function(pid) {
@@ -6086,9 +6097,12 @@ var benchPlayers = Object.keys(benchByPid).map(function(pid) {
         var id = String(pid);
         var p = self.data.playersById[id];
         if (!p) return;
+        if (isInjuredOut(p)) return;
+        var stats = statsMap[id] || {};
+        if (!stats || Object.keys(stats).length === 0) return;
         var mappedPos = positionMap[p.position];
         if (!mappedPos || !posTotals.hasOwnProperty(mappedPos)) return;
-        posTotals[mappedPos] += self.scoreFromStats(statsMap[id] || {}, id);
+        posTotals[mappedPos] += self.scoreFromStats(stats, id);
       });
       Object.keys(posTotals).forEach(function(k) { posTotals[k] = Math.round(posTotals[k] * 100) / 100; });
       var total = Math.round(posList.reduce(function(acc, k) { return acc + (posTotals[k] || 0); }, 0) * 100) / 100;
@@ -7553,6 +7567,12 @@ renderFA: function() {
       "DEF": "DL"
     };
 
+    var isInjuredOut = function(p) {
+      var status = ((p && (p.injury_status || p.status)) || "").toString().trim().toUpperCase();
+      var outStatuses = ["OUT", "IR", "PUP", "NFI", "SUSP", "SUSPENDED", "COVID", "INACTIVE", "DNR"];
+      return outStatuses.indexOf(status) >= 0;
+    };
+
     // Create a map of roster_id to their matchup data
     var rosterMatchupData = {};
     matchups.forEach(function(m) {
@@ -7571,6 +7591,11 @@ renderFA: function() {
         var id = String(pid);
         var p = self.data.playersById[id];
         if (!p) return;
+        if (useActual) {
+          if (isInjuredOut(p)) return;
+          var stats = scoreMap[id] || {};
+          if (!stats || Object.keys(stats).length === 0) return;
+        }
         var mappedPos = positionMap[p.position];
         if (!mappedPos || !posTotals.hasOwnProperty(mappedPos)) return;
         posTotals[mappedPos] += self.scoreFromStats(scoreMap[id] || {}, id);
