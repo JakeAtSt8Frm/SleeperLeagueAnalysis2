@@ -7674,23 +7674,26 @@ renderFA: function() {
         if (orig) orig.rushRank = getNumericForSort(t.rushYdsPerGame) === 99999 ? "—" : (idx + 1);
       });
     } else {
-      // Data is estimated - use points-allowed ranking with slight variation
-      // to provide meaningful but honest differentiation
-      // Sort by total yards (from estimated data) for total yards ranking
-      var totalYardsRanks = allTeamStats.slice().sort(function(a, b) { 
-        var aTotal = getNumericForSort(a.passYdsPerGame) + getNumericForSort(a.rushYdsPerGame);
-        var bTotal = getNumericForSort(b.passYdsPerGame) + getNumericForSort(b.rushYdsPerGame);
-        return aTotal - bTotal;
+      // Data is estimated - rank pass and rush independently, but flag as estimated.
+      var estPassRanks = allTeamStats.slice().sort(function(a, b) {
+        return getNumericForSort(a.passYdsPerGame) - getNumericForSort(b.passYdsPerGame);
       });
-      
-      // Assign total yards rank to both pass and rush (since they're estimated from same source)
-      totalYardsRanks.forEach(function(t, idx) { 
+      estPassRanks.forEach(function(t, idx) {
         var orig = allTeamStats.find(function(x) { return x.team === t.team; });
         if (orig) {
-          var rank = getNumericForSort(t.passYdsPerGame) === 99999 ? "—" : (idx + 1);
-          orig.passRank = rank;
-          orig.rushRank = rank;
-          orig.yardsEstimated = true;  // Flag that this is estimated data
+          orig.passRank = getNumericForSort(t.passYdsPerGame) === 99999 ? "—" : (idx + 1);
+          orig.yardsEstimated = true;
+        }
+      });
+
+      var estRushRanks = allTeamStats.slice().sort(function(a, b) {
+        return getNumericForSort(a.rushYdsPerGame) - getNumericForSort(b.rushYdsPerGame);
+      });
+      estRushRanks.forEach(function(t, idx) {
+        var orig = allTeamStats.find(function(x) { return x.team === t.team; });
+        if (orig) {
+          orig.rushRank = getNumericForSort(t.rushYdsPerGame) === 99999 ? "—" : (idx + 1);
+          orig.yardsEstimated = true;
         }
       });
     }
