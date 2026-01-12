@@ -1802,6 +1802,10 @@ playersById: {},
   // Effective season/week handling: in the NFL offseason Sleeper's /state/nfl may advance to the next season (week 1),
   // but a fantasy league remains tied to its league.season. Prefer league.season whenever available.
   getSeason: function() {
+    if (this.cfg && this.cfg.autoSetup === false && this.cfg.manual && this.cfg.manual.season != null) {
+      return String(this.cfg.manual.season);
+    }
+    if (this.cfg && this.cfg.selectedSeasonChoice != null) return String(this.cfg.selectedSeasonChoice);
     if (this.data.appSeason != null) return String(this.data.appSeason);
     if (this.data.league && this.data.league.season != null) return String(this.data.league.season);
     if (this.data.nflState && this.data.nflState.season != null) return String(this.data.nflState.season);
@@ -4262,8 +4266,8 @@ if (!isFinite(posPts) || posPts <= 0) continue;
           totalPts: 0,
           totalPassYds: 0,
           totalRushYds: 0,
-          passYdsPerGame: "0.0",
-          rushYdsPerGame: "0.0",
+          passYdsPerGame: null,
+          rushYdsPerGame: null,
           ptsPerGame: "0.0",
           passTD: 0,
           rushTD: 0,
@@ -4298,6 +4302,101 @@ if (!isFinite(posPts) || posPts <= 0) continue;
     }).catch(function(err) {
       console.log("Sleeper API supplement not available:", err && err.message ? err.message : err);
     });
+  },
+
+  mergeDefenseStatsFromPlayerStats: function() {
+    var weekStats = this.data.weekStats || {};
+    var playersById = this.data.playersById || {};
+    var baseStats = this.data.pfrDefenseStats || {};
+    var defenseTotals = {};
+    var defenseWeeks = {};
+    var self = this;
+    var hasPassRushData = false;
+
+    var statValue = function(stats, keys) {
+      if (!stats) return 0;
+      for (var i = 0; i < keys.length; i++) {
+        var key = keys[i];
+        if (stats[key] != null && isFinite(stats[key])) return Number(stats[key]) || 0;
+      }
+      return 0;
+    };
+
+    Object.keys(weekStats).forEach(function(weekKey) {
+      var statsMap = weekStats[weekKey];
+      if (!statsMap || typeof statsMap !== "object") return;
+      var weekNum = Number(weekKey);
+      Object.keys(statsMap).forEach(function(pid) {
+        var st = statsMap[pid];
+        if (!st || typeof st !== "object") return;
+        if (!Object.keys(st).length) return;
+        var player = playersById[pid];
+        if (!player || !player.team) return;
+
+        var opp = self.getOpponent(st, null, player, weekNum);
+        if (!opp) return;
+
+        var passYds = statValue(st, ["pass_yd", "pass_yds", "pass_yds_allowed"]);
+        var rushYds = statValue(st, ["rush_yd", "rush_yds", "rush_yds_allowed"]);
+        var passTD = statValue(st, ["pass_td"]);
+        var rushTD = statValue(st, ["rush_td"]);
+
+        if (!defenseTotals[opp]) {
+          defenseTotals[opp] = { totalPassYds: 0, totalRushYds: 0, passTD: 0, rushTD: 0 };
+        }
+        defenseTotals[opp].totalPassYds += passYds;
+        defenseTotals[opp].totalRushYds += rushYds;
+        defenseTotals[opp].passTD += passTD;
+        defenseTotals[opp].rushTD += rushTD;
+        if (passYds > 0 || rushYds > 0) hasPassRushData = true;
+
+        if (!defenseWeeks[opp]) defenseWeeks[opp] = new Set();
+        defenseWeeks[opp].add(weekNum);
+      });
+    });
+
+    Object.keys(defenseTotals).forEach(function(team) {
+      var totals = defenseTotals[team];
+      var weekSet = defenseWeeks[team];
+      var games = weekSet ? weekSet.size : 0;
+      if (!baseStats[team]) {
+        baseStats[team] = {
+          team: team,
+          games: 0,
+          totalPts: 0,
+          totalPassYds: 0,
+          totalRushYds: 0,
+          passYdsPerGame: null,
+          rushYdsPerGame: null,
+          ptsPerGame: "0.0",
+          passTD: 0,
+          rushTD: 0,
+          interceptions: 0,
+          sacks: 0,
+          hasRealPassRushData: false
+        };
+      }
+
+      var existing = baseStats[team];
+      if (games > 0) existing.games = Math.max(existing.games || 0, games);
+      if (totals.totalPassYds > 0 && existing.games > 0) {
+        existing.totalPassYds = totals.totalPassYds;
+        existing.passYdsPerGame = (totals.totalPassYds / existing.games).toFixed(1);
+      }
+      if (totals.totalRushYds > 0 && existing.games > 0) {
+        existing.totalRushYds = totals.totalRushYds;
+        existing.rushYdsPerGame = (totals.totalRushYds / existing.games).toFixed(1);
+      }
+      if (totals.passTD > 0) existing.passTD = totals.passTD;
+      if (totals.rushTD > 0) existing.rushTD = totals.rushTD;
+      if (totals.totalPassYds > 0 || totals.totalRushYds > 0) {
+        existing.hasRealPassRushData = true;
+        existing.yardsEstimated = false;
+      }
+    });
+
+    this.data.pfrDefenseStats = baseStats;
+    if (hasPassRushData) this.data.hasRealPassRushData = true;
   },
 
   renderLeagueInsights: function() {
@@ -5596,6 +5695,13 @@ getPlayerDeltaRank: function(pid) {
           console.warn("Defense stats load failed (non-critical):", e);
           return Promise.resolve();
         }
+    }).then(function() {
+      self.setProgress("Normalizing defense stats…", 79);
+      try {
+        self.mergeDefenseStatsFromPlayerStats();
+      } catch(e) {
+        console.warn("Defense stats normalization failed (non-critical):", e);
+      }
     }).then(function() {
       self.setProgress("Building defense role metrics…", 80);
       try {
@@ -7495,8 +7601,8 @@ renderFA: function() {
           name: teamNames[teamAbbr] || teamAbbr,
           gamesPlayed: pfr.games || 17,
           ptsPerGame: pfr.ptsPerGame || "0.0",
-          passYdsPerGame: pfr.passYdsPerGame || "0.0",
-          rushYdsPerGame: pfr.rushYdsPerGame || "0.0",
+          passYdsPerGame: (pfr.passYdsPerGame != null ? pfr.passYdsPerGame : "N/A"),
+          rushYdsPerGame: (pfr.rushYdsPerGame != null ? pfr.rushYdsPerGame : "N/A"),
           totalPts: pfr.totalPts || 0,
           sacks: pfr.sacks || 0,
           interceptions: pfr.interceptions || 0,
@@ -7511,8 +7617,8 @@ renderFA: function() {
         name: teamNames[teamAbbr] || teamAbbr,
         gamesPlayed: 0,
         ptsPerGame: "0.0",
-        passYdsPerGame: "0.0",
-        rushYdsPerGame: "0.0",
+        passYdsPerGame: "N/A",
+        rushYdsPerGame: "N/A",
         totalPts: 0,
         sacks: 0,
         interceptions: 0,
@@ -7543,6 +7649,7 @@ renderFA: function() {
 
     // Helper to get numeric value for sorting, putting N/A at end
     var getNumericForSort = function(val) {
+      if (val == null || val === "N/A" || val === "—") return 99999;
       var num = parseFloat(val);
       return isNaN(num) ? 99999 : num;
     };
@@ -7550,43 +7657,25 @@ renderFA: function() {
     // Check if we have real pass/rush data (not all estimated from total yards)
     var hasRealData = self.data.hasRealPassRushData;
     
-    if (hasRealData) {
-      // Use actual pass/rush yard rankings
-      var passRanks = allTeamStats.slice().sort(function(a, b) { 
-        return getNumericForSort(a.passYdsPerGame) - getNumericForSort(b.passYdsPerGame); 
-      });
-      passRanks.forEach(function(t, idx) { 
-        var orig = allTeamStats.find(function(x) { return x.team === t.team; });
-        if (orig) orig.passRank = t.passYdsPerGame === "N/A" ? "—" : (idx + 1);
-      });
+    // Use actual pass/rush yard rankings when available (fall back to "—" for missing data).
+    var passRanks = allTeamStats.slice().sort(function(a, b) { 
+      return getNumericForSort(a.passYdsPerGame) - getNumericForSort(b.passYdsPerGame); 
+    });
+    passRanks.forEach(function(t, idx) { 
+      var orig = allTeamStats.find(function(x) { return x.team === t.team; });
+      if (orig) orig.passRank = getNumericForSort(t.passYdsPerGame) === 99999 ? "—" : (idx + 1);
+    });
 
-      var rushRanks = allTeamStats.slice().sort(function(a, b) { 
-        return getNumericForSort(a.rushYdsPerGame) - getNumericForSort(b.rushYdsPerGame); 
-      });
-      rushRanks.forEach(function(t, idx) { 
-        var orig = allTeamStats.find(function(x) { return x.team === t.team; });
-        if (orig) orig.rushRank = t.rushYdsPerGame === "N/A" ? "—" : (idx + 1);
-      });
-    } else {
-      // Data is estimated - use points-allowed ranking with slight variation
-      // to provide meaningful but honest differentiation
-      // Sort by total yards (from estimated data) for total yards ranking
-      var totalYardsRanks = allTeamStats.slice().sort(function(a, b) { 
-        var aTotal = getNumericForSort(a.passYdsPerGame) + getNumericForSort(a.rushYdsPerGame);
-        var bTotal = getNumericForSort(b.passYdsPerGame) + getNumericForSort(b.rushYdsPerGame);
-        return aTotal - bTotal;
-      });
-      
-      // Assign total yards rank to both pass and rush (since they're estimated from same source)
-      totalYardsRanks.forEach(function(t, idx) { 
-        var orig = allTeamStats.find(function(x) { return x.team === t.team; });
-        if (orig) {
-          var rank = t.passYdsPerGame === "N/A" ? "—" : (idx + 1);
-          orig.passRank = rank;
-          orig.rushRank = rank;
-          orig.yardsEstimated = true;  // Flag that this is estimated data
-        }
-      });
+    var rushRanks = allTeamStats.slice().sort(function(a, b) { 
+      return getNumericForSort(a.rushYdsPerGame) - getNumericForSort(b.rushYdsPerGame); 
+    });
+    rushRanks.forEach(function(t, idx) { 
+      var orig = allTeamStats.find(function(x) { return x.team === t.team; });
+      if (orig) orig.rushRank = getNumericForSort(t.rushYdsPerGame) === 99999 ? "—" : (idx + 1);
+    });
+
+    if (!hasRealData) {
+      allTeamStats.forEach(function(t) { t.yardsEstimated = true; });
     }
 
     // Create lookup
