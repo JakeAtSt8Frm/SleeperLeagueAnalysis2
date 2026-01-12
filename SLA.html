@@ -5108,8 +5108,10 @@ getPlayerDeltaRank: function(pid) {
 
             // Season used for stats/projections
             var statsSeason = leagueSeason;
-            if (self.cfg && self.cfg.autoSetup === false && self.cfg.manual && self.cfg.manual.season) {
-              statsSeason = String(self.cfg.manual.season);
+            if (self.cfg && self.cfg.autoSetup === false) {
+              var dropdownSeason = String(self.cfg.selectedSeasonChoice || "");
+              var manualSeason = (self.cfg.manual && self.cfg.manual.season) ? String(self.cfg.manual.season) : "";
+              statsSeason = dropdownSeason || manualSeason || leagueSeason;
             }
             self.data.appSeason = statsSeason;
 
@@ -5150,7 +5152,7 @@ getPlayerDeltaRank: function(pid) {
             self.ui.selectedWeek = effWeek;
 
             if (self.dom.hdrLeague) self.dom.hdrLeague.textContent = (league && league.name) || "Sleeper League";
-            if (self.dom.hdrMeta) self.dom.hdrMeta.textContent = "Season " + leagueSeason + " | Week " + effWeek;
+            if (self.dom.hdrMeta) self.dom.hdrMeta.textContent = "Season " + statsSeason + " | Week " + effWeek;
 
             self.setProgress("Loading users/rosters…", 28);
             return Promise.all([
