@@ -1144,6 +1144,7 @@ playersById: {},
     losersBracket: [],
     seasonTotals: null,
     pfrDefenseStats: null,
+    defenseWeekStats: {},
     nflSchedule: null,
     playerDeltaRanks: {},
     defRoleMetrics: null,
@@ -2144,6 +2145,8 @@ playersById: {},
     var weeklyRoleRaw = {}; // role -> DEF -> week -> [player fantasy points]
     var weeklyRoleStats = {}; // role -> DEF -> week -> [{ pts, stats object }] for detailed analysis
     var roleSet = {};
+    var defenseRoleOverrides = {};
+    var OFFENSE_ROLES = ["QB", "RB", "WR", "TE", "K"];
 
     // Aggregate: use player stats for team, map to opponent DEF for that week.
     for (var w = 1; w <= currentWeek; w++) {
@@ -2224,6 +2227,25 @@ var p = players[pid];
         }
       }
     }
+
+    // Supplement with defensive team stats that include fan_pts_allow_* keys (Sleeper API).
+    var defenseWeekStats = this.data.defenseWeekStats || {};
+    defTeams.forEach(function(defTeam) {
+      var teamWeeks = defenseWeekStats[defTeam] || {};
+      Object.keys(teamWeeks).forEach(function(weekKey) {
+        var wkNum = Number(weekKey);
+        if (!isFinite(wkNum) || wkNum <= 0 || wkNum > currentWeek) return;
+        var weekStatsEntry = teamWeeks[weekKey] || {};
+        OFFENSE_ROLES.forEach(function(role) {
+          var val = weekStatsEntry[role];
+          if (val == null || !isFinite(val)) return;
+          roleSet[role] = true;
+          if (!defenseRoleOverrides[role]) defenseRoleOverrides[role] = {};
+          if (!defenseRoleOverrides[role][defTeam]) defenseRoleOverrides[role][defTeam] = {};
+          defenseRoleOverrides[role][defTeam][wkNum] = Number(val);
+        });
+      });
+    });
 
     var rolesList = Object.keys(roleSet).sort();
     // Keep the UI focused on 8 main fantasy-relevant role categories
@@ -2308,6 +2330,19 @@ var roleTopN = function(role) {
           map[wk] = v;
         }
         weeklyRole[role][defTeam] = map;
+      });
+    });
+
+    // Override weekly role values with defensive fan_pts_allow_* totals when available.
+    Object.keys(defenseRoleOverrides).forEach(function(role) {
+      if (!weeklyRole[role]) weeklyRole[role] = {};
+      var teamMap = defenseRoleOverrides[role] || {};
+      Object.keys(teamMap).forEach(function(defTeam) {
+        if (!weeklyRole[role][defTeam]) weeklyRole[role][defTeam] = {};
+        var weekMap = teamMap[defTeam] || {};
+        Object.keys(weekMap).forEach(function(wkKey) {
+          weeklyRole[role][defTeam][wkKey] = weekMap[wkKey];
+        });
       });
     });
 
@@ -3415,7 +3450,7 @@ var roleTopN = function(role) {
             var hasPlayedB = Object.keys(stB).length > 0;
             if (!hasPlayedB) continue;        // "Not played"
             var posPts = self.scoreFromStats(stB, pid3);
-if (!isFinite(posPts)) continue;
+if (!isFinite(posPts) || posPts <= 0) continue;
 
             posAgg[pos] = posAgg[pos] || [];
             posAgg[pos].push(posPts);
@@ -4121,6 +4156,23 @@ if (!isFinite(posPts)) continue;
       return keys.length > 0;
     };
 
+    var statValueMaybe = function(stats, keys) {
+      if (!stats) return null;
+      for (var i = 0; i < keys.length; i++) {
+        var key = keys[i];
+        if (stats[key] != null && isFinite(stats[key])) return Number(stats[key]);
+      }
+      return null;
+    };
+
+    var allowedStatKeys = {
+      QB: ["fan_pts_allow_qb", "pts_allow_qb", "def_pts_allow_qb"],
+      RB: ["fan_pts_allow_rb", "pts_allow_rb", "def_pts_allow_rb"],
+      WR: ["fan_pts_allow_wr", "pts_allow_wr", "def_pts_allow_wr"],
+      TE: ["fan_pts_allow_te", "pts_allow_te", "def_pts_allow_te"],
+      K: ["fan_pts_allow_k", "pts_allow_k", "def_pts_allow_k"]
+    };
+
     var fetchTeam = function(teamId) {
       var url = "https://api.sleeper.app/stats/nfl/player/" + teamId + "?season_type=" + seasonType + "&season=" + season + "&grouping=week";
       return self.fetchJson(url).then(function(payload) {
@@ -4139,10 +4191,28 @@ if (!isFinite(posPts)) continue;
           rushYds: 0
         };
 
+        var defenseWeeks = {};
+        var addDefenseWeek = function(weekKey, stats) {
+          if (!stats) return;
+          var wk = Number(weekKey);
+          if (!isFinite(wk) || wk <= 0) return;
+          var weekAllowed = {};
+          var roles = Object.keys(allowedStatKeys);
+          for (var r = 0; r < roles.length; r++) {
+            var role = roles[r];
+            var val = statValueMaybe(stats, allowedStatKeys[role]);
+            if (val != null && isFinite(val)) weekAllowed[role] = Number(val);
+          }
+          if (Object.keys(weekAllowed).length) defenseWeeks[wk] = weekAllowed;
+        };
+
         if (Array.isArray(weekly)) {
           weekly.forEach(function(entry) {
             var stats = entry && entry.stats ? entry.stats : entry;
             if (!stats || !hasAnyStat(stats)) return;
+            var wk = entry && (entry.week || entry.week_num || entry.weekNumber);
+            if (wk == null) wk = weekly.indexOf(entry) + 1;
+            addDefenseWeek(wk, stats);
             totals.games += 1;
             totals.totalPts += statValue(stats, ["pts_allow", "def_pts_allow", "pts_allowed", "pa"]);
             totals.sacks += statValue(stats, ["sack", "def_sack", "sacks"]);
@@ -4155,6 +4225,7 @@ if (!isFinite(posPts)) continue;
             var stats = weekly[weekKey];
             if (stats && stats.stats) stats = stats.stats;
             if (!stats || !hasAnyStat(stats)) return;
+            addDefenseWeek(weekKey, stats);
             totals.games += 1;
             totals.totalPts += statValue(stats, ["pts_allow", "def_pts_allow", "pts_allowed", "pa"]);
             totals.sacks += statValue(stats, ["sack", "def_sack", "sacks"]);
@@ -4164,7 +4235,7 @@ if (!isFinite(posPts)) continue;
           });
         }
 
-        return { team: teamId, totals: totals };
+        return { team: teamId, totals: totals, defenseWeeks: defenseWeeks };
       }).catch(function() {
         return null;
       });
@@ -4172,11 +4243,18 @@ if (!isFinite(posPts)) continue;
 
     return Promise.all(teamList.map(fetchTeam)).then(function(results) {
       var updated = false;
+      var defenseWeekStats = self.data.defenseWeekStats || {};
       (results || []).forEach(function(entry) {
         if (!entry || !entry.totals) return;
         var teamId = entry.team;
         var totals = entry.totals;
         if (!teamId || !totals) return;
+        if (entry.defenseWeeks && Object.keys(entry.defenseWeeks).length) {
+          defenseWeekStats[teamId] = defenseWeekStats[teamId] || {};
+          Object.keys(entry.defenseWeeks).forEach(function(weekKey) {
+            defenseWeekStats[teamId][weekKey] = entry.defenseWeeks[weekKey];
+          });
+        }
 
         baseStats[teamId] = baseStats[teamId] || {
           team: teamId,
@@ -4215,6 +4293,7 @@ if (!isFinite(posPts)) continue;
 
       if (updated) {
         self.data.pfrDefenseStats = baseStats;
+        self.data.defenseWeekStats = defenseWeekStats;
       }
     }).catch(function(err) {
       console.log("Sleeper API supplement not available:", err && err.message ? err.message : err);
