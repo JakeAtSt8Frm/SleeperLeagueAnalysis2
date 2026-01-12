@@ -7598,8 +7598,8 @@ renderFA: function() {
           name: teamNames[teamAbbr] || teamAbbr,
           gamesPlayed: pfr.games || 17,
           ptsPerGame: pfr.ptsPerGame || "0.0",
-          passYdsPerGame: pfr.passYdsPerGame || "0.0",
-          rushYdsPerGame: pfr.rushYdsPerGame || "0.0",
+          passYdsPerGame: (pfr.passYdsPerGame != null ? pfr.passYdsPerGame : "N/A"),
+          rushYdsPerGame: (pfr.rushYdsPerGame != null ? pfr.rushYdsPerGame : "N/A"),
           totalPts: pfr.totalPts || 0,
           sacks: pfr.sacks || 0,
           interceptions: pfr.interceptions || 0,
@@ -7614,8 +7614,8 @@ renderFA: function() {
         name: teamNames[teamAbbr] || teamAbbr,
         gamesPlayed: 0,
         ptsPerGame: "0.0",
-        passYdsPerGame: "0.0",
-        rushYdsPerGame: "0.0",
+        passYdsPerGame: "N/A",
+        rushYdsPerGame: "N/A",
         totalPts: 0,
         sacks: 0,
         interceptions: 0,
@@ -7646,6 +7646,7 @@ renderFA: function() {
 
     // Helper to get numeric value for sorting, putting N/A at end
     var getNumericForSort = function(val) {
+      if (val == null || val === "N/A" || val === "—") return 99999;
       var num = parseFloat(val);
       return isNaN(num) ? 99999 : num;
     };
@@ -7660,7 +7661,7 @@ renderFA: function() {
       });
       passRanks.forEach(function(t, idx) { 
         var orig = allTeamStats.find(function(x) { return x.team === t.team; });
-        if (orig) orig.passRank = t.passYdsPerGame === "N/A" ? "—" : (idx + 1);
+        if (orig) orig.passRank = getNumericForSort(t.passYdsPerGame) === 99999 ? "—" : (idx + 1);
       });
 
       var rushRanks = allTeamStats.slice().sort(function(a, b) { 
@@ -7668,7 +7669,7 @@ renderFA: function() {
       });
       rushRanks.forEach(function(t, idx) { 
         var orig = allTeamStats.find(function(x) { return x.team === t.team; });
-        if (orig) orig.rushRank = t.rushYdsPerGame === "N/A" ? "—" : (idx + 1);
+        if (orig) orig.rushRank = getNumericForSort(t.rushYdsPerGame) === 99999 ? "—" : (idx + 1);
       });
     } else {
       // Data is estimated - use points-allowed ranking with slight variation
@@ -7684,7 +7685,7 @@ renderFA: function() {
       totalYardsRanks.forEach(function(t, idx) { 
         var orig = allTeamStats.find(function(x) { return x.team === t.team; });
         if (orig) {
-          var rank = t.passYdsPerGame === "N/A" ? "—" : (idx + 1);
+          var rank = getNumericForSort(t.passYdsPerGame) === 99999 ? "—" : (idx + 1);
           orig.passRank = rank;
           orig.rushRank = rank;
           orig.yardsEstimated = true;  // Flag that this is estimated data
