@@ -1159,10 +1159,12 @@ var APP = {
     rosters: [],
     matchups: [],
     weekMatchups: {},
+    weekMatchupsByRoster: {},
         weekTrans: {},
     teamWeekScores: {},
     leagueMetrics: null,
 playersById: {},
+    playerDisplayCache: {},
     weekStats: {},
     weekProj: {},
     weekLoadPromises: {},
@@ -1173,6 +1175,7 @@ playersById: {},
     defenseWeekStats: {},
     nflSchedule: null,
     playerDeltaRanks: {},
+    playerPosRanks: {},
     defRoleMetrics: null,
     playerValueIndex: null
   },
@@ -1748,6 +1751,12 @@ playersById: {},
   },
 
   playerDisplay: function(p) {
+    if (!p) return { name: "Unknown Player", pos: "?", posPrimary: "?", team: "FA", age: null };
+    var pid = String(p.player_id || p.id || "");
+    if (pid) {
+      this.data.playerDisplayCache = this.data.playerDisplayCache || {};
+      if (this.data.playerDisplayCache[pid]) return this.data.playerDisplayCache[pid];
+    }
     var firstName = (p && p.first_name) ? p.first_name : "";
     var lastName = (p && p.last_name) ? p.last_name : "";
     var name = [firstName, lastName].filter(Boolean).join(" ").trim() || "Unknown Player";
@@ -1768,13 +1777,15 @@ playersById: {},
       posCombo = posCombo + " (" + subPos + ")";
     }
 
-    return {
+    var out = {
       name: name,
       pos: posCombo,
       posPrimary: posPrimary,
       team: (p && p.team) ? p.team : "FA",
       age: this.playerAge(p)
     };
+    if (pid) this.data.playerDisplayCache[pid] = out;
+    return out;
   },
   // Roster naming helpers: "Account - Team Name"
   getRosterTeamName: function(roster) {
@@ -3215,8 +3226,14 @@ var roleTopN = function(role) {
     var fetchOne = function(w) {
       var wk = String(w);
       return self.fetchJson("https://api.sleeper.app/v1/league/" + self.cfg.leagueId + "/matchups/" + w)
-        .then(function(arr) { self.data.weekMatchups[wk] = arr || []; })
-        .catch(function() { self.data.weekMatchups[wk] = []; });
+        .then(function(arr) {
+          self.data.weekMatchups[wk] = arr || [];
+          self.buildWeekMatchupIndex(wk, self.data.weekMatchups[wk]);
+        })
+        .catch(function() {
+          self.data.weekMatchups[wk] = [];
+          self.buildWeekMatchupIndex(wk, []);
+        });
     };
 
     var CONCURRENCY = 6;
@@ -3232,14 +3249,26 @@ var roleTopN = function(role) {
     return Promise.all(workers).then(function() {});
   },
 
-  getMatchupForRoster: function(weekNum, rosterId) {
-    var wk = String(weekNum);
-    var arr = (this.data.weekMatchups && this.data.weekMatchups[wk]) || [];
+  buildWeekMatchupIndex: function(weekKey, matchups) {
+    var wk = String(weekKey);
+    var map = {};
+    var arr = matchups || [];
     for (var i = 0; i < arr.length; i++) {
       var m = arr[i];
-      if (m && String(m.roster_id) === String(rosterId)) return m;
+      if (m && m.roster_id != null) map[String(m.roster_id)] = m;
     }
-    return null;
+    this.data.weekMatchupsByRoster[wk] = map;
+    return map;
+  },
+
+  getMatchupForRoster: function(weekNum, rosterId) {
+    var wk = String(weekNum);
+    if (this.data.weekMatchupsByRoster && this.data.weekMatchupsByRoster[wk]) {
+      return this.data.weekMatchupsByRoster[wk][String(rosterId)] || null;
+    }
+    var arr = (this.data.weekMatchups && this.data.weekMatchups[wk]) || [];
+    var map = this.buildWeekMatchupIndex(wk, arr);
+    return map[String(rosterId)] || null;
   },
 
   buildLeagueMetrics: function() {
@@ -3254,11 +3283,20 @@ var roleTopN = function(role) {
         return;
       }
 
+      // Roster lookup
+      var rosterById = {};
+      rosters.forEach(function(r) { rosterById[String(r.roster_id)] = r; });
+
       // Build name map
+      var nameCache = {};
       var nameForRoster = function(rid) {
-        var roster = rosters.find(function(r) { return String(r.roster_id) === String(rid); });
+        var key = String(rid);
+        if (nameCache[key]) return nameCache[key];
+        var roster = rosterById[key];
         var u = roster ? self.data.usersById[roster.owner_id] : null;
-        return (u && u.display_name) ? u.display_name : ("Team " + rid);
+        var name = (u && u.display_name) ? u.display_name : ("Team " + rid);
+        nameCache[key] = name;
+        return name;
       };
 
       var rosterIds = rosters.map(function(r) { return String(r.roster_id); });
@@ -3283,11 +3321,6 @@ var roleTopN = function(role) {
           scores: [], optPf: 0, benchPf: 0, regret: 0
         };
       });
-
-      
-      // Roster lookup for fallbacks
-      var rosterById = {};
-      rosters.forEach(function(r) { rosterById[String(r.roster_id)] = r; });
 
       // Starter slots (exclude bench/IR/taxi/reserve if present in roster_positions)
       var rosterPositions = (self.data.league && Array.isArray(self.data.league.roster_positions)) ? self.data.league.roster_positions : [];
@@ -4913,7 +4946,37 @@ renderLineupInsights: function() {
         totals[pid] = Math.round(totals[pid] * 100) / 100;
       });
       self.data.seasonTotals = totals;
+      self.buildPositionRanks();
     });
+  },
+
+  buildPositionRanks: function() {
+    var self = this;
+    var totals = this.data.seasonTotals || {};
+    var players = this.data.playersById || {};
+    var groups = { QB: [], RB: [], WR: [], TE: [], K: [], DEF: [], DL: [], LB: [], DB: [] };
+
+    Object.keys(totals).forEach(function(pid) {
+      var total = totals[pid];
+      if (!isFinite(total) || total <= 0) return;
+      var p = players[pid];
+      if (!p) return;
+      var group = self.positionGroupForPlayer(p);
+      if (!group || !groups[group]) return;
+      groups[group].push({ pid: pid, total: total });
+    });
+
+    var ranks = {};
+    Object.keys(groups).forEach(function(group) {
+      var arr = groups[group];
+      if (!arr || !arr.length) return;
+      arr.sort(function(a, b) { return b.total - a.total; });
+      for (var i = 0; i < arr.length; i++) {
+        ranks[arr[i].pid] = { pos: group, rank: i + 1 };
+      }
+    });
+
+    this.data.playerPosRanks = ranks;
   },
 
   // ---------- Player Value (0-1000) ----------
@@ -5392,52 +5455,11 @@ getPlayerDeltaRank: function(pid) {
   },
 
   positionRank: function(playerId) {
-    var p = this.data.playersById[playerId];
-    if (!p || !p.position) return null;
-    var self = this;
-    var totals = this.data.seasonTotals || {};
-
-    // Map specific positions to general categories for ranking
-    var positionGroups = {
-      "QB": ["QB"],
-      "RB": ["RB"],
-      "WR": ["WR"],
-      "TE": ["TE"],
-      "K": ["K"],
-      "DEF": ["DEF"],
-      "DL": ["DL", "DE", "DT", "NT"],
-      "LB": ["LB", "ILB", "OLB", "MLB"],
-      "DB": ["DB", "CB", "S", "SS", "FS"]
-    };
-
-    // Find which group this player belongs to
-    var playerGroup = null;
-    var groupName = null;
-    Object.keys(positionGroups).forEach(function(group) {
-      if (positionGroups[group].indexOf(p.position) >= 0) {
-        playerGroup = positionGroups[group];
-        groupName = group;
-      }
-    });
-
-    if (!playerGroup) return null;
-
-    // Get all players in this position group with season totals, sorted by custom score
-    var pool = Object.values(this.data.playersById)
-      .filter(function(x) { 
-        if (!x || !x.position) return false;
-        var inGroup = playerGroup.indexOf(x.position) >= 0;
-        var hasStats = totals[String(x.player_id)] > 0;
-        return inGroup && hasStats;
-      })
-      .sort(function(a, b) { 
-        var ta = totals[String(a.player_id)] || 0;
-        var tb = totals[String(b.player_id)] || 0;
-        return tb - ta; // Higher score = better rank
-      });
-
-    var idx = pool.findIndex(function(x) { return String(x.player_id) === String(playerId); });
-    return idx < 0 ? null : { pos: groupName, rank: idx + 1 };
+    var pid = String(playerId);
+    if (!this.data.playerPosRanks || !Object.keys(this.data.playerPosRanks).length) {
+      if (this.data.seasonTotals && this.data.playersById) this.buildPositionRanks();
+    }
+    return (this.data.playerPosRanks && this.data.playerPosRanks[pid]) ? this.data.playerPosRanks[pid] : null;
   },
 
   // Switch to a different season/league without page reload (Google Apps Script compatible)
@@ -5475,10 +5497,12 @@ getPlayerDeltaRank: function(pid) {
       rosters: [],
       matchups: [],
       weekMatchups: {},
+      weekMatchupsByRoster: {},
       weekTrans: {},
       teamWeekScores: {},
       leagueMetrics: null,
       playersById: {},
+      playerDisplayCache: {},
       weekStats: {},
       weekProj: {},
       weekLoadPromises: {},
@@ -5488,6 +5512,7 @@ getPlayerDeltaRank: function(pid) {
       pfrDefenseStats: null,
       nflSchedule: null,
       playerDeltaRanks: {},
+      playerPosRanks: {},
       defRoleMetrics: null,
       playerValueIndex: null
     };
@@ -5678,10 +5703,12 @@ getPlayerDeltaRank: function(pid) {
           return (p && typeof p.catch === 'function') ? p.catch(function(e) {
             console.warn("Season totals build failed (non-critical):", e);
             self.data.seasonTotals = {};
+            self.data.playerPosRanks = {};
           }) : Promise.resolve();
         } catch(e) {
           console.warn("Season totals build failed (non-critical):", e);
           self.data.seasonTotals = {};
+          self.data.playerPosRanks = {};
           return Promise.resolve();
         }
       })
@@ -5867,6 +5894,7 @@ getPlayerDeltaRank: function(pid) {
     ]).then(function(results) {
       // Store matchups by week to avoid overwriting current week's data
       self.data.weekMatchups[String(week)] = results[0] || [];
+      self.buildWeekMatchupIndex(String(week), self.data.weekMatchups[String(week)]);
       // Also update main matchups if this is the selected week
       if (week === self.ui.selectedWeek) {
         self.data.matchups = results[0] || [];
@@ -7269,6 +7297,11 @@ renderFA: function() {
         if (!isFinite(n)) return null;
         return n.toFixed(digits || 0);
       };
+      var fmtPct = function(v, digits) {
+        var n = Number(v);
+        if (!isFinite(n)) return null;
+        return (n * 100).toFixed(digits || 0) + "%";
+      };
 
       if (valObj && valMetrics && valMetrics.games > 0) {
         var availabilityPct = fmtNum((valMetrics.availability || 0) * 100, 0);
@@ -7277,11 +7310,15 @@ renderFA: function() {
         valHtml += this.effMetricCard('Value Score', String(valObj.score || 0), 'text-accent');
         valHtml += this.effMetricCard('Availability', (availabilityPct !== null ? availabilityPct + '%' : '—'), 'text-white');
         valHtml += this.effMetricCard('PPG', fmtNum(valMetrics.ppg, 1) || '—', 'text-gray-200');
+        valHtml += this.effMetricCard('L4 Avg', fmtNum(valMetrics.l4, 1) || '—', 'text-sky-300');
         valHtml += this.effMetricCard('Total', fmtNum(valMetrics.total, 1) || '—', 'text-gray-200');
         valHtml += this.effMetricCard('Floor (P25)', fmtNum(valMetrics.floor, 1) || '—', 'text-yellow-400');
         valHtml += this.effMetricCard('Ceiling (P85)', fmtNum(valMetrics.ceiling, 1) || '—', 'text-green-400');
         valHtml += this.effMetricCard('Consistency', (consistencyPct !== null ? consistencyPct + '%' : '—'), 'text-accent');
         valHtml += this.effMetricCard('Δ vs Proj', fmtNum(valMetrics.deltaAvg, 2) || '—', 'text-emerald-300');
+        valHtml += this.effMetricCard('Boom %', fmtPct(valMetrics.boomRate, 0) || '—', 'text-green-400');
+        valHtml += this.effMetricCard('Bust %', fmtPct(valMetrics.bustRate, 0) || '—', 'text-red-400');
+        valHtml += this.effMetricCard('Snap %', (valMetrics.snap != null ? fmtNum(valMetrics.snap, 0) + '%' : '—'), 'text-blue-300');
       } else {
         valHtml = '<div class="col-span-full text-gray-500 text-sm">No season value profile available</div>';
       }
