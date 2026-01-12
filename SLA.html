@@ -3543,7 +3543,7 @@ if (!isFinite(posPts)) continue;
     });
   },
 
-  // Load defense stats - now using real NFL.com 2025 season data
+  // Load defense stats - now using real NFL.com season data
   loadDefenseStats: function() {
     var self = this;
     var season = String(this.getSeason());
@@ -5417,6 +5417,8 @@ getPlayerDeltaRank: function(pid) {
 
         if (self.cfg.seasonLeagues && self.cfg.seasonLeagues[yr]) {
           try { localStorage.setItem("sleeper_app_season_choice", yr); } catch(e) {}
+          self.cfg.selectedSeasonChoice = yr;
+          try { if (self.saveAppSettings) self.saveAppSettings(); } catch(e) {}
           self.switchSeason(yr);
         }
       };    }
@@ -7126,9 +7128,13 @@ renderFA: function() {
     var conf = this.ui.selectedConference;
     var divisions = nflTeams[conf];
     var pfrStats = this.data.pfrDefenseStats;
-    //var season = this.getSeason();
-    var season = 2025;
-    var dataSource = season + " NFL Season Stats (via Pro-Football-Reference)";
+    var season = this.getSeason();
+    var dataSource = season + " NFL Season Stats";
+    if (this.data.hasRealPassRushData) {
+      dataSource += " (NFL.com)";
+    } else {
+      dataSource += " (Sleeper schedule / estimated splits)";
+    }
 
     // Get defense stats from our data
     var getTeamDefenseStats = function(teamAbbr) {
