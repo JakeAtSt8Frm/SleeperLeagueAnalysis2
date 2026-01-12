@@ -1802,6 +1802,10 @@ playersById: {},
   // Effective season/week handling: in the NFL offseason Sleeper's /state/nfl may advance to the next season (week 1),
   // but a fantasy league remains tied to its league.season. Prefer league.season whenever available.
   getSeason: function() {
+    if (this.cfg && this.cfg.autoSetup === false && this.cfg.manual && this.cfg.manual.season != null) {
+      return String(this.cfg.manual.season);
+    }
+    if (this.cfg && this.cfg.selectedSeasonChoice != null) return String(this.cfg.selectedSeasonChoice);
     if (this.data.appSeason != null) return String(this.data.appSeason);
     if (this.data.league && this.data.league.season != null) return String(this.data.league.season);
     if (this.data.nflState && this.data.nflState.season != null) return String(this.data.nflState.season);
