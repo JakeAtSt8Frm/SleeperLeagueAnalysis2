@@ -82,6 +82,7 @@
     .player-card {
       background: var(--surface-2);
       border: 1px solid var(--border);
+      border-color: rgba(49,117,242,0.18)
     }
     .player-card:hover {
       border-color: rgba(16,185,129,0.3);
@@ -314,6 +315,31 @@
       }
     }
 
+
+    /* Free Agents grid - allow up to 3 columns when there’s room */
+    .ui2k-card-grid-fa{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(420px, 1fr));
+      gap: 1rem;
+      align-items: start;
+      justify-items: center;
+      width: 100%;
+      max-width: calc(3 * 540px + 2 * 1rem);
+      margin-inline: auto;
+    }
+    @media (max-width: 1400px){
+      .ui2k-card-grid-fa{
+        grid-template-columns: repeat(2, minmax(420px, 1fr));
+        max-width: calc(2 * 540px + 1rem);
+      }
+    }
+    @media (max-width: 960px){
+      .ui2k-card-grid-fa{
+        grid-template-columns: 1fr;
+        max-width: 100%;
+      }
+    }
+
     /* Status bar on left of panel headers */
     .madden-status-bar{
       width:3px;
@@ -359,7 +385,7 @@
   <!-- Layout -->
   <div class="flex h-[calc(100vh-3.5rem)]">
     <!-- Sidebar -->
-    <aside class="w-20 border-r border-gray-800/50 flex flex-col items-center py-7 gap-3 shrink-0 ui2k-sidebar">
+    <aside class="w-16 border-r border-gray-800/50 flex flex-col items-center py-7 gap-3 shrink-0 ui2k-sidebar">
       <div class="flex flex-col items-center gap-1">
         <button class="w-20 h-10 rounded-lg text-gray-400 font-medium text-[9px] ui2k-navbtn" id="btnTabTeams" title="Current Rosters">ROST</button>
         <button class="w-20 h-10 rounded-lg text-gray-500 font-medium text-[9px] ui2k-navbtn" id="btnTabOptimal" title="Optimal Lineups">OPT</button>
@@ -1444,6 +1470,12 @@ playersById: {},
     if (slot === "IR") avail = "IR";
     if (injury) avail = injury;
     if (item.isOut) avail = "OUT";
+    // Option A: shorten long labels so the pill never clips off the right edge
+    var availDisplay = avail;
+    var _a = safeUpper(availDisplay);
+    if (_a === "QUESTIONABLE") availDisplay = "QUEST";
+    else if (_a === "PROBABLE") availDisplay = "PROB";
+    else if (_a === "DOUBTFUL") availDisplay = "DOUBT";
     var availCls = "bg-emerald-900/20 text-emerald-200 border-emerald-900/40";
     var availKey = avail.toLowerCase();
     if (availKey.indexOf("ir") !== -1) availCls = "bg-amber-900/20 text-amber-200 border-amber-900/40";
@@ -1495,7 +1527,7 @@ playersById: {},
     // --- card element ---
     var card = document.createElement("div");
     var border = item.isOut ? "border-red-900/50" : "";
-    card.className = "player-card card-hover rounded-lg cursor-pointer w-full min-w-[400px] max-w-[520px] h-[160px] overflow-hidden " + (item.isOut ? " opacity-70" : "");
+    card.className = "player-card card-hover rounded-2xl cursor-pointer w-full min-w-[400px] max-w-[520px] h-[160px] overflow-hidden " + (item.isOut ? " opacity-70" : "");
     card.setAttribute("data-pid", pid);
     card.onclick = function() { self.openPlayerModal(pid); };
 
@@ -1548,7 +1580,7 @@ playersById: {},
                 '<div class="text-sky-300 text-[12px] font-black mt-0.5">' + esc(totalPts) + '</div>' +
               '</div>' +
             '</div>' +
-            '<span class="shrink-0 px-2 py-1 rounded-lg border font-mono text-[10px] font-bold ' + esc(availCls) + '">' + esc(avail) + '</span>' +
+            '<span class="shrink-0 px-2 py-1 rounded-lg border font-mono text-[10px] font-bold ' + esc(availCls) + '">' + esc(availDisplay) + '</span>' +
           '</div>' +
 
           '<div class="flex items-center justify-between gap-2 py-1">' +
@@ -1628,7 +1660,7 @@ playersById: {},
 
   boomBustStatus: function(proj, actual, hasPlayed, muScore) {
     if (!hasPlayed) return { label: "Not played", color: "text-gray-400", bg: "bg-gray-800" };
-    if (proj <= 0) return { label: "No projection", color: "text-gray-400", bg: "bg-gray-800" };
+    if (proj <= 0) return { label: "No Proj", color: "text-gray-400", bg: "bg-gray-800" };
 
     var isBoom = actual >= proj * this.cfg.boomPct;
     var isBust = actual <= proj * this.cfg.bustPct;
@@ -3084,7 +3116,7 @@ var roleTopN = function(role) {
     var normMap = { Q: "QUESTIONABLE", O: "OUT", P: "PROBABLE", D: "DOUBTFUL", INJURED_RESERVE: "IR" };
     var norm = normMap[up] || up;
     
-    var labels = { QUESTIONABLE: "Questionable", DOUBTFUL: "Doubtful", PROBABLE: "Probable", OUT: "Out", IR: "IR", DNR: "DNR" };
+    var labels = { QUESTIONABLE: "QUEST", DOUBTFUL: "DOUBT", PROBABLE: "PROB", OUT: "Out", IR: "IR", DNR: "DNR", SUSP: "SUSP", SUSPENDED: "SUSP" };
     var label = labels[norm] || (raw.length > 18 ? raw.slice(0, 18) + "…" : raw);
 
     var severe = ["OUT", "IR", "DNR", "SUSP", "SUSPENDED", "PUP", "NFI", "COVID", "INACTIVE"];
@@ -7074,7 +7106,7 @@ renderFA: function() {
 
       // Create 2-column grid container
       var gridContainer = document.createElement("div");
-      gridContainer.className = "ui2k-card-grid";
+      gridContainer.className = "ui2k-card-grid-fa";
 
       // 7. Render as player cards
       top.forEach(function(p, index) {
