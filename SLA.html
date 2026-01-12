@@ -7651,8 +7651,10 @@ renderFA: function() {
       return isNaN(num) ? 99999 : num;
     };
 
-    // Check if we have real pass/rush data (not all estimated from total yards)
-    var hasRealData = self.data.hasRealPassRushData;
+    // Check if we have real pass/rush data (NFL.com or player-stat-derived splits)
+    var hasRealData = self.data.hasRealPassRushData || allTeamStats.some(function(team) {
+      return team.hasRealPassRushData;
+    });
     
     if (hasRealData) {
       // Use actual pass/rush yard rankings
