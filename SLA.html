@@ -865,7 +865,12 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
               <div>
                 <label class="block text-xs text-accent mb-1" >LEAGUE ID (override)</label>
-                <input id="settingsLeagueId" type="text" placeholder="e.g., 1312656463549726720" class="w-full rounded-xl bg-black/50 border border-accent/20 px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-accent/40" />
+                <input id="settingsLeagueId" type="text" list="leagueIdPresets" placeholder="e.g., 1312656463549726720" class="w-full rounded-xl bg-black/50 border border-accent/20 px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-accent/40" />
+                <datalist id="leagueIdPresets">
+                  <option value="1122650835105759232">2024 (default)</option>
+                  <option value="1180280389862244352">2025 (default)</option>
+                  <option value="1312656463549726720">2026 (default)</option>
+                </datalist>
                 <div class="text-xs text-gray-500 mt-1">Leave blank to use the Year → League mapping.</div>
               </div>
 
@@ -873,6 +878,12 @@
                 <label class="block text-xs text-accent mb-1" >SEASON (year)</label>
                 <select id="settingsSeason" class="w-full rounded-xl bg-black/50 border border-accent/20 px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-accent/40"></select>
                 <div class="text-xs text-gray-500 mt-1">In auto mode, league.season is preferred.</div>
+              </div>
+
+              <div>
+                <label class="block text-xs text-accent mb-1" >ROSTER DATA LEAGUE ID (override)</label>
+                <input id="settingsRosterLeagueId" type="text" placeholder="e.g., 1312656463549726720" class="w-full rounded-xl bg-black/50 border border-accent/20 px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-accent/40" />
+                <div class="text-xs text-gray-500 mt-1">Use different league rosters while keeping all other data from the selected season.</div>
               </div>
 
               <div>
@@ -1083,6 +1094,7 @@ var APP = {
       autoSetup: true,
       manual: { leagueId: "", season: "", seasonType: "regular", currentWeek: 1, maxWeek: 18 },
       weekSelectionMode: "max_week",
+      rosterLeagueIdOverride: "",
     boomPct: 1.20,
     bustPct: 0.80
   },
@@ -1166,7 +1178,7 @@ playersById: {},
                'defRoleSelect',
                'defRoleModeMost',
                'defRoleModeLeast',
-               'defRoleTableBody', 'viewSettings', 'btnTabSettings', 'settingsAutoSetup', 'settingsLeagueId', 'settingsSeason', 'settingsSeasonType', 'settingsWeekMode', 'settingsCurrentWeek', 'settingsMaxWeek', 'settingsBoomPct', 'settingsBustPct', 'settingsApply', 'settingsReset', 'settingsEffective'];
+               'defRoleTableBody', 'viewSettings', 'btnTabSettings', 'settingsAutoSetup', 'settingsLeagueId', 'settingsRosterLeagueId', 'settingsSeason', 'settingsSeasonType', 'settingsWeekMode', 'settingsCurrentWeek', 'settingsMaxWeek', 'settingsBoomPct', 'settingsBustPct', 'settingsApply', 'settingsReset', 'settingsEffective'];
     var self = this;
     ids.forEach(function(id) { self.dom[id] = document.getElementById(id); });
   },
@@ -3929,28 +3941,128 @@ if (!isFinite(posPts)) continue;
   loadSleeperDefenseStats: function(baseStats) {
     var self = this;
     var season = this.getSeason();
-    var currentWeek = this.getMaxWeek() || 1;
-    
-    // Try to get points allowed from Sleeper for more accurate scoring
-    var url = "https://api.sleeper.com/stats/nfl/" + season + "/" + currentWeek + "?season_type=regular&position[]=DEF";
-    
-    this.fetchJson(url).then(function(weekData) {
-      if (!Array.isArray(weekData)) return;
-      
-      weekData.forEach(function(d) {
-        if (!d) return;
-        var teamId = d.player_id || d.player || d.team;
-        if (!teamId || !baseStats[teamId]) return;
-        
-        var stats = d.stats || d;
-        // Update points allowed if available for current week
-        if (stats.pts_allow !== undefined) {
-          // We have live data for this team
-          console.log("Got live Sleeper data for", teamId);
+    var seasonType = "regular";
+    var teamList = Object.keys(baseStats || {});
+    if (!teamList.length) {
+      teamList = ["ARI","ATL","BAL","BUF","CAR","CHI","CIN","CLE","DAL","DEN","DET","GB","HOU","IND","JAX","KC","LAC","LAR","LV","MIA","MIN","NE","NO","NYG","NYJ","PHI","PIT","SEA","SF","TB","TEN","WAS"];
+    }
+
+    var statValue = function(stats, keys) {
+      if (!stats) return 0;
+      for (var i = 0; i < keys.length; i++) {
+        var key = keys[i];
+        if (stats[key] != null && isFinite(stats[key])) return Number(stats[key]) || 0;
+      }
+      return 0;
+    };
+
+    var hasAnyStat = function(stats) {
+      if (!stats) return false;
+      var keys = Object.keys(stats);
+      for (var i = 0; i < keys.length; i++) {
+        var v = stats[keys[i]];
+        if (v != null && isFinite(v) && Number(v) !== 0) return true;
+      }
+      return keys.length > 0;
+    };
+
+    var fetchTeam = function(teamId) {
+      var url = "https://api.sleeper.app/stats/nfl/player/" + teamId + "?season_type=" + seasonType + "&season=" + season + "&grouping=week";
+      return self.fetchJson(url).then(function(payload) {
+        if (!payload || typeof payload !== "object") return null;
+
+        var weekly = payload;
+        if (payload.stats_by_week) weekly = payload.stats_by_week;
+        if (payload.stats) weekly = payload.stats;
+
+        var totals = {
+          games: 0,
+          totalPts: 0,
+          sacks: 0,
+          interceptions: 0,
+          passYds: 0,
+          rushYds: 0
+        };
+
+        if (Array.isArray(weekly)) {
+          weekly.forEach(function(entry) {
+            var stats = entry && entry.stats ? entry.stats : entry;
+            if (!stats || !hasAnyStat(stats)) return;
+            totals.games += 1;
+            totals.totalPts += statValue(stats, ["pts_allow", "def_pts_allow", "pts_allowed", "pa"]);
+            totals.sacks += statValue(stats, ["sack", "def_sack", "sacks"]);
+            totals.interceptions += statValue(stats, ["int", "def_int", "interceptions"]);
+            totals.passYds += statValue(stats, ["pass_yds", "pass_yds_allowed", "pass_yds_allow"]);
+            totals.rushYds += statValue(stats, ["rush_yds", "rush_yds_allowed", "rush_yds_allow"]);
+          });
+        } else {
+          Object.keys(weekly).forEach(function(weekKey) {
+            var stats = weekly[weekKey];
+            if (stats && stats.stats) stats = stats.stats;
+            if (!stats || !hasAnyStat(stats)) return;
+            totals.games += 1;
+            totals.totalPts += statValue(stats, ["pts_allow", "def_pts_allow", "pts_allowed", "pa"]);
+            totals.sacks += statValue(stats, ["sack", "def_sack", "sacks"]);
+            totals.interceptions += statValue(stats, ["int", "def_int", "interceptions"]);
+            totals.passYds += statValue(stats, ["pass_yds", "pass_yds_allowed", "pass_yds_allow"]);
+            totals.rushYds += statValue(stats, ["rush_yds", "rush_yds_allowed", "rush_yds_allow"]);
+          });
+        }
+
+        return { team: teamId, totals: totals };
+      }).catch(function() {
+        return null;
+      });
+    };
+
+    return Promise.all(teamList.map(fetchTeam)).then(function(results) {
+      var updated = false;
+      (results || []).forEach(function(entry) {
+        if (!entry || !entry.totals) return;
+        var teamId = entry.team;
+        var totals = entry.totals;
+        if (!teamId || !totals) return;
+
+        baseStats[teamId] = baseStats[teamId] || {
+          team: teamId,
+          games: 0,
+          totalPts: 0,
+          totalPassYds: 0,
+          totalRushYds: 0,
+          passYdsPerGame: "0.0",
+          rushYdsPerGame: "0.0",
+          ptsPerGame: "0.0",
+          passTD: 0,
+          rushTD: 0,
+          interceptions: 0,
+          sacks: 0,
+          hasRealPassRushData: false
+        };
+
+        var existing = baseStats[teamId];
+        if (totals.games > 0) {
+          existing.games = totals.games;
+          existing.totalPts = totals.totalPts;
+          existing.ptsPerGame = (totals.totalPts / totals.games).toFixed(1);
+          existing.sacks = totals.sacks || existing.sacks;
+          existing.interceptions = totals.interceptions || existing.interceptions;
+          if (totals.passYds > 0) {
+            existing.totalPassYds = totals.passYds;
+            existing.passYdsPerGame = (totals.passYds / totals.games).toFixed(1);
+          }
+          if (totals.rushYds > 0) {
+            existing.totalRushYds = totals.rushYds;
+            existing.rushYdsPerGame = (totals.rushYds / totals.games).toFixed(1);
+          }
+          updated = true;
         }
       });
+
+      if (updated) {
+        self.data.pfrDefenseStats = baseStats;
+      }
     }).catch(function(err) {
-      console.log("Sleeper API supplement not available:", err.message);
+      console.log("Sleeper API supplement not available:", err && err.message ? err.message : err);
     });
   },
 
@@ -5073,6 +5185,7 @@ getPlayerDeltaRank: function(pid) {
     // Apply saved settings (if any)
     try { if (self.loadAppSettings) self.loadAppSettings(); } catch(e) {}
     try {
+      self.cfg.autoSetup = (self.cfg.autoSetup !== false);
       self.cfg.seasonType = "regular";
       if (self.cfg && self.cfg.manual) self.cfg.manual.seasonType = "regular";
     } catch(e) {}
@@ -5155,9 +5268,10 @@ getPlayerDeltaRank: function(pid) {
             if (self.dom.hdrMeta) self.dom.hdrMeta.textContent = "Season " + statsSeason + " | Week " + effWeek;
 
             self.setProgress("Loading users/rosters…", 28);
+            var rosterLeagueId = (self.resolveRosterLeagueId) ? self.resolveRosterLeagueId() : self.cfg.leagueId;
             return Promise.all([
-              self.fetchJson("https://api.sleeper.app/v1/league/" + self.cfg.leagueId + "/users").catch(function() { return []; }),
-              self.fetchJson("https://api.sleeper.app/v1/league/" + self.cfg.leagueId + "/rosters").catch(function() { return []; }),
+              self.fetchJson("https://api.sleeper.app/v1/league/" + rosterLeagueId + "/users").catch(function() { return []; }),
+              self.fetchJson("https://api.sleeper.app/v1/league/" + rosterLeagueId + "/rosters").catch(function() { return []; }),
               self.fetchJson("https://api.sleeper.app/v1/league/" + self.cfg.leagueId + "/matchups/" + effWeek).catch(function() { return []; }),
               self.fetchJson("https://api.sleeper.app/v1/league/" + self.cfg.leagueId + "/transactions/" + effWeek).catch(function() { return []; }),
               self.fetchJson("https://api.sleeper.app/v1/league/" + self.cfg.leagueId + "/winners_bracket").catch(function() { return []; }),
@@ -8768,6 +8882,7 @@ var fmtPid = function(pid) {
       var obj = JSON.parse(raw);
       if (!obj || typeof obj !== "object") return;
       if (typeof obj.autoSetup === "boolean") APP.cfg.autoSetup = obj.autoSetup;
+      if (obj.rosterLeagueIdOverride != null) APP.cfg.rosterLeagueIdOverride = String(obj.rosterLeagueIdOverride || "");
       if (obj.manual && typeof obj.manual === "object") {
         APP.cfg.manual = APP.cfg.manual || {};
         for (var k in obj.manual) APP.cfg.manual[k] = obj.manual[k];
@@ -8786,6 +8901,7 @@ var fmtPid = function(pid) {
       var out = {
         autoSetup: !!APP.cfg.autoSetup,
         manual: APP.cfg.manual || {},
+        rosterLeagueIdOverride: String(APP.cfg.rosterLeagueIdOverride || ""),
         selectedSeasonChoice: String(APP.cfg.selectedSeasonChoice || ""),
         weekSelectionMode: String(APP.cfg.weekSelectionMode || "max_week"),
         seasonType: "regular",
@@ -8803,6 +8919,11 @@ var fmtPid = function(pid) {
     var yr = String(APP.cfg.selectedSeasonChoice || "");
     if (APP.cfg.seasonLeagues && APP.cfg.seasonLeagues[yr]) return APP.cfg.seasonLeagues[yr];
     return APP.cfg.leagueId;
+  };
+
+  APP.resolveRosterLeagueId = function() {
+    var override = APP.cfg && APP.cfg.rosterLeagueIdOverride ? String(APP.cfg.rosterLeagueIdOverride).trim() : "";
+    return override || APP.resolveLeagueId();
   };
 
   APP.getLastScoredWeek = function(league) {
@@ -8825,6 +8946,7 @@ var fmtPid = function(pid) {
     if (!d.btnTabSettings) d.btnTabSettings = document.getElementById("btnTabSettings");
     if (!d.settingsAutoSetup) d.settingsAutoSetup = document.getElementById("settingsAutoSetup");
     if (!d.settingsLeagueId) d.settingsLeagueId = document.getElementById("settingsLeagueId");
+    if (!d.settingsRosterLeagueId) d.settingsRosterLeagueId = document.getElementById("settingsRosterLeagueId");
     if (!d.settingsSeason) d.settingsSeason = document.getElementById("settingsSeason");
     if (!d.settingsSeasonType) d.settingsSeasonType = document.getElementById("settingsSeasonType");
     if (!d.settingsWeekMode) d.settingsWeekMode = document.getElementById("settingsWeekMode");
@@ -8858,6 +8980,7 @@ var fmtPid = function(pid) {
 
     try { if (d.settingsAutoSetup) d.settingsAutoSetup.checked = (APP.cfg.autoSetup !== false); } catch(e) {}
     try { if (d.settingsLeagueId) d.settingsLeagueId.value = (APP.cfg.manual && APP.cfg.manual.leagueId) ? String(APP.cfg.manual.leagueId) : ""; } catch(e) {}
+    try { if (d.settingsRosterLeagueId) d.settingsRosterLeagueId.value = String(APP.cfg.rosterLeagueIdOverride || ""); } catch(e) {}
     try {
       var seasonVal = (APP.cfg.manual && APP.cfg.manual.season) ? String(APP.cfg.manual.season) : String(APP.cfg.selectedSeasonChoice || "");
       if (d.settingsSeason) d.settingsSeason.value = seasonVal;
@@ -8874,6 +8997,8 @@ var fmtPid = function(pid) {
       var eff = {
         autoSetup: (APP.cfg.autoSetup !== false),
         leagueId: APP.resolveLeagueId(),
+        rosterLeagueIdOverride: APP.cfg.rosterLeagueIdOverride || "",
+        rosterLeagueId: APP.resolveRosterLeagueId(),
         selectedSeasonChoice: APP.cfg.selectedSeasonChoice,
         seasonType: APP.cfg.seasonType,
         weekSelectionMode: APP.cfg.weekSelectionMode || "max_week",
@@ -8896,6 +9021,9 @@ var fmtPid = function(pid) {
 
         var lid = (d.settingsLeagueId && d.settingsLeagueId.value) ? String(d.settingsLeagueId.value).trim() : "";
         APP.cfg.manual.leagueId = lid;
+
+        var rosterLid = (d.settingsRosterLeagueId && d.settingsRosterLeagueId.value) ? String(d.settingsRosterLeagueId.value).trim() : "";
+        APP.cfg.rosterLeagueIdOverride = rosterLid;
 
         var yr = (d.settingsSeason && d.settingsSeason.value) ? String(d.settingsSeason.value).trim() : "";
         if (yr) {
@@ -8922,6 +9050,7 @@ var fmtPid = function(pid) {
 
         // Resolve leagueId now
         APP.cfg.leagueId = APP.resolveLeagueId();
+        APP.cfg.rosterLeagueIdOverride = APP.cfg.rosterLeagueIdOverride || "";
 
         try { APP.saveAppSettings(); } catch(e) {}
 
@@ -8941,6 +9070,7 @@ var fmtPid = function(pid) {
           APP.cfg.autoSetup = true;
           APP.cfg.manual = { leagueId: "", season: "", seasonType: "regular", currentWeek: 1, maxWeek: 18 };
           APP.cfg.weekSelectionMode = "max_week";
+          APP.cfg.rosterLeagueIdOverride = "";
           APP.cfg.boomPct = 1.2;
           APP.cfg.bustPct = 0.8;
           APP.saveAppSettings();
