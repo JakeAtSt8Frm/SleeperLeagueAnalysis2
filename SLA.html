@@ -7832,12 +7832,6 @@ var benchPlayers = Object.keys(benchByPid).map(function(pid) {
       "DEF": "DL" // Team defense counts as DL for simplicity
     };
 
-    var isInjuredOut = function(p) {
-      var status = ((p && (p.injury_status || p.status)) || "").toString().trim().toUpperCase();
-      var outStatuses = ["OUT", "IR", "PUP", "NFI", "SUSP", "SUSPENDED", "COVID", "INACTIVE", "DNR"];
-      return outStatuses.indexOf(status) >= 0;
-    };
-
     var summarizePlayers = function(pids) {
       var posTotals = { QB: 0, RB: 0, WR: 0, TE: 0, K: 0, DL: 0, LB: 0, DB: 0 };
       (pids || []).forEach(function(pid) {
@@ -7859,29 +7853,14 @@ var benchPlayers = Object.keys(benchByPid).map(function(pid) {
         var id = String(pid);
         var p = self.data.playersById[id];
         if (!p) return;
-        if (isInjuredOut(p)) return;
-        var stats = statsMap[id] || {};
-        if (!self.hasPlayedStats(stats)) return;
         var mappedPos = positionMap[p.position];
         if (!mappedPos || !posTotals.hasOwnProperty(mappedPos)) return;
-        posTotals[mappedPos] += self.scoreFromStats(stats, id);
+        posTotals[mappedPos] += self.scoreFromStats(statsMap[id] || {}, id);
       });
       Object.keys(posTotals).forEach(function(k) { posTotals[k] = Math.round(posTotals[k] * 100) / 100; });
       var total = Math.round(posList.reduce(function(acc, k) { return acc + (posTotals[k] || 0); }, 0) * 100) / 100;
       return { posTotals: posTotals, total: total };
     };
-
-
-    var matchups = this.data.weekMatchups[String(week)] || this.data.matchups || [];
-    var rosterMatchupData = {};
-    matchups.forEach(function(m) {
-      if (m && m.roster_id != null) {
-        rosterMatchupData[String(m.roster_id)] = {
-          starters: m.starters || [],
-          players: m.players || []
-        };
-      }
-    });
 
     var selected = this.data.rosters.find(function(r) { return String(r.roster_id) === String(self.ui.selectedRosterId); });
     if (!selected) return;
@@ -7891,18 +7870,16 @@ var benchPlayers = Object.keys(benchByPid).map(function(pid) {
       var subtitle = opts.subtitle;
       var selectorFn = opts.selectorFn;
       
-      var selectedMatchData = rosterMatchupData[String(selected.roster_id)] || {};
-      var selectedS = selectorFn(selected, selectedMatchData);
+      var selectedS = selectorFn(selected);
       var selUser = self.data.usersById[selected.owner_id];
       var selName = (selUser && selUser.display_name) || ("Team " + selected.roster_id);
 
       var allTeams = self.data.rosters.map(function(r) {
         var u = self.data.usersById[r.owner_id];
-        var md = rosterMatchupData[String(r.roster_id)] || {};
         return { 
           roster: r, 
           name: (u && u.display_name) || ("Team " + r.roster_id), 
-          s: selectorFn(r, md), 
+          s: selectorFn(r), 
           isSelected: String(r.roster_id) === String(selected.roster_id) 
         };
       });
@@ -7983,25 +7960,25 @@ var wrap = document.createElement("div");
 
     box.appendChild(mkHeatmapTable({
       title: "Team Score Projected",
-      subtitle: "",
-      selectorFn: function(roster, matchData) { 
-        return summarizePlayers((matchData.players && matchData.players.length) ? matchData.players : ((roster && roster.players) || [])); 
+      subtitle: "Totals are sum of projections for all players on roster.",
+      selectorFn: function(roster) { 
+        return summarizePlayers((roster && roster.players) || []); 
       }
     }));
 
     box.appendChild(mkHeatmapTable({
       title: "Team Score Actual",
       subtitle: "Totals are sum of custom-scored actual points for the selected week (0 for players who have not played).",
-      selectorFn: function(roster, matchData) { 
-        return summarizeActualPlayers((matchData.players && matchData.players.length) ? matchData.players : ((roster && roster.players) || [])); 
+      selectorFn: function(roster) { 
+        return summarizeActualPlayers((roster && roster.players) || []); 
       }
     }));
 
     box.appendChild(mkHeatmapTable({
       title: "Starters Score Projected",
       subtitle: "Totals include only players currently in starting slots.",
-      selectorFn: function(roster, matchData) { 
-        return summarizePlayers((matchData.starters && matchData.starters.length) ? matchData.starters : ((roster && roster.starters) || [])); 
+      selectorFn: function(roster) { 
+        return summarizePlayers((roster && roster.starters) || []); 
       }
     }));
 
@@ -8009,8 +7986,8 @@ var wrap = document.createElement("div");
     box.appendChild(mkHeatmapTable({
       title: "Starters Scores Actual",
       subtitle: "Actual points for starters only this week.",
-      selectorFn: function(roster, matchData) { 
-        return summarizeActualPlayers((matchData.starters && matchData.starters.length) ? matchData.starters : ((roster && roster.starters) || [])); 
+      selectorFn: function(roster) { 
+        return summarizeActualPlayers((roster && roster.starters) || []); 
       }
     }));
 
