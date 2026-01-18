@@ -2,17 +2,30 @@
 <html lang="en" class="dark">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover" />
+  <meta name="description" content="Sleeper League Analytics - Advanced fantasy football analytics, roster analysis, matchup projections, and performance insights for your Sleeper league." />
+  <meta name="theme-color" content="#10b981" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  
+  <!-- Open Graph / Social Sharing -->
+  <meta property="og:title" content="Sleeper League Analytics" />
+  <meta property="og:description" content="Advanced fantasy football analytics for your Sleeper league" />
+  <meta property="og:type" content="website" />
+  
   <title>Sleeper League Analytics</title>
 
   <!-- Preconnect for faster Sleeper API handshakes -->
-  <link rel="preconnect" href="https://api.sleeper.app" crossorigin>
-  <link rel="preconnect" href="https://api.sleeper.com" crossorigin>
-  <link rel="dns-prefetch" href="https://api.sleeper.app">
-  <link rel="dns-prefetch" href="https://api.sleeper.com">
+  <link rel="preconnect" href="https://api.sleeper.app" crossorigin />
+  <link rel="preconnect" href="https://api.sleeper.com" crossorigin />
+  <link rel="dns-prefetch" href="https://api.sleeper.app" />
+  <link rel="dns-prefetch" href="https://api.sleeper.com" />
 
   <!-- Chart.js 3.x for broader browser compatibility -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js" fetchpriority="high"></script>
 
   <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -56,6 +69,9 @@
     .skeleton{position:relative;overflow:hidden;background:rgba(148,163,184,0.08)}
     .skeleton::after{content:"";position:absolute;inset:0;transform:translateX(-100%);background:linear-gradient(90deg,transparent,rgba(148,163,184,0.2),transparent);animation:skeleton-loading 1.2s infinite}
     @keyframes skeleton-loading{100%{transform:translateX(100%)}}
+    
+    /* Screen reader only - accessible hidden text */
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border-width:0}
 
     /* Sidebar Active States */
     .nav-btn-active {
@@ -82,33 +98,13 @@
     .player-card {
       background: var(--surface-2);
       border: 1px solid var(--border);
-      border-color: rgba(49,117,242,0.18)
+      border-color: rgba(49,117,242,0.18);
     }
     .player-card:hover {
       border-color: rgba(16,185,129,0.3);
     }
 
-    /* Card grid */
-    .ui2k-card-grid{
-      display:grid;
-      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-      gap: 1rem;
-      align-items: start;
-      justify-items: center;
-      width: 100%;
-      max-width: calc(3 * 520px + 2 * 10px);
-      margin-inline: auto;
-    }
-    @media (max-width: 520px){
-      .ui2k-card-grid{
-        grid-template-columns: 1fr;
-        max-width: 100%;
-      }
-      .player-card{
-        min-width: 0 !important;
-        width: 100% !important;
-      }
-    }
+    /* Card grid - main definition in Clean Modern Theme section below */
 
     .stat-chip {
       background: var(--surface-3);
@@ -128,10 +124,170 @@
       box-shadow: 0 0 0 2px rgba(16,185,129,0.3);
     }
     
+    /* Focus visible for keyboard users */
+    button:focus-visible, select:focus-visible, input:focus-visible {
+      box-shadow: 0 0 0 3px rgba(16,185,129,0.5);
+    }
+    
+    /* Smooth scrolling for better UX */
+    html {
+      scroll-behavior: smooth;
+    }
+    
+    /* Reduced motion preference support */
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+      .skeleton::after {
+        animation: none;
+      }
+    }
+    
     /* Select dropdown styling */
     select option {
       background: #111827;
       color: white;
+    }
+    
+    /* ===========================
+       MOBILE IMPROVEMENTS
+       =========================== */
+    
+    /* Safe area insets for notched phones */
+    .safe-top { padding-top: env(safe-area-inset-top, 0); }
+    .safe-bottom { padding-bottom: env(safe-area-inset-bottom, 0); }
+    .safe-left { padding-left: env(safe-area-inset-left, 0); }
+    .safe-right { padding-right: env(safe-area-inset-right, 0); }
+    
+    /* Touch-friendly tap targets */
+    @media (max-width: 768px) {
+      button, .nav-btn, select, input[type="checkbox"] {
+        min-height: 44px;
+        min-width: 44px;
+      }
+      
+      /* Larger touch targets for nav buttons */
+      .ui2k-navbtn {
+        min-width: 48px !important;
+        min-height: 48px !important;
+        font-size: 10px !important;
+      }
+      
+      /* Better spacing on mobile */
+      .p-4 { padding: 0.75rem; }
+      .gap-4 { gap: 0.75rem; }
+      
+      /* Stack sidebar below main content on very small screens */
+      aside.ui2k-sidebar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        top: auto;
+        height: auto;
+        width: 100%;
+        flex-direction: row;
+        z-index: 100;
+        padding: 0.5rem;
+        border-top: 1px solid rgba(255,255,255,0.06);
+        border-right: none;
+        justify-content: space-around;
+        background: var(--surface-1);
+      }
+      
+      aside.ui2k-sidebar > div[role="separator"],
+      aside.ui2k-sidebar .flex-1,
+      aside.ui2k-sidebar .text-\[8px\] {
+        display: none !important;
+      }
+      
+      aside.ui2k-sidebar > div[role="group"],
+      aside.ui2k-sidebar > button {
+        margin: 0;
+      }
+      
+      /* Main content needs padding for bottom nav */
+      main.ui2k-main {
+        padding-bottom: 70px;
+      }
+      
+      /* Player cards full width on mobile */
+      .ui2k-card-grid {
+        grid-template-columns: 1fr !important;
+      }
+      
+      /* Modals full screen on mobile */
+      #playerModal > div,
+      #matchupModal > div {
+        max-width: 100%;
+        max-height: 100%;
+        border-radius: 0;
+        height: 100vh;
+      }
+    }
+    
+    /* Tablet improvements */
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .ui2k-card-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+      }
+    }
+    
+    /* Hide horizontal scrollbars on touch devices */
+    @media (hover: none) and (pointer: coarse) {
+      .overflow-x-auto {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      .overflow-x-auto::-webkit-scrollbar {
+        display: none;
+      }
+    }
+    
+    /* Improve text readability on mobile */
+    @media (max-width: 640px) {
+      .text-2xl { font-size: 1.25rem; }
+      .text-xl { font-size: 1.125rem; }
+      .text-lg { font-size: 1rem; }
+      
+      /* Trade card mobile optimization */
+      .grid.lg\\:grid-cols-2 {
+        grid-template-columns: 1fr !important;
+      }
+      
+      /* Player card mobile text scaling */
+      .player-card .text-\[22px\] { font-size: 18px !important; }
+      .player-card .text-\[14px\] { font-size: 12px !important; }
+      .player-card .text-\[12px\] { font-size: 10px !important; }
+      .player-card .text-\[11px\] { font-size: 9px !important; }
+      .player-card .text-\[10px\] { font-size: 8px !important; }
+      .player-card .text-\[9px\] { font-size: 8px !important; }
+      .player-card .text-\[8px\] { font-size: 7px !important; }
+      
+      /* Ensure status tags stay within bounds */
+      .player-card span[class*="rounded-md"] {
+        max-width: 55px !important;
+        font-size: 8px !important;
+        padding: 2px 4px !important;
+      }
+      
+      /* Reduce padding on mobile cards */
+      .player-card > div > div {
+        padding: 0.5rem !important;
+      }
+    }
+    
+    /* Extra small screens */
+    @media (max-width: 380px) {
+      .player-card { height: 140px !important; }
+      .player-card .text-\[22px\] { font-size: 16px !important; }
+      .player-card .text-\[18px\] { font-size: 14px !important; }
+      
+      /* Hide less important stats on very small screens */
+      .player-card [class*="text-center"]:nth-child(n+4) {
+        display: none;
+      }
     }
 
   
@@ -139,8 +295,7 @@
        UI2K (Modern 2K-like Theme)
        =========================== */
 
-    /* Charts containers */
-    canvas{ }
+    /* Charts containers - styling handled by Chart.js */
 
     /* Tables */
     table{ border-collapse:separate; border-spacing:0; }
@@ -296,7 +451,7 @@
     /* Roster grid - max 2 columns */
     .ui2k-card-grid{
       display:grid;
-      grid-template-columns: repeat(2, minmax(420px, 1fr));
+      grid-template-columns: repeat(2, minmax(340px, 1fr));
       gap: 1rem;
       align-items: start;
       justify-items: center;
@@ -308,10 +463,21 @@
       .ui2k-card-grid{
         grid-template-columns: 1fr;
         max-width: 100%;
+        gap: 0.75rem;
       }
       .player-card{
         min-width: 0 !important;
         width: 100% !important;
+        max-width: 100% !important;
+      }
+    }
+    @media (max-width: 400px){
+      .ui2k-card-grid{
+        gap: 0.5rem;
+        padding: 0 0.25rem;
+      }
+      .player-card{
+        height: 150px !important;
       }
     }
 
@@ -355,10 +521,15 @@
 </head>
 
 <body class="bg-gray-950 text-gray-200 h-screen overflow-hidden ui2k">
+  <!-- Skip to main content link for keyboard accessibility -->
+  <a href="#viewTeams" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-sleeper-teal focus:text-white focus:rounded-lg">
+    Skip to main content
+  </a>
+  
   <!-- Header -->
-  <header class="h-14 border-b border-gray-800/50 flex items-center justify-between px-3.5 shrink-0 ui2k-header">
-    <div class="flex items-center gap-7">
-      <div class="w-14 h-9 rounded-lg flex items-center justify-center text-white font-bold text-sm madden-logo">SLA</div>
+  <header class="h-14 border-b border-gray-800/50 flex items-center justify-between px-1.5 shrink-0 ui2k-header" role="banner">
+    <div class="flex items-center gap-4">
+      <div class="w-14 h-9 rounded-lg flex items-center justify-center text-white font-bold text-sm madden-logo" aria-label="Sleeper League Analytics">SLA</div>
       <div>
         <div class="text-white font-semibold leading-tight text-base" id="hdrLeague">Sleeper League</div>
         <div class="text-xs text-gray-500" id="hdrMeta">Season — | Week —</div>
@@ -385,35 +556,35 @@
   <!-- Layout -->
   <div class="flex h-[calc(100vh-3.5rem)]">
     <!-- Sidebar -->
-    <aside class="w-16 border-r border-gray-800/50 flex flex-col items-center py-7 gap-3 shrink-0 ui2k-sidebar">
-      <div class="flex flex-col items-center gap-1">
-        <button class="w-20 h-10 rounded-lg text-gray-400 font-medium text-[9px] ui2k-navbtn" id="btnTabTeams" title="Current Rosters">ROST</button>
-        <button class="w-20 h-10 rounded-lg text-gray-500 font-medium text-[9px] ui2k-navbtn" id="btnTabOptimal" title="Optimal Lineups">OPT</button>
-        <button class="w-20 h-10 rounded-lg text-gray-500 font-medium text-[9px] ui2k-navbtn" id="btnTabHistory" title="Historical Rosters">HIST</button>
+    <aside class="w-16 border-r border-gray-800/50 flex flex-col items-center py-7 gap-3 shrink-0 ui2k-sidebar" role="navigation" aria-label="Main navigation">
+      <div class="flex flex-col items-center gap-1" role="group" aria-label="Roster views">
+        <button class="w-20 h-10 rounded-lg text-gray-400 font-medium text-[9px] ui2k-navbtn" id="btnTabTeams" title="Current Rosters" aria-label="View current rosters">ROST</button>
+        <button class="w-20 h-10 rounded-lg text-gray-500 font-medium text-[9px] ui2k-navbtn" id="btnTabOptimal" title="Optimal Lineups" aria-label="View optimal lineups">OPT</button>
+        <button class="w-20 h-10 rounded-lg text-gray-500 font-medium text-[9px] ui2k-navbtn" id="btnTabHistory" title="Historical Rosters" aria-label="View historical rosters">HIST</button>
       </div>
 
-      <div class="w-8 h-px my-2 bg-gray-800"></div>
+      <div class="w-8 h-px my-2 bg-gray-800" role="separator" aria-hidden="true"></div>
 
-      <div class="flex flex-col items-center gap-1">
-        <button class="w-20 h-10 rounded-lg text-gray-500 font-medium text-[9px] ui2k-navbtn" id="btnTabMatchups" title="Weekly Matchups">VS</button>
-        <button class="w-20 h-10 rounded-lg text-gray-500 font-medium text-[9px] ui2k-navbtn" id="btnTabFA" title="Free Agents">FA</button>
-        <button class="w-20 h-10 rounded-lg text-gray-500 font-medium text-[9px] ui2k-navbtn" id="btnTabTrades" title="Recent Trades">TRD</button>
-        <button class="w-20 h-10 rounded-lg text-gray-500 font-medium text-[9px] ui2k-navbtn" id="btnTabDef" title="NFL Defense Rankings">DEF</button>
+      <div class="flex flex-col items-center gap-1" role="group" aria-label="League views">
+        <button class="w-20 h-10 rounded-lg text-gray-500 font-medium text-[9px] ui2k-navbtn" id="btnTabMatchups" title="Weekly Matchups" aria-label="View weekly matchups">VS</button>
+        <button class="w-20 h-10 rounded-lg text-gray-500 font-medium text-[9px] ui2k-navbtn" id="btnTabFA" title="Free Agents" aria-label="View free agents">FA</button>
+        <button class="w-20 h-10 rounded-lg text-gray-500 font-medium text-[9px] ui2k-navbtn" id="btnTabTrades" title="Trade Options" aria-label="View trade options">TRD</button>
+        <button class="w-20 h-10 rounded-lg text-gray-500 font-medium text-[9px] ui2k-navbtn" id="btnTabDef" title="NFL Defense Rankings" aria-label="View NFL defense rankings">DEF</button>
       </div>
       
-      <div class="w-8 h-px my-2 bg-gray-800"></div>
+      <div class="w-8 h-px my-2 bg-gray-800" role="separator" aria-hidden="true"></div>
       
-      <div class="flex flex-col items-center gap-1">
-        <button class="w-10 h-10 rounded-lg text-gray-500 font-medium text-[9px] ui2k-navbtn" id="btnTabInsights" title="League Analytics">STAT</button>
+      <div class="flex flex-col items-center gap-1" role="group" aria-label="Analytics">
+        <button class="w-10 h-10 rounded-lg text-gray-500 font-medium text-[9px] ui2k-navbtn" id="btnTabInsights" title="League Analytics" aria-label="View league analytics">STAT</button>
       </div>
       
       <div class="flex-1"></div>
-      <button class="w-10 h-10 rounded-lg text-gray-500 font-medium text-[9px] ui2k-navbtn" id="btnTabSettings" title="Settings">SET</button>
-      <div class="text-[8px] text-gray-600 mt-1">v3.1</div>
+      <button class="w-10 h-10 rounded-lg text-gray-500 font-medium text-[9px] ui2k-navbtn" id="btnTabSettings" title="Settings" aria-label="Open settings">SET</button>
+      <div class="text-[8px] text-gray-600 mt-1" aria-label="Version 3.1">v3.1</div>
     </aside>
 
     <!-- Main -->
-    <main class="flex-1 overflow-hidden relative bg-gradient-to-br from-gray-950 via-gray-950 to-gray-900/50 ui2k-main">
+    <main class="flex-1 overflow-hidden relative bg-gradient-to-br from-gray-950 via-gray-950 to-gray-900/50 ui2k-main" role="main" aria-label="Content area">
       <!-- Tabs: Teams -->
       <section id="viewTeams" class="h-full flex flex-col p-4 gap-2">
         <div class="flex items-end justify-between gap-4">
@@ -431,7 +602,7 @@
 
         <!-- Team roster -->
         <div class="grid grid-cols-1 xl:grid-cols-3 gap-5 overflow-hidden flex-1">
-          <div class="xl:col-span-2 bg-gray-900/80  border border-gray-800/50 rounded-2xl overflow-hidden flex flex-col shadow-xl shadow-black/20 ui2k-panel">
+          <div class="xl:col-span-2 bg-gray-900/80 border border-gray-800/50 rounded-2xl overflow-hidden flex flex-col shadow-xl shadow-black/20 ui2k-panel">
             <div class="p-4 border-b border-accent/20 flex items-center justify-between bg-black/40">
               <div class="flex items-center gap-3">
                 <div class="madden-status-bar h-10"></div>
@@ -448,7 +619,7 @@
             <div class="flex-1 overflow-y-auto overflow-x-hidden p-4" id="rosterList"></div>
           </div>
 
-          <div class="bg-gray-900/80  border border-gray-800/50 rounded-2xl overflow-hidden flex flex-col shadow-xl shadow-black/20 ui2k-panel">
+          <div class="bg-gray-900/80 border border-gray-800/50 rounded-2xl overflow-hidden flex flex-col shadow-xl shadow-black/20 ui2k-panel">
             <div class="p-4 border-b border-accent/20 bg-black/40">
               <div class="flex items-center gap-3">
                 <div class="madden-status-bar h-10"></div>
@@ -495,7 +666,7 @@
 
         <div class="flex gap-2 overflow-x-auto pb-2" id="faTabs"></div>
 
-        <div class="bg-gray-900/80  border border-gray-800/50 rounded-2xl overflow-hidden flex flex-col flex-1 shadow-xl shadow-black/20 ui2k-panel">
+        <div class="bg-gray-900/80 border border-gray-800/50 rounded-2xl overflow-hidden flex flex-col flex-1 shadow-xl shadow-black/20 ui2k-panel">
           <div class="flex-1 overflow-y-auto p-4" id="faList">
             <!-- Player cards will be inserted here in a 2-column grid -->
           </div>
@@ -522,28 +693,79 @@
       </section>
 
       <!-- Tabs: Trades -->
-      <section id="viewTrades" class="h-full flex flex-col p-3 gap-2 hidden">
-        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+      <section id="viewTrades" class="h-full hidden flex flex-col p-4 gap-4 overflow-hidden">
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 shrink-0">
           <div>
-            <div class="text-2xl font-bold text-white">TRANSACTIONS</div>
-            <div class="text-sm text-accent" >COMPLETED TRADES & MOVES</div>
+            <div class="text-2xl font-bold text-white flex items-center gap-2"><span>🔄</span> GM TRADE BLOCK</div>
+            <div class="text-sm text-accent">FIND VALUE-BALANCED TRADE SCENARIOS</div>
           </div>
-          <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
-            <div class="text-xs text-accent font-bold" id="tradeWeekLabel" >Week —</div>
-            <input id="tradeSearch" placeholder="Search player/team…" class="bg-gray-900 border border-accent/20 rounded-lg px-3 py-2 text-sm text-white w-full sm:w-56" />
-            <select id="tradeType" class="bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-sm text-white w-full sm:w-auto">
-              <option value="all" selected>All Transactions</option>
-              <option value="trade">Trades</option>
-              <option value="add_drop">Adds/Drops</option>
-              <option value="waiver">Waivers</option>
-              <option value="free_agent">Free Agent Adds</option>
-            </select>
-            <button id="btnTradeRefresh" class="bg-gray-800 hover:bg-gray-700 text-white rounded-lg px-3 py-2 text-sm font-bold w-full sm:w-auto">Refresh</button>
+          <div class="flex items-center gap-2 bg-gray-800/50 rounded-lg px-3 py-1.5 border border-accent/30 ui2k-panel">
+            <span id="tradeWeekLabel" class="text-xs text-accent font-mono">Week —</span>
           </div>
         </div>
 
-        <div class="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden flex flex-col">
-          <div class="flex-1 overflow-y-auto overflow-x-hidden p-4" id="tradeContent"></div>
+        <!-- Controls Row -->
+        <div class="bg-gray-900/80 border border-gray-800/50 rounded-xl p-3 shrink-0">
+          <div class="flex flex-col xl:flex-row gap-4 items-start xl:items-center">
+            <!-- Team Selection -->
+            <div class="flex items-center gap-2">
+              <span class="text-xs text-gray-400 font-semibold uppercase">Team</span>
+              <select id="tradeTeamSelect" class="bg-gray-800 border border-gray-700 rounded-lg px-3 py-1.5 text-white text-sm min-w-[140px]">
+              </select>
+            </div>
+            
+            <!-- Position Filter -->
+            <div class="flex items-center gap-2">
+              <span class="text-xs text-gray-400 font-semibold uppercase">Position</span>
+              <select id="tradePosition" class="bg-gray-800 border border-gray-700 rounded-lg px-3 py-1.5 text-white text-sm">
+                <option value="any" selected>Any</option>
+                <option value="QB">QB</option>
+                <option value="RB">RB</option>
+                <option value="WR">WR</option>
+                <option value="TE">TE</option>
+                <option value="K">K</option>
+                <option value="DEF">DEF</option>
+                <option value="DL">DL</option>
+                <option value="LB">LB</option>
+                <option value="DB">DB</option>
+              </select>
+            </div>
+            
+            <!-- Overpay Tolerance -->
+            <div class="flex items-center gap-2 flex-1">
+              <span class="text-xs text-gray-400 font-semibold uppercase whitespace-nowrap">Overpay</span>
+              <input type="range" id="tradeOverpay" min="0" max="400" value="100" class="flex-1 max-w-[150px] h-2 bg-gray-800 rounded-lg appearance-none cursor-pointer accent-accent" />
+              <div class="bg-gray-800 rounded-lg px-2 py-1 min-w-[50px] text-center">
+                <span id="tradeOverpayLabel" class="text-accent font-bold text-sm">+100</span>
+              </div>
+            </div>
+            
+            <!-- Min Target Value -->
+            <div class="flex items-center gap-2">
+              <span class="text-xs text-gray-400 font-semibold uppercase whitespace-nowrap">Min Val</span>
+              <select id="tradeMinValue" class="bg-gray-800 border border-gray-700 rounded-lg px-3 py-1.5 text-white text-sm">
+                <option value="0">Any</option>
+                <option value="200">200+</option>
+                <option value="350" selected>350+</option>
+                <option value="500">500+</option>
+                <option value="650">650+</option>
+              </select>
+            </div>
+            
+            <!-- Search -->
+            <input id="tradeSearch" class="px-3 py-1.5 rounded-lg bg-gray-800 border border-gray-700 text-gray-200 text-sm placeholder-gray-500 w-full xl:w-40" placeholder="Search…" />
+            
+            <!-- Recompute -->
+            <button id="btnTradeRefresh" class="px-4 py-1.5 rounded-lg bg-accent/20 border border-accent/40 hover:bg-accent/30 text-accent text-sm font-bold transition-colors whitespace-nowrap">
+              ⟳ Rebuild
+            </button>
+          </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 overflow-y-auto pr-2 pb-6">
+          <div id="tradeContent" class="space-y-6"></div>
         </div>
       </section>
 
@@ -573,6 +795,7 @@
                     <th class="px-4 py-2 text-right text-accent font-bold uppercase cursor-pointer hover:text-white" data-sort="pf" >PF</th>
                     <th class="px-4 py-2 text-right text-accent font-bold uppercase cursor-pointer hover:text-white" data-sort="ppg" >PPG</th>
                     <th class="px-4 py-2 text-right text-accent font-bold uppercase cursor-pointer hover:text-white" data-sort="pa" >PA</th>
+                    <th class="px-4 py-2 text-right text-emerald-400 font-bold uppercase cursor-pointer hover:text-white" data-sort="value" title="Total roster player value">Value</th>
                     <th class="px-4 py-2 text-right text-accent font-bold uppercase cursor-pointer hover:text-white" data-sort="allplay" >All-Play</th>
                     <th class="px-4 py-2 text-right text-accent font-bold uppercase cursor-pointer hover:text-white" data-sort="xw" >xW</th>
                     <th class="px-4 py-2 text-right text-accent font-bold uppercase cursor-pointer hover:text-white" data-sort="luck" >Luck</th>
@@ -750,7 +973,7 @@
           </div>
         </div>
 
-        <div id="optSettingsPanel" class="hidden bg-gray-900/80  border border-gray-800/50 rounded-2xl p-4 shadow-xl shadow-black/20 ui2k-panel">
+        <div id="optSettingsPanel" class="hidden bg-gray-900/80 border border-gray-800/50 rounded-2xl p-4 shadow-xl shadow-black/20 ui2k-panel">
           <div class="flex items-center justify-between gap-3 mb-3">
             <div>
               <div class="text-sm font-bold text-white">Optimal weighting sliders</div>
@@ -838,7 +1061,7 @@
 
         <!-- Team roster for history -->
         <div class="grid grid-cols-1 xl:grid-cols-3 gap-5 overflow-hidden flex-1" id="historyMainContent">
-          <div class="xl:col-span-2 bg-gray-900/80  border border-gray-800/50 rounded-2xl overflow-hidden flex flex-col shadow-xl shadow-black/20 ui2k-panel">
+          <div class="xl:col-span-2 bg-gray-900/80 border border-gray-800/50 rounded-2xl overflow-hidden flex flex-col shadow-xl shadow-black/20 ui2k-panel">
             <div class="p-4 border-b border-accent/20 flex items-center justify-between bg-black/40">
               <div class="flex items-center gap-3">
                 <div class="madden-status-bar h-10"></div>
@@ -852,7 +1075,7 @@
             <div class="flex-1 overflow-y-auto overflow-x-hidden p-4" id="historyRosterList"></div>
           </div>
 
-          <div class="bg-gray-900/80  border border-gray-800/50 rounded-2xl overflow-hidden flex flex-col shadow-xl shadow-black/20 ui2k-panel">
+          <div class="bg-gray-900/80 border border-gray-800/50 rounded-2xl overflow-hidden flex flex-col shadow-xl shadow-black/20 ui2k-panel">
             <div class="p-4 border-b border-accent/20 bg-black/40">
               <div class="flex items-center gap-3">
                 <div class="madden-status-bar h-10"></div>
@@ -980,7 +1203,7 @@
       </section>
 
       <!-- Player modal -->
-      <div id="playerModal" class="fixed inset-0 hidden items-center justify-center bg-black/80  p-4 z-50">
+      <div id="playerModal" class="fixed inset-0 hidden items-center justify-center bg-black/80 p-4 z-50" role="dialog" aria-modal="true" aria-labelledby="pmName">
         <div class="w-full max-w-5xl max-h-[95vh] bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden flex flex-col">
           <div class="p-4 border-b border-gray-800 flex items-start justify-between gap-4">
             <div>
@@ -1052,7 +1275,7 @@
       </div>
       
       <!-- Matchup modal -->
-      <div id="matchupModal" class="fixed inset-0 hidden items-center justify-center bg-black/80  p-4 z-[60]">
+      <div id="matchupModal" class="fixed inset-0 hidden items-center justify-center bg-black/80 p-4 z-[60]" role="dialog" aria-modal="true" aria-labelledby="mmTitle">
         <div class="w-full max-w-6xl max-h-[95vh] bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden flex flex-col">
           <div class="p-4 border-b border-gray-800 flex items-start justify-between gap-4">
             <div class="min-w-0">
@@ -1100,17 +1323,36 @@
   </div>
 
 <script>
+"use strict";
 /* ==========================
    Sleeper League Analytics
    Standalone, no backend
    ES5 Compatible
+   
+   Features:
+   - Current roster analysis with projections
+   - Historical lineup performance tracking
+   - Optimal lineup recommendations
+   - Matchup projections and comparisons
+   - Free agent rankings
+   - Trade history tracking
+   - Defense vs position analysis
+   - League-wide analytics and insights
+   
+   @version 3.1
    ========================== */
 
-// Helper function to replace nullish coalescing
+/**
+ * Null-safe value helper (replaces nullish coalescing for ES5 compatibility)
+ * @param {*} val - Value to check
+ * @param {*} fallback - Fallback value if val is null/undefined
+ * @returns {*} val if not null/undefined, otherwise fallback
+ */
 function nvl(val, fallback) {
   return (val !== null && val !== undefined) ? val : fallback;
 }
 
+/** Season to League ID mapping */
 var SEASON_LEAGUES = {
   "2024": "1122650835105759232",
   "2025": "1180280389862244352",
@@ -1121,34 +1363,40 @@ var SAVED_SEASON_CHOICE = null;
 try { SAVED_SEASON_CHOICE = localStorage.getItem("sleeper_app_season_choice"); } catch(e) {}
 var INITIAL_SEASON_CHOICE = (SAVED_SEASON_CHOICE && SEASON_LEAGUES[SAVED_SEASON_CHOICE]) ? SAVED_SEASON_CHOICE : DEFAULT_SEASON_CHOICE;
 
+/**
+ * Main application object containing all state, configuration, and methods
+ * @namespace APP
+ */
 var APP = {
+  /** @type {Object} Application configuration */
   cfg: {
     seasonLeagues: SEASON_LEAGUES,
     selectedSeasonChoice: INITIAL_SEASON_CHOICE,
     leagueId: SEASON_LEAGUES[INITIAL_SEASON_CHOICE],
     seasonType: "regular",
-
-      // Auto setup uses /state/nfl + league metadata. Manual overrides are stored in localStorage.
-      autoSetup: true,
-      manual: { leagueId: "", season: "", seasonType: "regular", currentWeek: 1, maxWeek: 18 },
-      weekSelectionMode: "max_week",
-      rosterLeagueIdOverride: "",
+    // Auto setup uses /state/nfl + league metadata. Manual overrides are stored in localStorage.
+    autoSetup: true,
+    manual: { leagueId: "", season: "", seasonType: "regular", currentWeek: 1, maxWeek: 18 },
+    weekSelectionMode: "max_week",
+    rosterLeagueIdOverride: "",
     boomPct: 1.20,
     bustPct: 0.80
   },
+  
+  /** @type {Object} Default weights for optimal lineup calculations */
   optWeightDefaults: {
-    value: 16,
-    proj: 16,
-    mu: 10,
-    fit: 10,
-    ppg: 5,
-    l4: 15,
-    consistency: 8,
+    value: 9,
+    proj: 25,
+    mu: 3,
+    fit: 0,
+    ppg: 4,
+    l4: 2,
+    consistency: 19,
     snaps: 6,
-    boomBust: 4,
-    delta: 4,
-    ceil: 3,
-    season: 3
+    boomBust: 24,
+    delta: 1,
+    ceil: 6,
+    season: 1
   },
   data: {
     nflState: null,
@@ -1159,12 +1407,10 @@ var APP = {
     rosters: [],
     matchups: [],
     weekMatchups: {},
-    weekMatchupsByRoster: {},
         weekTrans: {},
     teamWeekScores: {},
     leagueMetrics: null,
 playersById: {},
-    playerDisplayCache: {},
     weekStats: {},
     weekProj: {},
     weekLoadPromises: {},
@@ -1175,7 +1421,6 @@ playersById: {},
     defenseWeekStats: {},
     nflSchedule: null,
     playerDeltaRanks: {},
-    playerPosRanks: {},
     defRoleMetrics: null,
     playerValueIndex: null
   },
@@ -1183,6 +1428,154 @@ playersById: {},
   // NFL Schedule - will be loaded dynamically
   nflSchedule: {},
   
+  // ================== POSITION SCARCITY SYSTEM FOR TRADE AI ==================
+  // KEY FIX: Fantasy positions have VASTLY different trade values!
+  // 
+  // PROBLEM: The original trade algorithm treated all positions equally.
+  // Trading your #4 WR for a #3 LB was considered "fair" because the raw value
+  // scores were similar. But in fantasy, WRs are FAR more valuable than LBs!
+  //
+  // SOLUTION: Position scarcity weighting + tier system
+  // - Tier 1 (Premium): QB, RB, WR, TE - these win leagues
+  // - Tier 2 (Secondary): K, DEF - necessary but low impact
+  // - Tier 3 (IDP): LB, DL, DB - in most leagues, easily replaceable
+  //
+  // CRITICAL RULE: Never suggest trading Tier 1 players for Tier 3 players!
+  
+  POSITION_SCARCITY: {
+    // Premium positions - most valuable in fantasy (Tier 1)
+    QB: { weight: 1.0, tier: 1, name: "Quarterback" },
+    RB: { weight: 1.15, tier: 1, name: "Running Back" },  // Higher due to scarcity
+    WR: { weight: 1.1, tier: 1, name: "Wide Receiver" },
+    TE: { weight: 0.95, tier: 1, name: "Tight End" },
+    
+    // Secondary positions (Tier 2)
+    K: { weight: 0.4, tier: 2, name: "Kicker" },
+    DEF: { weight: 0.5, tier: 2, name: "Defense" },
+    
+    // IDP positions - lowest trade value typically (Tier 3)
+    DL: { weight: 0.6, tier: 3, name: "Defensive Line" },
+    LB: { weight: 0.65, tier: 3, name: "Linebacker" },
+    DB: { weight: 0.55, tier: 3, name: "Defensive Back" }
+  },
+  
+  // Get position scarcity weight (1.0 = baseline)
+  getPositionWeight: function(pos) {
+    var info = this.POSITION_SCARCITY[pos];
+    return info ? info.weight : 0.5;
+  },
+  
+  // Get position tier (1 = premium, 2 = secondary, 3 = IDP)
+  getPositionTier: function(pos) {
+    var info = this.POSITION_SCARCITY[pos];
+    return info ? info.tier : 3;
+  },
+  
+  // Check if a trade has bad tier mismatch (trading premium for IDP)
+  hasBadTierMismatch: function(outPlayers, inPlayers) {
+    var self = this;
+    var outTier1 = 0, inTier1 = 0;
+    var outTier3 = 0, inTier3 = 0;
+    
+    (outPlayers || []).forEach(function(p) {
+      var tier = self.getPositionTier(p.group);
+      if (tier === 1) outTier1++;
+      if (tier === 3) outTier3++;
+    });
+    
+    (inPlayers || []).forEach(function(p) {
+      var tier = self.getPositionTier(p.group);
+      if (tier === 1) inTier1++;
+      if (tier === 3) inTier3++;
+    });
+    
+    // Bad: giving up more Tier 1 than receiving AND receiving mostly Tier 3
+    if (outTier1 > inTier1 && inTier3 > inTier1) return true;
+    
+    // Very bad: giving up 2+ premium players for IDP only
+    if (outTier1 >= 2 && inTier1 === 0 && inTier3 > 0) return true;
+    
+    return false;
+  },
+  
+  // Grade a trade proposal (returns A/B/C/D/F with reasons)
+  gradeTradeProposal: function(inPlayers, outPlayers) {
+    var self = this;
+    var reasons = [];
+    var score = 50; // Start at C
+    
+    // Calculate tier-adjusted values
+    var inValue = 0, outValue = 0;
+    var inTier1 = 0, outTier1 = 0;
+    var inBestRank = 999, outBestRank = 999;
+    
+    (inPlayers || []).forEach(function(p) {
+      var weight = self.getPositionWeight(p.group);
+      var adjVal = (p.tradeValue || p.valueScore || 0) * weight;
+      inValue += adjVal;
+      if (self.getPositionTier(p.group) === 1) inTier1++;
+      var rank = (self.data.playerPpgRanks && self.data.playerPpgRanks[p.pid]) ? self.data.playerPpgRanks[p.pid].rank : 999;
+      if (rank < inBestRank) inBestRank = rank;
+    });
+    
+    (outPlayers || []).forEach(function(p) {
+      var weight = self.getPositionWeight(p.group);
+      var adjVal = (p.tradeValue || p.valueScore || 0) * weight;
+      outValue += adjVal;
+      if (self.getPositionTier(p.group) === 1) outTier1++;
+      var rank = (self.data.playerPpgRanks && self.data.playerPpgRanks[p.pid]) ? self.data.playerPpgRanks[p.pid].rank : 999;
+      if (rank < outBestRank) outBestRank = rank;
+    });
+    
+    // Value difference scoring
+    var valuePct = outValue > 0 ? ((inValue - outValue) / outValue) * 100 : 0;
+    
+    if (valuePct > 15) {
+      score += 20;
+      reasons.push("Getting great value (+"+Math.round(valuePct)+"%)");
+    } else if (valuePct > 5) {
+      score += 10;
+      reasons.push("Favorable value");
+    } else if (valuePct < -15) {
+      score -= 25;
+      reasons.push("Overpaying by "+Math.abs(Math.round(valuePct))+"%");
+    } else if (valuePct < -5) {
+      score -= 10;
+      reasons.push("Slight overpay");
+    }
+    
+    // Tier 1 position exchange
+    if (outTier1 > inTier1 && outTier1 >= 2) {
+      score -= 25;
+      reasons.push("Giving up " + outTier1 + " premium players for " + inTier1);
+    } else if (inTier1 > outTier1) {
+      score += 10;
+      reasons.push("Acquiring more premium positions");
+    }
+    
+    // Don't trade away elite talent for depth
+    if (outBestRank < 15 && inBestRank > 30) {
+      score -= 20;
+      reasons.push("Trading elite talent for depth");
+    }
+    
+    // Consolidation bonus
+    if (outPlayers.length > inPlayers.length && inBestRank < outBestRank) {
+      score += 15;
+      reasons.push("Consolidating for star power");
+    }
+    
+    // Determine letter grade
+    var grade;
+    if (score >= 80) grade = 'A';
+    else if (score >= 65) grade = 'B';
+    else if (score >= 45) grade = 'C';
+    else if (score >= 30) grade = 'D';
+    else grade = 'F';
+    
+    return { grade: grade, score: score, reasons: reasons, inValue: Math.round(inValue), outValue: Math.round(outValue) };
+  },
+
   ui: {
     currentView: "teams",
     selectedRosterId: null,
@@ -1204,8 +1597,13 @@ playersById: {},
     optWeights: null
   },
 
+  /** @type {Object} Cached DOM element references */
   dom: {},
 
+  /**
+   * Cache DOM element references for faster access
+   * Call once during initialization
+   */
   cacheDom: function() {
     var ids = ['hdrStatus', 'hdrProgress', 'seasonSelect', 'hdrLeague', 'hdrMeta', 'weekSelect', 
                'teamTabs', 'teamTitle', 'teamSubtitle', 'btnRosterRefresh', 'rosterList', 'compareBox',
@@ -1214,7 +1612,7 @@ playersById: {},
                'pmEfficiencySection', 'pmEfficiencyGrid', 'pmValueSection', 'pmValueGrid', 'pmMatchupSection', 'pmMatchupGrid',
                'mmTitle', 'mmTeamA', 'mmTeamB', 'mmTotalA', 'mmTotalB', 'mmListA', 'mmListB',
                'viewTeams', 'viewMatchups', 'viewFA', 'viewDef', 'btnTabTeams', 'btnTabMatchups', 
-               'btnTabFA', 'btnTabDef', 'pmClose', 'mmClose', 'defContent', 'defTabAFC', 'defTabNFC', 'viewTrades', 'btnTabTrades', 'tradeContent', 'tradeSearch', 'tradeType', 'btnTradeRefresh', 'tradeWeekLabel', 'leagueInsights',
+               'btnTabFA', 'btnTabDef', 'pmClose', 'mmClose', 'defContent', 'defTabAFC', 'defTabNFC', 'viewTrades', 'btnTabTrades', 'tradeContent', 'tradeSearch', 'btnTradeRefresh', 'tradeWeekLabel', 'tradeTeamSelect', 'tradeOverpay', 'tradeOverpayLabel', 'tradeMinValue', 'tradePosition', 'leagueInsights',
              'viewInsights', 'btnTabInsights', 'insightsPFChart', 'insightsLuckChart', 'insightsLucky', 'insightsUnlucky', 'insightsConsistent', 'insightsTrendsChart',
              'viewHistory', 'btnTabHistory', 'btnTabOptimal', 'historyHeaderTitle', 'historyHeaderSubtitle', 'historyWeekSelect', 'optSettingsToggle', 'optSettingsPanel', 'optSettingsReset', 'historyTeamTabs', 'historyTeamTitle', 'historyTeamSubtitle', 'historyRosterList', 'historyCompareBox', 'historyCompareSubtitle', 'historyLoading', 'historyMainContent', 'currentWeekLabel', 'leagueLineupInsights', 'posBaselineTable', 'insightsBestEfficiency', 'insightsMostRegret', 'insightsBenchLeaders', 'btnInsightsExport',
                'defRoleSelect',
@@ -1225,11 +1623,20 @@ playersById: {},
     ids.forEach(function(id) { self.dom[id] = document.getElementById(id); });
   },
 
+  /**
+   * Update the loading progress indicator in the header
+   * @param {string} msg - Status message to display
+   * @param {number} pct - Percentage complete (0-100)
+   */
   setProgress: function(msg, pct) {
     if (this.dom.hdrStatus) this.dom.hdrStatus.textContent = msg;
     if (this.dom.hdrProgress) this.dom.hdrProgress.style.width = pct + "%";
   },
 
+  /**
+   * Get the current NFL week from state data
+   * @returns {number} Current week number (defaults to 1 if not available)
+   */
   getNflStateWeek: function() {
     var ns = this.data.nflState || {};
     var leg = Number(ns.leg != null ? ns.leg : ns.week);
@@ -1316,6 +1723,12 @@ playersById: {},
     }
   },
 
+  /**
+   * Fetch JSON data from a URL
+   * @param {string} url - URL to fetch
+   * @returns {Promise<Object>} Promise resolving to parsed JSON
+   * @throws {Error} If HTTP response is not ok
+   */
   fetchJson: function(url) {
     return fetch(url).then(function(r) {
       if (!r.ok) throw new Error("HTTP " + r.status + " for " + url);
@@ -1323,7 +1736,13 @@ playersById: {},
     });
   },
 
-  // Fetch helper for HTML/text endpoints (used for HTML scraping via CORS-friendly mirrors)
+  /**
+   * Fetch text/HTML data from a URL
+   * Used for HTML scraping via CORS-friendly mirrors
+   * @param {string} url - URL to fetch
+   * @returns {Promise<string>} Promise resolving to text content
+   * @throws {Error} If HTTP response is not ok
+   */
   fetchText: function(url) {
     return fetch(url).then(function(r) {
       if (!r.ok) throw new Error("HTTP " + r.status + " for " + url);
@@ -1331,7 +1750,11 @@ playersById: {},
     });
   },
 
-
+  /**
+   * Escape HTML special characters to prevent XSS
+   * @param {string} str - String to escape
+   * @returns {string} HTML-escaped string
+   */
   escapeHtml: function(str) {
     if (!str) return '';
     var div = document.createElement('div');
@@ -1339,6 +1762,12 @@ playersById: {},
     return div.innerHTML;
   },
 
+  /**
+   * Create a debounced version of a function
+   * @param {Function} fn - Function to debounce
+   * @param {number} [wait=250] - Delay in milliseconds
+   * @returns {Function} Debounced function
+   */
   debounce: function(fn, wait) {
     var timer;
     return function() {
@@ -1349,6 +1778,11 @@ playersById: {},
     };
   },
 
+  /**
+   * Convert an array of player objects to a map keyed by player ID
+   * @param {Array|Object} arr - Array of player objects or object with player data
+   * @returns {Object} Map of player ID to stats/projections
+   */
   arrToMap: function(arr) {
     var m = {};
     var i, row, pid, vals, v;
@@ -1530,7 +1964,7 @@ playersById: {},
     // --- card element ---
     var card = document.createElement("div");
     var border = item.isOut ? "border-red-900/50" : "";
-    card.className = "player-card card-hover rounded-2xl cursor-pointer w-full min-w-[400px] max-w-[520px] h-[160px] overflow-hidden " + (item.isOut ? " opacity-70" : "");
+    card.className = "player-card card-hover rounded-2xl cursor-pointer w-full min-w-[320px] sm:min-w-[400px] max-w-[520px] h-[160px] overflow-hidden " + (item.isOut ? " opacity-70" : "");
     card.setAttribute("data-pid", pid);
     card.onclick = function() { self.openPlayerModal(pid); };
 
@@ -1564,26 +1998,26 @@ playersById: {},
         '</div>' +
         // RIGHT DETAILS PANEL
         '<div class="flex-1 min-w-0 rounded-2xl border border-white/5 bg-[#0f111a] p-2 flex flex-col justify-between">' +
-          '<div class="flex items-start justify-between gap-2 border-b border-white/5 pb-2">' +
-            '<div class="flex items-start gap-4">' +
-              '<div class="text-[9px] uppercase tracking-widest text-gray-400 font-bold text-center">' +
+          '<div class="flex items-start justify-between gap-1 border-b border-white/5 pb-2 overflow-hidden">' +
+            '<div class="flex items-start gap-2 sm:gap-4 min-w-0 flex-1">' +
+              '<div class="text-[9px] uppercase tracking-widest text-gray-400 font-bold text-center shrink-0">' +
                 '<div class="text-[9px] text-gray-500">RANK</div>' +
                 '<div class="text-emerald-400 text-[12px] font-black mt-0.5">' + esc(rankTotal) + '</div>' +
               '</div>' +
-              '<div class="text-[9px] uppercase tracking-widest text-gray-400 font-bold text-center">' +
+              '<div class="text-[9px] uppercase tracking-widest text-gray-400 font-bold text-center shrink-0">' +
                 '<div class="text-[9px] text-gray-500">PPG</div>' +
                 '<div class="text-fuchsia-400 text-[12px] font-black mt-0.5">' + esc(rankPPG) + '</div>' +
               '</div>' +
-              '<div class="text-[9px] uppercase tracking-widest text-gray-400 font-bold text-center">' +
+              '<div class="text-[9px] uppercase tracking-widest text-gray-400 font-bold text-center shrink-0">' +
                 '<div class="text-[9px] text-gray-500">DELTA</div>' +
                 '<div class="text-green-400 text-[12px] font-black mt-0.5">' + esc(fmt2signed(deltaVal)) + '</div>' +
               '</div>' +
-              '<div class="text-[9px] uppercase tracking-widest text-gray-400 font-bold text-left">' +
+              '<div class="text-[9px] uppercase tracking-widest text-gray-400 font-bold text-left shrink-0">' +
                 '<div class="text-[9px] text-gray-500">TOTAL</div>' +
                 '<div class="text-sky-300 text-[12px] font-black mt-0.5">' + esc(totalPts) + '</div>' +
               '</div>' +
             '</div>' +
-            '<span class="shrink-0 px-2 py-1 rounded-lg border font-mono text-[10px] font-bold ' + esc(availCls) + '">' + esc(availDisplay) + '</span>' +
+            '<span class="shrink-0 px-1.5 py-0.5 rounded-md border font-mono text-[9px] font-bold whitespace-nowrap max-w-[60px] truncate ' + esc(availCls) + '" title="' + esc(avail) + '">' + esc(availDisplay) + '</span>' +
           '</div>' +
 
           '<div class="flex items-center justify-between gap-2 py-1">' +
@@ -1712,7 +2146,7 @@ playersById: {},
       var actStats = (statsMap && statsMap[pid]) ? statsMap[pid] : {};
       var projStats = (projMap && projMap[pid]) ? projMap[pid] : {};
 
-      var hasPlayed = actStats && Object.keys(actStats).length > 0;
+      var hasPlayed = self.hasPlayedStats(actStats);
       var proj = self.scoreFromStats(projStats, pid);
       var act = self.scoreFromStats(actStats, pid);
 
@@ -1751,12 +2185,6 @@ playersById: {},
   },
 
   playerDisplay: function(p) {
-    if (!p) return { name: "Unknown Player", pos: "?", posPrimary: "?", team: "FA", age: null };
-    var pid = String(p.player_id || p.id || "");
-    if (pid) {
-      this.data.playerDisplayCache = this.data.playerDisplayCache || {};
-      if (this.data.playerDisplayCache[pid]) return this.data.playerDisplayCache[pid];
-    }
     var firstName = (p && p.first_name) ? p.first_name : "";
     var lastName = (p && p.last_name) ? p.last_name : "";
     var name = [firstName, lastName].filter(Boolean).join(" ").trim() || "Unknown Player";
@@ -1777,15 +2205,13 @@ playersById: {},
       posCombo = posCombo + " (" + subPos + ")";
     }
 
-    var out = {
+    return {
       name: name,
       pos: posCombo,
       posPrimary: posPrimary,
       team: (p && p.team) ? p.team : "FA",
       age: this.playerAge(p)
     };
-    if (pid) this.data.playerDisplayCache[pid] = out;
-    return out;
   },
   // Roster naming helpers: "Account - Team Name"
   getRosterTeamName: function(roster) {
@@ -1914,7 +2340,7 @@ playersById: {},
       var statsMap = weekStats[String(w)] || {};
       var projMapW = weekProj[String(w)] || {};
       var st = statsMap[pid];
-      if (!st || Object.keys(st).length === 0) continue;
+      if (!self.hasPlayedStats(st)) continue;
       
       agg.games++;
       agg.rec += st.rec || 0;
@@ -2203,7 +2629,7 @@ playersById: {},
       for (var i = 0; i < pids.length; i++) {
         var pid = String(pids[i]);
         var st = statsMap[pid];
-        if (!st || Object.keys(st).length === 0) continue;
+        if (!self.hasPlayedStats(st)) continue;
 
         // Do not filter by projections here; projections can be missing/0 for real games.
 var p = players[pid];
@@ -3033,7 +3459,7 @@ var roleTopN = function(role) {
       if (!id || id === "null" || id === "undefined") return;
       var statsObj = statsMap[id] || {};
       var projObj = projMap[id] || {};
-      var hasPlayed = Object.keys(statsObj).length > 0;
+      var hasPlayed = self.hasPlayedStats(statsObj);
       sum += hasPlayed ? self.scoreFromStats(statsObj, id) : self.scoreFromStats(projObj, id);
     });
     return Math.round(sum * 100) / 100;
@@ -3098,16 +3524,33 @@ var roleTopN = function(role) {
     return out;
   },
 
+  /**
+   * Generate Sleeper CDN URL for player headshot
+   * @param {string} pid - Player ID
+   * @returns {string} URL to player headshot image
+   */
   playerHeadshotUrl: function(pid) {
     var id = String(pid || "").trim();
     return id ? "https://sleepercdn.com/content/nfl/players/thumb/" + id + ".jpg" : "";
   },
 
+  /**
+   * Generate Sleeper CDN URL for team logo
+   * @param {string} team - Team abbreviation (e.g., "KC", "BUF")
+   * @returns {string} URL to team logo image
+   */
   teamLogoUrl: function(team) {
     var t = (team || "").toString().trim().toLowerCase();
     return t ? "https://sleepercdn.com/images/team_logos/nfl/" + t + ".png" : "";
   },
 
+  /**
+   * Generate player image HTML with fallback to team logo
+   * @param {string} pid - Player ID
+   * @param {Object} playerObj - Player object containing team info
+   * @param {string} [sizeClass="w-10 h-10"] - Tailwind size classes
+   * @returns {string} HTML img tag
+   */
   playerImg: function(pid, playerObj, sizeClass) {
     sizeClass = sizeClass || "w-10 h-10";
     var head = this.playerHeadshotUrl(pid);
@@ -3226,14 +3669,8 @@ var roleTopN = function(role) {
     var fetchOne = function(w) {
       var wk = String(w);
       return self.fetchJson("https://api.sleeper.app/v1/league/" + self.cfg.leagueId + "/matchups/" + w)
-        .then(function(arr) {
-          self.data.weekMatchups[wk] = arr || [];
-          self.buildWeekMatchupIndex(wk, self.data.weekMatchups[wk]);
-        })
-        .catch(function() {
-          self.data.weekMatchups[wk] = [];
-          self.buildWeekMatchupIndex(wk, []);
-        });
+        .then(function(arr) { self.data.weekMatchups[wk] = arr || []; })
+        .catch(function() { self.data.weekMatchups[wk] = []; });
     };
 
     var CONCURRENCY = 6;
@@ -3249,26 +3686,14 @@ var roleTopN = function(role) {
     return Promise.all(workers).then(function() {});
   },
 
-  buildWeekMatchupIndex: function(weekKey, matchups) {
-    var wk = String(weekKey);
-    var map = {};
-    var arr = matchups || [];
-    for (var i = 0; i < arr.length; i++) {
-      var m = arr[i];
-      if (m && m.roster_id != null) map[String(m.roster_id)] = m;
-    }
-    this.data.weekMatchupsByRoster[wk] = map;
-    return map;
-  },
-
   getMatchupForRoster: function(weekNum, rosterId) {
     var wk = String(weekNum);
-    if (this.data.weekMatchupsByRoster && this.data.weekMatchupsByRoster[wk]) {
-      return this.data.weekMatchupsByRoster[wk][String(rosterId)] || null;
-    }
     var arr = (this.data.weekMatchups && this.data.weekMatchups[wk]) || [];
-    var map = this.buildWeekMatchupIndex(wk, arr);
-    return map[String(rosterId)] || null;
+    for (var i = 0; i < arr.length; i++) {
+      var m = arr[i];
+      if (m && String(m.roster_id) === String(rosterId)) return m;
+    }
+    return null;
   },
 
   buildLeagueMetrics: function() {
@@ -3283,20 +3708,11 @@ var roleTopN = function(role) {
         return;
       }
 
-      // Roster lookup
-      var rosterById = {};
-      rosters.forEach(function(r) { rosterById[String(r.roster_id)] = r; });
-
       // Build name map
-      var nameCache = {};
       var nameForRoster = function(rid) {
-        var key = String(rid);
-        if (nameCache[key]) return nameCache[key];
-        var roster = rosterById[key];
+        var roster = rosters.find(function(r) { return String(r.roster_id) === String(rid); });
         var u = roster ? self.data.usersById[roster.owner_id] : null;
-        var name = (u && u.display_name) ? u.display_name : ("Team " + rid);
-        nameCache[key] = name;
-        return name;
+        return (u && u.display_name) ? u.display_name : ("Team " + rid);
       };
 
       var rosterIds = rosters.map(function(r) { return String(r.roster_id); });
@@ -3321,6 +3737,11 @@ var roleTopN = function(role) {
           scores: [], optPf: 0, benchPf: 0, regret: 0
         };
       });
+
+      
+      // Roster lookup for fallbacks
+      var rosterById = {};
+      rosters.forEach(function(r) { rosterById[String(r.roster_id)] = r; });
 
       // Starter slots (exclude bench/IR/taxi/reserve if present in roster_positions)
       var rosterPositions = (self.data.league && Array.isArray(self.data.league.roster_positions)) ? self.data.league.roster_positions : [];
@@ -3440,7 +3861,7 @@ var roleTopN = function(role) {
           if (!id || id === "null" || id === "undefined") return 0;
           var st = statsMap[id] || {};
           var pr = projMap[id] || {};
-          var hasPlayed = Object.keys(st).length > 0;
+          var hasPlayed = self.hasPlayedStats(st);
           var pts = hasPlayed ? self.scoreFromStats(st, id) : self.scoreFromStats(pr, id);
           return (Math.round(pts * 100) / 100);
         };
@@ -3462,7 +3883,7 @@ var roleTopN = function(role) {
           for (var stIdx = 0; stIdx < starters.length; stIdx++) {
             var pidActual = String(starters[stIdx]);
             var stObj = statsMap[pidActual] || {};
-            if (Object.keys(stObj).length > 0) {
+            if (self.hasPlayedStats(stObj)) {
               hasPlayedWeek = true;
               actualTotal += self.scoreFromStats(stObj, pidActual);
             }
@@ -3516,8 +3937,10 @@ var roleTopN = function(role) {
             // Baselines should ignore weeks where the player did not play.
 // NOTE: Do NOT filter by projections here; projections can be missing/0 for real games.
             var stB = statsMap[pid3] || {};
-            var hasPlayedB = Object.keys(stB).length > 0;
+            var hasPlayedB = self.hasPlayedStats(stB);
             if (!hasPlayedB) continue;        // "Not played"
+            var prB = projMap[pid3] || {};
+            if (!self.hasValidProjection(prB, pid3)) continue; // "No Proj"
             var posPts = self.scoreFromStats(stB, pid3);
 if (!isFinite(posPts) || posPts <= 0) continue;
 
@@ -3622,6 +4045,44 @@ if (!isFinite(posPts) || posPts <= 0) continue;
 
       self.data.teamWeekScores = weekScores;
       self.data.leagueMetrics = { maxWeek: maxWeek, teams: teams, baselines: baselines };
+
+      // Compute total team value for each roster
+      self.computeTeamValues();
+    });
+  },
+
+  // Compute total player value for each team's roster
+  computeTeamValues: function() {
+    var self = this;
+    var rosters = this.data.rosters || [];
+    var playerValues = this.data.playerValues || {};
+    var teams = (this.data.leagueMetrics && this.data.leagueMetrics.teams) || {};
+    
+    rosters.forEach(function(roster) {
+      var rid = String(roster.roster_id);
+      var players = roster.players || [];
+      var totalValue = 0;
+      var starterValue = 0;
+      var starters = roster.starters || [];
+      
+      players.forEach(function(pid) {
+        var pidStr = String(pid);
+        var vObj = playerValues[pidStr];
+        var val = (vObj && vObj.score) ? vObj.score : 0;
+        totalValue += val;
+        
+        // Check if player is a starter
+        if (starters.indexOf(pid) !== -1 || starters.indexOf(pidStr) !== -1) {
+          starterValue += val;
+        }
+      });
+      
+      // Add to team object if it exists
+      if (teams[rid]) {
+        teams[rid].totalValue = totalValue;
+        teams[rid].starterValue = starterValue;
+        teams[rid].benchValue = totalValue - starterValue;
+      }
     });
   },
 
@@ -4466,7 +4927,7 @@ if (!isFinite(posPts) || posPts <= 0) continue;
     if (!tbody) return;
     var metrics = this.data.leagueMetrics;
     if (!metrics || !metrics.teams) {
-      tbody.innerHTML = '<tr><td class="px-4 py-3 text-gray-400 text-sm" colspan="10">League metrics not ready yet.</td></tr>';
+      tbody.innerHTML = '<tr><td class="px-4 py-3 text-gray-400 text-sm" colspan="11">League metrics not ready yet.</td></tr>';
       return;
     }
 
@@ -4485,6 +4946,7 @@ if (!isFinite(posPts) || posPts <= 0) continue;
         case "luck": return team.luck || 0;
         case "stddev": return team.stddev || 0;
         case "sos": return team.sos || 0;
+        case "value": return team.totalValue || 0;
         default: return team.expW || 0;
       }
     };
@@ -4501,12 +4963,14 @@ if (!isFinite(posPts) || posPts <= 0) continue;
     var rows = '';
     for (var i = 0; i < teamsArr.length; i++) {
       var t = teamsArr[i];
+      var teamVal = (t.totalValue != null && isFinite(t.totalValue)) ? t.totalValue : 0;
       rows += '<tr class="border-t border-gray-800 hover:bg-gray-900/40">' +
         '<td class="px-4 py-2 text-white font-bold">' + '<span class="inline-block w-2.5 h-2.5 rounded-full mr-2" style="background:' + this.rosterColor(t.roster_id) + '"></span>' + this.escapeHtml(t.name) + '</td>' +
         '<td class="px-4 py-2 text-right text-gray-200 font-mono">' + t.w + '-' + t.l + (t.t ? ('-' + t.t) : '') + '</td>' +
         '<td class="px-4 py-2 text-right text-gray-200 font-mono">' + t.pf.toFixed(2) + '</td>' +
         '<td class="px-4 py-2 text-right text-gray-200 font-mono">' + t.ppg.toFixed(2) + '</td>' +
         '<td class="px-4 py-2 text-right text-gray-200 font-mono">' + t.pa.toFixed(2) + '</td>' +
+        '<td class="px-4 py-2 text-right text-emerald-400 font-mono font-bold">' + teamVal.toLocaleString() + '</td>' +
         '<td class="px-4 py-2 text-right text-gray-200 font-mono">' + (t.allPlayPct * 100).toFixed(1) + '%</td>' +
         '<td class="px-4 py-2 text-right text-gray-200 font-mono">' + t.expW.toFixed(2) + '</td>' +
         '<td class="px-4 py-2 text-right font-mono ' + (t.luck >= 0 ? 'text-green-400' : 'text-red-400') + '">' + (t.luck >= 0 ? '+' : '') + t.luck.toFixed(2) + '</td>' +
@@ -4514,7 +4978,7 @@ if (!isFinite(posPts) || posPts <= 0) continue;
         '<td class="px-4 py-2 text-right text-gray-200 font-mono">' + t.sos.toFixed(2) + '</td>' +
       '</tr>';
     }
-    tbody.innerHTML = rows || '<tr><td class="px-4 py-3 text-gray-400 text-sm" colspan="10">No teams.</td></tr>';
+    tbody.innerHTML = rows || '<tr><td class="px-4 py-3 text-gray-400 text-sm" colspan="11">No teams.</td></tr>';
   },
 
   exportLeagueInsightsCsv: function() {
@@ -4527,6 +4991,7 @@ if (!isFinite(posPts) || posPts <= 0) continue;
         PF: t.pf != null ? t.pf.toFixed(2) : "0.00",
         PPG: t.ppg != null ? t.ppg.toFixed(2) : "0.00",
         PA: t.pa != null ? t.pa.toFixed(2) : "0.00",
+        TeamValue: t.totalValue != null ? t.totalValue : 0,
         AllPlayPct: t.allPlayPct != null ? (t.allPlayPct * 100).toFixed(1) + "%" : "0.0%",
         xW: t.expW != null ? t.expW.toFixed(2) : "0.00",
         Luck: t.luck != null ? t.luck.toFixed(2) : "0.00",
@@ -4701,231 +5166,994 @@ renderLineupInsights: function() {
     });
   },
 
-  renderTrades: function() {
+  // --- Trade Options (replaces trade-history tab) --------------------------------
+  // Uses the currently selected team + week context already loaded by the app.
+  // Goal: identify the selected team's weakest positions and suggest (a) fair trade ideas,
+  // and (b) best free agents to patch those weaknesses.
+
+  _tradeMedian: function(arr) {
+    if (!arr || !arr.length) return 0;
+    var s = arr.slice().filter(function(x){ return isFinite(x); }).sort(function(a,b){ return a-b; });
+    if (!s.length) return 0;
+    var mid = (s.length - 1) / 2;
+    var lo = Math.floor(mid), hi = Math.ceil(mid);
+    return (lo === hi) ? s[lo] : (s[lo] + s[hi]) / 2;
+  },
+
+  _tradeFmt: function(x, d) {
+    var n = (x == null || !isFinite(x)) ? 0 : Number(x);
+    var dec = (d == null) ? 0 : d;
+    return n.toFixed(dec);
+  },
+
+  _tradeGetWeekStartersForRoster: function(week, rid) {
+    // Prefer matchups starters for that week; fall back to current roster.starters.
+    var mu = this.getMatchupForRoster ? this.getMatchupForRoster(Number(week), Number(rid)) : null;
+    if (mu && Array.isArray(mu.starters) && mu.starters.length) return mu.starters;
+    var roster = (this.data.rosters || []).find(function(r){ return String(r.roster_id) === String(rid); });
+    return roster && Array.isArray(roster.starters) ? roster.starters : [];
+  },
+
+  _tradeEnrichPlayer: function(pid, slot, week, statsMap, projMap, isStarter) {
+    var p = (this.data.playersById && this.data.playersById[String(pid)]) ? this.data.playersById[String(pid)] : {};
+    var disp = this.playerDisplay ? this.playerDisplay(p) : { name: (p.full_name || p.first_name || p.last_name || ("#" + pid)), pos: (p.position || ""), team: (p.team || "") };
+    var group = this.positionGroupForPlayer ? this.positionGroupForPlayer(p) : (String(disp.pos || "").toUpperCase() || "UNK");
+
+    // Value score (0..1000) from buildSeasonTotals()
+    var vObj = (this.data.playerValues && this.data.playerValues[String(pid)]) ? this.data.playerValues[String(pid)] : null;
+    var vScore = vObj && isFinite(vObj.score) ? Number(vObj.score) : 0;
+
+    // Season totals and PPG info (optional but helpful for context)
+    var seasonTotal = (this.data.seasonTotals && isFinite(this.data.seasonTotals[String(pid)])) ? Number(this.data.seasonTotals[String(pid)]) : 0;
+    var ppgObj = (this.data.playerPpgRanks && this.data.playerPpgRanks[String(pid)]) ? this.data.playerPpgRanks[String(pid)] : null;
+
+    // Week scoring (actual if played else projection)
+    var s = statsMap ? statsMap[String(pid)] : null;
+    var pr = projMap ? projMap[String(pid)] : null;
+    var act = this.scoreFromStats ? this.scoreFromStats(s) : null;
+    var proj = this.scoreFromStats ? this.scoreFromStats(pr) : null;
+    var played = this.hasPlayed ? this.hasPlayed(s) : (act != null && isFinite(act));
+    var scoreToShow = (played && act != null && isFinite(act)) ? act : (proj != null && isFinite(proj) ? proj : null);
+
+    return {
+      pid: String(pid),
+      player: p,
+      disp: disp,
+      group: group || "UNK",
+      slot: slot || "",
+      isStarter: !!isStarter,
+      valueScore: vScore,
+      seasonTotal: seasonTotal,
+      ppg: (ppgObj && isFinite(ppgObj.ppg)) ? ppgObj.ppg : null,
+      weekScore: scoreToShow,
+      played: !!played
+    };
+  },
+
+  _tradeBuildRosterPool: function(rid, week, statsMap, projMap) {
+    var self = this;
+    var roster = (this.data.rosters || []).find(function(r){ return String(r.roster_id) === String(rid); });
+    if (!roster) return { roster: null, starters: [], bench: [], byPosBench: {}, byPosStarters: {} };
+
+    var starters = self._tradeGetWeekStartersForRoster(week, rid) || [];
+    var starterSet = {};
+    for (var i = 0; i < starters.length; i++) starterSet[String(starters[i])] = true;
+
+    // Bench pids across players/taxi/IR, excluding starters
+    var benchSlot = {}; // pid -> slot label
+    var addBench = function(pid, slot) {
+      pid = String(pid);
+      if (!pid || starterSet[pid]) return;
+      if (!benchSlot[pid]) benchSlot[pid] = slot || "BN";
+    };
+
+    (roster.players || []).forEach(function(pid){ addBench(pid, "BN"); });
+    (roster.taxi || []).forEach(function(pid){ addBench(pid, "TX"); });
+    (roster.reserve || roster.ir || []).forEach(function(pid){ addBench(pid, "IR"); });
+
+    var starterItems = [];
+    var byPosStarters = {};
+    for (var sIdx = 0; sIdx < starters.length; sIdx++) {
+      var pidS = starters[sIdx];
+      var itemS = self._tradeEnrichPlayer(pidS, "ST", week, statsMap, projMap, true);
+      starterItems.push(itemS);
+      (byPosStarters[itemS.group] || (byPosStarters[itemS.group] = [])).push(itemS);
+    }
+
+    var benchItems = [];
+    var byPosBench = {};
+    Object.keys(benchSlot).forEach(function(pidB) {
+      var itemB = self._tradeEnrichPlayer(pidB, benchSlot[pidB], week, statsMap, projMap, false);
+      // Skip obvious non-usable stashes for suggestions (IR by default)
+      if (itemB.slot === "IR") return;
+      benchItems.push(itemB);
+      (byPosBench[itemB.group] || (byPosBench[itemB.group] = [])).push(itemB);
+    });
+
+    // Sort by value score
+    starterItems.sort(function(a,b){ return (b.valueScore||0) - (a.valueScore||0); });
+    benchItems.sort(function(a,b){ return (b.valueScore||0) - (a.valueScore||0); });
+    Object.keys(byPosBench).forEach(function(pos){ byPosBench[pos].sort(function(a,b){ return (b.valueScore||0)-(a.valueScore||0); }); });
+    Object.keys(byPosStarters).forEach(function(pos){ byPosStarters[pos].sort(function(a,b){ return (b.valueScore||0)-(a.valueScore||0); }); });
+
+    return { roster: roster, starters: starterItems, bench: benchItems, byPosBench: byPosBench, byPosStarters: byPosStarters };
+  },
+
+  _tradeComputeLeaguePosTotals: function(week, statsMap, projMap) {
+    var self = this;
+    var posList = ["QB","RB","WR","TE","K","DEF","DL","LB","DB"];
+    var byRoster = {}; // rid -> pos -> total value
+    var allByPos = {}; // pos -> array of totals
+    posList.forEach(function(p){ allByPos[p] = []; });
+
+    (this.data.rosters || []).forEach(function(r) {
+      var rid = String(r.roster_id);
+      var starters = self._tradeGetWeekStartersForRoster(week, rid) || [];
+      var totals = {};
+      posList.forEach(function(p){ totals[p] = 0; });
+
+      for (var i = 0; i < starters.length; i++) {
+        var pid = String(starters[i]);
+        var player = (self.data.playersById && self.data.playersById[pid]) ? self.data.playersById[pid] : null;
+        if (!player) continue;
+        var group = self.positionGroupForPlayer ? self.positionGroupForPlayer(player) : (String(player.position||"").toUpperCase());
+        if (!group || totals[group] === undefined) continue;
+
+        var vObj = (self.data.playerValues && self.data.playerValues[pid]) ? self.data.playerValues[pid] : null;
+        var v = vObj && isFinite(vObj.score) ? Number(vObj.score) : 0;
+        totals[group] += v;
+      }
+
+      byRoster[rid] = totals;
+      posList.forEach(function(p){ allByPos[p].push(totals[p] || 0); });
+    });
+
+    var medians = {};
+    posList.forEach(function(p){ medians[p] = self._tradeMedian(allByPos[p]); });
+
+    return { posList: posList, byRoster: byRoster, medians: medians, allByPos: allByPos };
+  },
+
+  _tradeComputeDeficits: function(teamTotals, medians) {
+    var out = [];
+    Object.keys(medians || {}).forEach(function(pos){
+      var team = (teamTotals && isFinite(teamTotals[pos])) ? Number(teamTotals[pos]) : 0;
+      var med = (medians && isFinite(medians[pos])) ? Number(medians[pos]) : 0;
+      out.push({ pos: pos, team: team, median: med, delta: (team - med) });
+    });
+    out.sort(function(a,b){ return a.delta - b.delta; }); // most negative first
+    return out;
+  },
+
+  _tradeBuildNeedWeights: function(teamTotals, medians) {
+    var deficits = this._tradeComputeDeficits(teamTotals, medians);
+    var minDelta = 0;
+    deficits.forEach(function(d) { if (d.delta < minDelta) minDelta = d.delta; });
+    var maxNeed = Math.abs(minDelta || 0);
+    var weights = {};
+    deficits.forEach(function(d) {
+      if (d.delta < 0 && maxNeed > 0) {
+        weights[d.pos] = Math.min(1, Math.abs(d.delta) / maxNeed);
+      } else {
+        weights[d.pos] = 0;
+      }
+    });
+    return { weights: weights, deficits: deficits };
+  },
+
+  _tradeNeedDelta: function(inPlayers, outPlayers, weights) {
+    var w = weights || {};
+    var inScore = 0;
+    var outScore = 0;
+    (inPlayers || []).forEach(function(p) { inScore += (w[p.group] || 0); });
+    (outPlayers || []).forEach(function(p) { outScore += (w[p.group] || 0); });
+    return (inPlayers && inPlayers.length ? inScore / inPlayers.length : 0) -
+      (outPlayers && outPlayers.length ? outScore / outPlayers.length : 0);
+  },
+
+  _tradeBuildPpgCounts: function() {
+    var counts = {};
+    var ranks = this.data.playerPpgRanks || {};
+    Object.keys(ranks).forEach(function(pid) {
+      var pos = ranks[pid] && ranks[pid].pos;
+      if (!pos) return;
+      counts[pos] = (counts[pos] || 0) + 1;
+    });
+    return counts;
+  },
+
+  _tradeCombinedValue: function(player, ctx) {
+    var self = this;
+    var base = (player && isFinite(player.valueScore)) ? Number(player.valueScore) : 0;
+    var posRanks = (ctx && ctx.posTotalRanks) ? ctx.posTotalRanks : {};
+    var posCounts = (ctx && ctx.posCounts) ? ctx.posCounts : {};
+    var ppgRanks = (ctx && ctx.ppgRanks) ? ctx.ppgRanks : {};
+    var ppgCounts = (ctx && ctx.ppgCounts) ? ctx.ppgCounts : {};
+
+    var totalRank = posRanks[player.pid];
+    var totalPct = null;
+    if (totalRank && posCounts[totalRank.pos]) {
+      var totalDen = Math.max(1, posCounts[totalRank.pos] - 1);
+      totalPct = 1 - ((totalRank.rank - 1) / totalDen);
+    }
+
+    var ppgRank = ppgRanks[player.pid];
+    var ppgPct = null;
+    if (ppgRank && ppgCounts[ppgRank.pos]) {
+      var ppgDen = Math.max(1, ppgCounts[ppgRank.pos] - 1);
+      ppgPct = 1 - ((ppgRank.rank - 1) / ppgDen);
+    }
+
+    var marketPct = null;
+    if (totalPct != null && ppgPct != null) marketPct = (totalPct * 0.55) + (ppgPct * 0.45);
+    else if (totalPct != null) marketPct = totalPct;
+    else if (ppgPct != null) marketPct = ppgPct;
+    else marketPct = base / 1000;
+
+    var marketScore = Math.round(Math.max(0, Math.min(1000, marketPct * 1000)));
+    var rawCombined = Math.round((base * 0.7) + (marketScore * 0.3));
+    
+    // CRITICAL FIX: Apply position scarcity weight to trade value
+    // This ensures WRs/RBs are valued higher than IDP players
+    var posWeight = self.getPositionWeight ? self.getPositionWeight(player.group) : 1.0;
+    var combined = Math.round(rawCombined * posWeight);
+    
+    // Starter bonus - starters are more valuable to trade
+    if (player.isStarter) {
+      combined = Math.round(combined * 1.08);
+    }
+    
+    return { combined: combined, marketScore: marketScore, rawCombined: rawCombined, posWeight: posWeight };
+  },
+
+  _tradeRosterName: function(rid) {
+    var name = null;
+    var r = (this.data.rosters || []).find(function(x){ return String(x.roster_id) === String(rid); });
+    if (!r) return ("Roster " + rid);
+    var owner = r.owner_id;
+    var u = (this.data.usersById && this.data.usersById[String(owner)]) ? this.data.usersById[String(owner)] : null;
+    name = u ? (u.metadata && u.metadata.team_name ? u.metadata.team_name : (u.display_name || u.username)) : null;
+    return name || ("Roster " + rid);
+  },
+
+  // Get all tradeable players from a roster (sorted by value desc)
+  _tradeGetRosterPlayers: function(rid, week, statsMap, projMap, minValue) {
+    var self = this;
+    minValue = minValue || 0;
+    var roster = (this.data.rosters || []).find(function(r) { return String(r.roster_id) === String(rid); });
+    if (!roster) return [];
+    
+    var starters = this._tradeGetWeekStartersForRoster(week, rid) || [];
+    var starterSet = {};
+    starters.forEach(function(pid) { starterSet[String(pid)] = true; });
+    
+    var players = [];
+    var seen = {};
+    
+    var addPlayer = function(pid, slot) {
+      pid = String(pid);
+      if (!pid || seen[pid]) return;
+      seen[pid] = true;
+      
+      var item = self._tradeEnrichPlayer(pid, slot, week, statsMap, projMap, !!starterSet[pid]);
+      if (item && (item.valueScore || 0) >= minValue) {
+        players.push(item);
+      }
+    };
+    
+    (roster.players || []).forEach(function(pid) { 
+      addPlayer(pid, starterSet[String(pid)] ? 'ST' : 'BN'); 
+    });
+    (roster.taxi || []).forEach(function(pid) { addPlayer(pid, 'TX'); });
+    
+    players.sort(function(a, b) { return (b.valueScore || 0) - (a.valueScore || 0); });
+    return players;
+  },
+
+  // Generate all combinations of size k from array (with higher limit)
+  _tradeCombinations: function(arr, k) {
+    var results = [];
+    if (k > arr.length || k <= 0) return results;
+    if (k === arr.length) return [arr.slice()];
+    
+    function combine(start, combo) {
+      if (combo.length === k) {
+        results.push(combo.slice());
+        return;
+      }
+      for (var i = start; i < arr.length && results.length < 200; i++) {
+        combo.push(arr[i]);
+        combine(i + 1, combo);
+        combo.pop();
+      }
+    }
+    combine(0, []);
+    return results;
+  },
+
+  // Main trade finder - flexible multi-for-multi approach
+  _tradeBuildProposals: function(myRid, focusPos, leagueInfo, week, statsMap, projMap, tradeCtx) {
+    var self = this;
+    var proposals = [];
+    
+    // Get settings from UI
+    var overpay = Number((this.dom.tradeOverpay && this.dom.tradeOverpay.value) || 100);
+    var minValue = Number((this.dom.tradeMinValue && this.dom.tradeMinValue.value) || 350);
+    var posFilter = (this.dom.tradePosition && this.dom.tradePosition.value) || 'any';
+    var maxGain = Math.max(40, Math.round(overpay * 0.6));
+    var posTotalRanks = (tradeCtx && tradeCtx.posTotalRanks) ? tradeCtx.posTotalRanks : {};
+    var posCounts = (tradeCtx && tradeCtx.posCounts) ? tradeCtx.posCounts : {};
+    var ppgRanks = this.data.playerPpgRanks || {};
+    var ppgCounts = (tradeCtx && tradeCtx.ppgCounts) ? tradeCtx.ppgCounts : this._tradeBuildPpgCounts();
+    var combinedCtx = { posTotalRanks: posTotalRanks, posCounts: posCounts, ppgRanks: ppgRanks, ppgCounts: ppgCounts };
+    var myNeed = (tradeCtx && tradeCtx.myNeed) ? tradeCtx.myNeed : this._tradeBuildNeedWeights((leagueInfo && leagueInfo.byRoster && leagueInfo.byRoster[myRid]) || {}, (leagueInfo && leagueInfo.medians) || {});
+    
+    // Get my players - use low threshold to allow packaging lower-value players
+    var myPlayers = this._tradeGetRosterPlayers(myRid, week, statsMap, projMap, 50).map(function(p) {
+      var combined = self._tradeCombinedValue(p, combinedCtx);
+      p.tradeValue = combined.combined;
+      p.marketValue = combined.marketScore;
+      return p;
+    });
+    if (!myPlayers.length) return [];
+    
+    // For each other team, find trade matches
+    (this.data.rosters || []).forEach(function(r) {
+      var partnerRid = String(r.roster_id);
+      if (partnerRid === String(myRid)) return;
+      
+      // Get partner players - also low threshold to allow combinations
+      var partnerPlayers = self._tradeGetRosterPlayers(partnerRid, week, statsMap, projMap, 50).map(function(p) {
+        var combined = self._tradeCombinedValue(p, combinedCtx);
+        p.tradeValue = combined.combined;
+        p.marketValue = combined.marketScore;
+        return p;
+      });
+      if (!partnerPlayers.length) return;
+      
+      // Filter by position if specified
+      var theirFiltered = partnerPlayers;
+      if (posFilter && posFilter !== 'any') {
+        theirFiltered = partnerPlayers.filter(function(p) {
+          return p.group === posFilter;
+        });
+      }
+      if (!theirFiltered.length) return;
+      
+      var partnerName = self._tradeRosterName(partnerRid);
+      
+      var partnerNeed = self._tradeBuildNeedWeights((leagueInfo && leagueInfo.byRoster && leagueInfo.byRoster[partnerRid]) || {}, (leagueInfo && leagueInfo.medians) || {});
+
+      // Get top players from each side for trading
+      var myTop = myPlayers.slice(0, 15);
+      var theirTop = theirFiltered.slice(0, 15);
+      
+      // Build all possible "give" packages (1-3 players)
+      var myPackages = [];
+      for (var giveSize = 1; giveSize <= 3; giveSize++) {
+        var combos = self._tradeCombinations(myTop, giveSize);
+        combos.forEach(function(combo) {
+          var totalValue = combo.reduce(function(s, p) { return s + (p.tradeValue || p.valueScore || 0); }, 0);
+          myPackages.push({ players: combo, value: totalValue, size: giveSize });
+        });
+      }
+      
+      // Build all possible "receive" packages (1-3 players)
+      var theirPackages = [];
+      for (var getSize = 1; getSize <= 3; getSize++) {
+        var combos2 = self._tradeCombinations(theirTop, getSize);
+        combos2.forEach(function(combo) {
+          var totalValue = combo.reduce(function(s, p) { return s + (p.tradeValue || p.valueScore || 0); }, 0);
+          // Apply minValue filter to the PACKAGE total, not individual players
+          if (totalValue >= minValue) {
+            theirPackages.push({ players: combo, value: totalValue, size: getSize });
+          }
+        });
+      }
+      
+      // Find all value-balanced matches
+      myPackages.forEach(function(myPkg) {
+        theirPackages.forEach(function(theirPkg) {
+          var diff = myPkg.value - theirPkg.value;
+          
+          // Check if within tolerance
+          // diff > 0 means we're overpaying, diff < 0 means we're getting a deal
+          // Allow overpay up to the slider value, and cap max gain to keep realism
+          if (diff >= -maxGain && diff <= overpay) {
+            
+            // CRITICAL FIX: Check for bad tier mismatches
+            // Don't suggest trading premium positions (WR, RB) for IDP (LB, DL, DB)
+            if (self.hasBadTierMismatch && self.hasBadTierMismatch(myPkg.players, theirPkg.players)) {
+              return; // Skip this trade - bad tier mismatch
+            }
+            
+            // Calculate trade type string
+            var tradeType = myPkg.size + '-for-' + theirPkg.size;
+            
+            // Score trades - DON'T penalize multi-player trades as heavily
+            // In fact, give a small bonus to interesting multi-player trades
+            var balanceScore = 1 - (Math.abs(diff) / (theirPkg.value + 100));
+            var valueScore = Math.min(theirPkg.value / 600, 1) * 0.2;
+            var gainScore = diff < 0 ? Math.min(Math.abs(diff) / Math.max(250, theirPkg.value), 0.3) : -Math.min(diff / Math.max(250, myPkg.value), 0.3);
+
+            var myNeedDelta = self._tradeNeedDelta(theirPkg.players, myPkg.players, myNeed.weights);
+            var partnerNeedDelta = self._tradeNeedDelta(myPkg.players, theirPkg.players, partnerNeed.weights);
+            var needScore = (myNeedDelta * 0.25) + (partnerNeedDelta * 0.2);
+            
+            // Small bonus for multi-player trades (more interesting)
+            var multiBonus = 0;
+            if (myPkg.size > 1 || theirPkg.size > 1) {
+              multiBonus = 0.05;
+            }
+            if (myPkg.size >= 2 && theirPkg.size >= 2) {
+              multiBonus = 0.1; // 2-for-2 or bigger gets bonus
+            }
+            
+            // Penalty if giving away starters
+            var starterPenalty = 0;
+            myPkg.players.forEach(function(p) {
+              if (p.isStarter) starterPenalty += 0.05;
+            });
+            
+            // NEW: Penalty for giving up premium positions for non-premium
+            var tierPenalty = 0;
+            var outTier1 = 0, inTier1 = 0;
+            myPkg.players.forEach(function(p) {
+              if (self.getPositionTier && self.getPositionTier(p.group) === 1) outTier1++;
+            });
+            theirPkg.players.forEach(function(p) {
+              if (self.getPositionTier && self.getPositionTier(p.group) === 1) inTier1++;
+            });
+            if (outTier1 > inTier1) {
+              tierPenalty = (outTier1 - inTier1) * 0.15;
+            }
+            
+            var score = balanceScore + valueScore + gainScore + needScore + multiBonus - starterPenalty - tierPenalty;
+            
+            // Create unique key
+            var myPids = myPkg.players.map(function(p) { return p.pid; }).sort().join(',');
+            var theirPids = theirPkg.players.map(function(p) { return p.pid; }).sort().join(',');
+            
+            // Calculate trade grade
+            var gradeInfo = self.gradeTradeProposal ? self.gradeTradeProposal(theirPkg.players, myPkg.players) : null;
+            
+            // Skip trades with F grade (really bad trades)
+            if (gradeInfo && gradeInfo.grade === 'F') {
+              return;
+            }
+            
+            proposals.push({
+              partnerRid: partnerRid,
+              partnerName: partnerName,
+              inPlayers: theirPkg.players,
+              outPlayers: myPkg.players,
+              inValue: theirPkg.value,
+              outValue: myPkg.value,
+              valueDiff: diff,
+              myNeedDelta: myNeedDelta,
+              partnerNeedDelta: partnerNeedDelta,
+              tradeType: tradeType,
+              score: score,
+              key: partnerRid + '|' + myPids + '|' + theirPids,
+              gradeInfo: gradeInfo
+            });
+          }
+        });
+      });
+    });
+    
+    // Sort by score
+    proposals.sort(function(a, b) { return b.score - a.score; });
+    
+    // Deduplicate - keep best unique trades (by key)
+    var seen = {};
+    var unique = [];
+    proposals.forEach(function(p) {
+      if (!seen[p.key]) {
+        seen[p.key] = true;
+        unique.push(p);
+      }
+    });
+    
+    // Group by trade type to ensure variety
+    var byType = {};
+    unique.forEach(function(p) {
+      if (!byType[p.tradeType]) byType[p.tradeType] = [];
+      byType[p.tradeType].push(p);
+    });
+    
+    // Take top trades from each type to ensure variety
+    var varied = [];
+    var types = Object.keys(byType).sort(); // Sort so 1-for-1, 1-for-2, etc. are consistent
+    
+    // First pass: take top 3 from each type
+    types.forEach(function(type) {
+      var trades = byType[type].slice(0, 3);
+      trades.forEach(function(t) { varied.push(t); });
+    });
+    
+    // Second pass: fill remaining slots with best overall
+    unique.forEach(function(p) {
+      if (varied.length < 40 && varied.indexOf(p) < 0) {
+        varied.push(p);
+      }
+    });
+    
+    // Re-sort by score
+    varied.sort(function(a, b) { return b.score - a.score; });
+    
+    return varied.slice(0, 40);
+  },
+
+  _tradeFindFreeAgents: function(positions, week, statsMap, projMap) {
+    var self = this;
+    var posSet = {};
+    (positions || []).forEach(function(p){ if (p) posSet[String(p).toUpperCase()] = true; });
+
+    // Build rostered player set
+    var rostered = {};
+    (this.data.rosters || []).forEach(function(r) {
+      (r.players || []).forEach(function(pid){ rostered[String(pid)] = true; });
+      (r.taxi || []).forEach(function(pid){ rostered[String(pid)] = true; });
+      (r.reserve || r.ir || []).forEach(function(pid){ rostered[String(pid)] = true; });
+    });
+
+    var picksByPos = {};
+    Object.keys(posSet).forEach(function(pos){ picksByPos[pos] = []; });
+
+    // Iterate playerValues (already filtered to those with at least some season data)
+    var values = this.data.playerValues || {};
+    Object.keys(values).forEach(function(pid) {
+      if (rostered[pid]) return;
+      var p = (self.data.playersById && self.data.playersById[pid]) ? self.data.playersById[pid] : null;
+      if (!p) return;
+      if (p.active === false) return;
+      var group = self.positionGroupForPlayer ? self.positionGroupForPlayer(p) : (String(p.position||"").toUpperCase());
+      if (!group || !posSet[group]) return;
+
+      var item = self._tradeEnrichPlayer(pid, "FA", week, statsMap, projMap, false);
+      // Prefer players with any value signal
+      if (!item.valueScore || item.valueScore <= 0) return;
+      picksByPos[group].push(item);
+    });
+
+    Object.keys(picksByPos).forEach(function(pos) {
+      picksByPos[pos].sort(function(a,b){ return (b.valueScore||0) - (a.valueScore||0); });
+      picksByPos[pos] = picksByPos[pos].slice(0, 5);
+    });
+
+    return picksByPos;
+  },
+
+  renderTradeOptions: function(force) {
     var self = this;
     var content = this.dom.tradeContent;
     if (!content) return;
 
-    var week = Number(this.ui.selectedWeek || 1);
-    if (this.dom.tradeWeekLabel) this.dom.tradeWeekLabel.textContent = "Week " + week;
-
-    var query = (this.dom.tradeSearch && this.dom.tradeSearch.value ? this.dom.tradeSearch.value : "").toLowerCase().trim();
-    var type = (this.dom.tradeType && this.dom.tradeType.value) ? this.dom.tradeType.value : "all";
-
-    var tx = (this.data.weekTrans && this.data.weekTrans[String(week)]) || [];
-
-    // If empty, attempt an automatic refresh once.
-    if (!tx.length) {
-      if (!this.data._txAutoTried) this.data._txAutoTried = {};
-      if (!this.data._txAutoTried[String(week)]) {
-        this.data._txAutoTried[String(week)] = true;
-        content.innerHTML = '<div class="text-gray-400 text-sm">Loading transactions…</div>';
-        this.refreshTransactions(week).then(function() { self.renderTrades(); });
-        return;
-      }
+    // Ensure player values exist
+    if (!this.data.playerValues) {
+      content.innerHTML = '<div class="flex items-center justify-center py-12"><div class="text-gray-400 text-sm animate-pulse">Building player values…</div></div>';
+      return this.buildSeasonTotals().then(function() { self.renderTradeOptions(force); });
     }
 
-    var matchesType = function(t) {
-      if (!t) return false;
-      var tt = t.type || "";
-      if (type === "all") return true;
-      if (type === "add_drop") return (tt === "free_agent" || tt === "waiver");
-      return tt === type;
-    };
+    // Populate team dropdown if needed
+    this._tradePopulateTeamDropdown();
 
-    var items = (tx || []).filter(matchesType).filter(function(t) {
-      if (!query) return true;
-      var blob = JSON.stringify(t).toLowerCase();
-      return blob.indexOf(query) !== -1;
-    });
+    var week = Number(this.ui.selectedWeek || 1);
+    var wkKey = String(week);
+    var statsMap = (this.data.weekStats && this.data.weekStats[wkKey]) ? this.data.weekStats[wkKey] : {};
+    var projMap  = (this.data.weekProj  && this.data.weekProj[wkKey])  ? this.data.weekProj[wkKey]  : {};
 
-    items.sort(function(a,b){
-      var ta = Number(a.created || a.created_at || 0);
-      var tb = Number(b.created || b.created_at || 0);
-      return tb - ta;
-    });
-
-    if (!items.length) {
-      content.innerHTML = '<div class="text-gray-400 text-sm">No transactions found for Week ' + week + '.</div>';
+    var myRid = String(this.ui.selectedRosterId || "");
+    if (!myRid) {
+      content.innerHTML = '<div class="flex items-center justify-center py-12"><div class="text-gray-400 text-sm">Select a team to analyze trade options.</div></div>';
       return;
     }
 
-    var rosterName = function(rid) {
-      var r = (self.data.rosters || []).find(function(x){ return String(x.roster_id) === String(rid); });
-      var u = r ? self.data.usersById[r.owner_id] : null;
-      return (u && u.display_name) ? u.display_name : ("Team " + rid);
-    };
+    // Label header
+    if (this.dom.tradeWeekLabel) {
+      this.dom.tradeWeekLabel.textContent = (this._tradeRosterName(myRid) || "Selected Team") + " • Week " + week;
+    }
 
-    var playerLabel = function(pid) {
-      var p = self.data.playersById[String(pid)] || {};
-      var disp = self.playerDisplay(p);
-      var seasonTotal = (self.data.seasonTotals && self.data.seasonTotals[pid]) || 0;
-      return (disp.name || ("Player " + pid)) + (disp.pos ? (" (" + disp.pos + ")") : "");
-    };
+    // Build position total points ranks
+    var posTotalRanksObj = this._tradeBuildPosTotalRanks();
+    var posTotalRanks = posTotalRanksObj.ranks;
+    var posTotalCounts = posTotalRanksObj.counts;
 
-    var pointsFor = function(pid) {
-      var v = self.data.seasonTotals ? self.data.seasonTotals[String(pid)] : null;
-      return (v !== null && v !== undefined) ? Number(v) : 0;
-    };
+    // League positional value totals + deficits
+    var leagueInfo = this._tradeComputeLeaguePosTotals(week, statsMap, projMap);
+    var myTotals = leagueInfo.byRoster[myRid] || {};
+    var myNeed = this._tradeBuildNeedWeights(myTotals, leagueInfo.medians);
+    var deficits = myNeed.deficits;
 
-    var txTitle = function(t) {
-      var tt = t.type || "transaction";
-      if (tt === "trade") return "Trade";
-      if (tt === "free_agent") return "Free Agent Add";
-      if (tt === "waiver") return "Waiver";
-      return tt.replace(/_/g, " ").replace(/\b\w/g, function(c){ return c.toUpperCase(); });
-    };
+    // Build proposals (now position-agnostic)
+    var proposals = this._tradeBuildProposals(myRid, null, leagueInfo, week, statsMap, projMap, {
+      posTotalRanks: posTotalRanks,
+      posCounts: posTotalCounts,
+      ppgCounts: this._tradeBuildPpgCounts(),
+      myNeed: myNeed
+    });
 
-    var txMeta = function(t) {
-      var parts = [];
-      if (t.status) parts.push(String(t.status));
-      var created = t.created || t.created_at || null;
-      if (created) parts.push(new Date(created).toLocaleString());
-      // Bid / FAAB info if present
-      var st = t.settings || {};
-      var bid = (st.waiver_bid != null) ? st.waiver_bid : ((st.faab_bid != null) ? st.faab_bid : null);
-      if (bid != null && bid !== "") parts.push("Bid: " + bid);
-      return parts.join(" • ");
-    };
-
-    var html = '<div class="space-y-3">';
-
-    items.forEach(function(t) {
-      var rosterIds = (t.roster_ids || []).map(function(x){ return String(x); });
-      var adds = t.adds || {};
-      var drops = t.drops || {};
-      var picks = t.draft_picks || [];
-
-      // Some non-trade transactions may omit roster_ids; infer from adds/drops.
-      var inferredSet = new Set(rosterIds);
-      Object.keys(adds).forEach(function(pid){ inferredSet.add(String(adds[pid])); });
-      Object.keys(drops).forEach(function(pid){ inferredSet.add(String(drops[pid])); });
-      rosterIds = Array.from(inferredSet).filter(function(x){ return x && x !== "null" && x !== "undefined"; });
-
-      var perRoster = {};
-      rosterIds.forEach(function(rid) {
-        perRoster[rid] = { recv: [], recvPts: 0, picks: [], adds: [], drops: [] };
+    // Filter proposals by search query (team/player)
+    var q = (this.dom.tradeSearch && this.dom.tradeSearch.value) ? String(this.dom.tradeSearch.value).trim().toLowerCase() : "";
+    if (q) {
+      proposals = proposals.filter(function(p) {
+        if ((p.partnerName || "").toLowerCase().indexOf(q) >= 0) return true;
+        var has = false;
+        (p.inPlayers || []).forEach(function(x){ if ((x.disp && x.disp.name || "").toLowerCase().indexOf(q) >= 0) has = true; });
+        (p.outPlayers || []).forEach(function(x){ if ((x.disp && x.disp.name || "").toLowerCase().indexOf(q) >= 0) has = true; });
+        return has;
       });
+    }
 
-      // Players received (trade or add). We keep both `recv` (trade semantics) and `adds` (explicit add).
-      Object.keys(adds).forEach(function(pid) {
-        var toRid = String(adds[pid]);
-        if (!perRoster[toRid]) perRoster[toRid] = { recv: [], recvPts: 0, picks: [], adds: [], drops: [] };
-        perRoster[toRid].recv.push(String(pid));
-        perRoster[toRid].adds.push(String(pid));
-        perRoster[toRid].recvPts += pointsFor(pid);
-      });
+    // Weakness summary (top 3)
+    var weaknessTop = deficits.slice(0, 3);
 
-      // Drops (free agent / waiver)
-      Object.keys(drops).forEach(function(pid) {
-        var fromRid = String(drops[pid]);
-        if (!perRoster[fromRid]) perRoster[fromRid] = { recv: [], recvPts: 0, picks: [], adds: [], drops: [] };
-        perRoster[fromRid].drops.push(String(pid));
-      });
+    // Find FA positions based on weaknesses
+    var faPosUniq = weaknessTop.filter(function(d) { return d.delta < 0; }).map(function(d) { return d.pos; });
+    if (!faPosUniq.length) faPosUniq = weaknessTop.slice(0, 2).map(function(d) { return d.pos; });
+    var faByPos = this._tradeFindFreeAgents(faPosUniq, week, statsMap, projMap);
 
-      // Draft picks (trades)
-      picks.forEach(function(pk) {
-        var toRid = String(pk.roster_id);
-        if (!perRoster[toRid]) perRoster[toRid] = { recv: [], recvPts: 0, picks: [], adds: [], drops: [] };
-        var fromRid = pk.previous_owner_id != null ? String(pk.previous_owner_id) : null;
-        var label = (pk.season ? pk.season : '') + ' R' + (pk.round != null ? pk.round : '?') +
-          (pk.order != null ? (' #' + pk.order) : '') +
-          (fromRid ? (' (from ' + self.escapeHtml(rosterName(fromRid)) + ')') : '');
-        perRoster[toRid].picks.push(label);
-      });
-
-      // If exactly 2 rosters, infer "sent" lists as the opposite of receives (best effort).
-      var inferredSent = {};
-      if (rosterIds.length === 2 && (t.type === "trade")) {
-        var a = rosterIds[0], b = rosterIds[1];
-        inferredSent[a] = (perRoster[b] ? perRoster[b].recv.slice() : []);
-        inferredSent[b] = (perRoster[a] ? perRoster[a].recv.slice() : []);
+    // Helper to render player stat card
+    var renderPlayerCard = function(x, isReceive) {
+      var ppgRank = (self.data.playerPpgRanks && self.data.playerPpgRanks[x.pid]) ? self.data.playerPpgRanks[x.pid] : null;
+      var totalRank = (posTotalRanks && posTotalRanks[x.pid]) ? posTotalRanks[x.pid] : null;
+      var seasonTot = (self.data.seasonTotals && self.data.seasonTotals[x.pid]) ? self.data.seasonTotals[x.pid] : 0;
+      var ppg = ppgRank ? ppgRank.ppg : (x.ppg || 0);
+      
+      var borderCls = isReceive ? 'border-green-500/30' : 'border-orange-500/30';
+      var bgCls = isReceive ? 'bg-green-500/5' : 'bg-orange-500/5';
+      
+      var html = '<div class="' + bgCls + ' border ' + borderCls + ' rounded-xl p-3">';
+      html += '<div class="flex items-start justify-between gap-2 mb-2">';
+      html += '<div class="flex-1 min-w-0">';
+      html += '<div class="text-white font-semibold text-sm truncate">' + self.escapeHtml((x.disp && x.disp.name) ? x.disp.name : x.pid) + '</div>';
+      html += '<div class="text-xs text-gray-400">' + self.escapeHtml(x.group || '') + ' • ' + self.escapeHtml((x.disp && x.disp.team) || '') + '</div>';
+      html += '</div>';
+      html += '<div class="text-right shrink-0">';
+      var tradeValue = isFinite(x.tradeValue) ? Math.round(x.tradeValue) : Math.round(x.valueScore || 0);
+      var baseValue = Math.round(x.valueScore || 0);
+      html += '<div class="text-accent font-bold text-lg">' + tradeValue + '</div>';
+      html += '<div class="text-[10px] text-gray-500 uppercase">Trade Value</div>';
+      if (tradeValue && baseValue && Math.abs(tradeValue - baseValue) >= 15) {
+        html += '<div class="text-[9px] text-gray-500">Base ' + baseValue + '</div>';
       }
-
-      var title = txTitle(t);
-      var meta = txMeta(t);
-
-      html += '<div class="bg-gray-950/40 border border-gray-800 rounded-2xl p-4">' +
-        '<div class="flex items-start justify-between gap-3">' +
-          '<div>' +
-            '<div class="text-white font-bold">' + self.escapeHtml(title) + '</div>' +
-            '<div class="text-xs text-gray-400 font-mono">' + self.escapeHtml(meta || "—") + '</div>' +
-          '</div>' +
-          '<div class="text-xs text-gray-500 font-mono">Week ' + week + '</div>' +
-        '</div>';
-
-      if (!rosterIds.length) {
-        html += '<div class="mt-3 text-sm text-gray-400">No roster details available for this transaction.</div></div>';
-        return;
+      html += '</div>';
+      html += '</div>';
+      
+      // Stats grid
+      html += '<div class="grid grid-cols-3 gap-2 text-center">';
+      
+      // Total Points
+      html += '<div class="bg-black/30 rounded-lg px-2 py-1.5">';
+      html += '<div class="text-white font-medium text-sm">' + self._tradeFmt(seasonTot, 1) + '</div>';
+      html += '<div class="text-[9px] text-gray-500 uppercase">Tot Pts</div>';
+      html += '</div>';
+      
+      // Total Points Rank
+      html += '<div class="bg-black/30 rounded-lg px-2 py-1.5">';
+      if (totalRank) {
+        html += '<div class="text-white font-medium text-sm">#' + totalRank.rank + '</div>';
+      } else {
+        html += '<div class="text-gray-500 font-medium text-sm">—</div>';
       }
+      html += '<div class="text-[9px] text-gray-500 uppercase">' + self.escapeHtml(x.group || 'Pos') + ' Rank</div>';
+      html += '</div>';
+      
+      // PPG Rank
+      html += '<div class="bg-black/30 rounded-lg px-2 py-1.5">';
+      if (ppgRank) {
+        html += '<div class="text-white font-medium text-sm">#' + ppgRank.rank + '</div>';
+        html += '<div class="text-[9px] text-gray-500 uppercase">PPG (' + self._tradeFmt(ppg, 1) + ')</div>';
+      } else {
+        html += '<div class="text-gray-500 font-medium text-sm">—</div>';
+        html += '<div class="text-[9px] text-gray-500 uppercase">PPG</div>';
+      }
+      html += '</div>';
+      
+      html += '</div></div>';
+      return html;
+    };
 
-      html += '<div class="mt-3 grid grid-cols-1 lg:grid-cols-' + Math.min(2, rosterIds.length) + ' gap-3">';
+    // Render
+    var html = '';
 
-      rosterIds.forEach(function(rid) {
-        var recv = (perRoster[rid] && perRoster[rid].recv) ? perRoster[rid].recv : [];
-        var addsList = (perRoster[rid] && perRoster[rid].adds) ? perRoster[rid].adds : [];
-        var dropsList = (perRoster[rid] && perRoster[rid].drops) ? perRoster[rid].drops : [];
-        var picksLbl = (perRoster[rid] && perRoster[rid].picks) ? perRoster[rid].picks : [];
+    // Weakness bar - styled panel
+    html += '<div class="bg-gray-900/80 border border-gray-800/50 rounded-2xl overflow-hidden shadow-xl shadow-black/20 ui2k-panel">';
+    html += '<div class="p-4 border-b border-accent/20 bg-black/40">';
+    html += '<div class="flex items-start justify-between gap-4">';
+    html += '<div class="flex items-center gap-3">';
+    html += '<div class="w-1 h-10 bg-gradient-to-b from-red-500 to-orange-500 rounded-full"></div>';
+    html += '<div>';
+    html += '<div class="text-white font-bold uppercase tracking-wide">Team Weaknesses</div>';
+    html += '<div class="text-xs text-accent/70 font-mono">Positional value vs league median</div>';
+    html += '</div></div>';
+    html += '</div></div>';
+    
+    html += '<div class="p-4">';
+    html += '<div class="grid grid-cols-1 sm:grid-cols-3 gap-3">';
 
-        var sent = (inferredSent[rid] || []);
-        var net = (t.type === "trade") ? ((perRoster[rid] ? perRoster[rid].recvPts : 0) - sent.reduce(function(acc, pid){ return acc + pointsFor(pid); }, 0)) : 0;
-
-        var hasAddDrop = (addsList.length || dropsList.length) && (t.type !== "trade");
-        var header = self.escapeHtml(rosterName(rid));
-
-        html += '<div class="bg-gray-950 border border-gray-800 rounded-xl p-3">' +
-          '<div class="text-gray-200 font-bold truncate">' + header + '</div>';
-
-        if (t.type === "trade") {
-          html +=
-            '<div class="mt-2">' +
-              '<div class="text-xs text-gray-400 font-mono">Receives</div>' +
-              '<div class="mt-1 text-sm text-gray-100">' +
-                (recv.length ? recv.map(function(pid){ return self.escapeHtml(playerLabel(pid)); }).join(', ') : '<span class="text-gray-500">—</span>') +
-              '</div>' +
-            '</div>' +
-            (picksLbl.length ? (
-              '<div class="mt-2">' +
-                '<div class="text-xs text-gray-400 font-mono">Picks</div>' +
-                '<div class="mt-1 text-sm text-gray-100">' + picksLbl.map(function(x){ return self.escapeHtml(x); }).join(', ') + '</div>' +
-              '</div>'
-            ) : '') +
-            '<div class="mt-2">' +
-              '<div class="text-xs text-gray-400 font-mono">Sends (best-effort)</div>' +
-              '<div class="mt-1 text-sm text-gray-100">' +
-                (sent.length ? sent.map(function(pid){ return self.escapeHtml(playerLabel(pid)); }).join(', ') : '<span class="text-gray-500">—</span>') +
-              '</div>' +
-            '</div>' +
-            '<div class="mt-2 text-xs font-mono ' + (net >= 0 ? 'text-green-400' : 'text-red-400') + '">Net (season pts only): ' + (net >= 0 ? '+' : '') + net.toFixed(2) + '</div>';
-        } else if (hasAddDrop) {
-          html +=
-            '<div class="mt-2">' +
-              '<div class="text-xs text-gray-400 font-mono">Adds</div>' +
-              '<div class="mt-1 text-sm text-gray-100">' +
-                (addsList.length ? addsList.map(function(pid){ return self.escapeHtml(playerLabel(pid)); }).join(', ') : '<span class="text-gray-500">—</span>') +
-              '</div>' +
-            '</div>' +
-            '<div class="mt-2">' +
-              '<div class="text-xs text-gray-400 font-mono">Drops</div>' +
-              '<div class="mt-1 text-sm text-gray-100">' +
-                (dropsList.length ? dropsList.map(function(pid){ return self.escapeHtml(playerLabel(pid)); }).join(', ') : '<span class="text-gray-500">—</span>') +
-              '</div>' +
-            '</div>';
-        } else {
-          // Fallback summary
-          html += '<div class="mt-2 text-sm text-gray-400">No add/drop details found.</div>';
-        }
-
-        html += '</div>';
-      });
-
+    weaknessTop.forEach(function(w, idx) {
+      var delta = w.delta || 0;
+      var isNegative = delta < 0;
+      var deltaCls = isNegative ? 'text-red-400' : 'text-green-400';
+      var bgGrad = isNegative ? 'from-red-500/10 to-transparent' : 'from-green-500/10 to-transparent';
+      var borderCls = isNegative ? 'border-red-500/20' : 'border-green-500/20';
+      var indicatorCls = idx === 0 ? 'bg-red-500' : (isNegative ? 'bg-orange-500' : 'bg-green-500');
+      
+      html += '<div class="bg-gradient-to-br ' + bgGrad + ' border ' + borderCls + ' rounded-xl p-4 relative overflow-hidden">';
+      html += '<div class="absolute top-0 left-0 w-1 h-full ' + indicatorCls + '"></div>';
+      html += '<div class="flex items-center justify-between mb-2">';
+      html += '<div class="text-white font-bold text-lg">' + self.escapeHtml(w.pos) + '</div>';
+      html += '<div class="text-sm font-mono font-bold ' + deltaCls + '">' + (delta >= 0 ? '+' : '') + Math.round(delta) + '</div>';
+      html += '</div>';
+      html += '<div class="flex items-center justify-between text-xs text-gray-400 font-mono">';
+      html += '<span>Your team: ' + Math.round(w.team) + '</span>';
+      html += '<span>Median: ' + Math.round(w.median) + '</span>';
       html += '</div></div>';
     });
 
-    html += '</div>';
+    html += '</div></div></div>';
+
+    // Trade proposals - styled panel
+    var overpay = Number((this.dom.tradeOverpay && this.dom.tradeOverpay.value) || 100);
+    var minVal = Number((this.dom.tradeMinValue && this.dom.tradeMinValue.value) || 350);
+    var posFilter = (this.dom.tradePosition && this.dom.tradePosition.value) || 'any';
+    var maxGain = Math.max(40, Math.round(overpay * 0.6));
+    
+    html += '<div class="bg-gray-900/80 border border-gray-800/50 rounded-2xl overflow-hidden shadow-xl shadow-black/20 ui2k-panel">';
+    html += '<div class="p-4 border-b border-accent/20 bg-black/40">';
+    html += '<div class="flex items-start justify-between gap-4">';
+    html += '<div class="flex items-center gap-3">';
+    html += '<div class="w-1 h-10 bg-gradient-to-b from-accent to-blue-500 rounded-full"></div>';
+    html += '<div>';
+    html += '<div class="text-white font-bold uppercase tracking-wide">Trade Scenarios</div>';
+    html += '<div class="text-xs text-accent/70 font-mono">Pos: ' + self.escapeHtml(posFilter.toUpperCase()) + ' • Overpay: +' + overpay + ' • Max Gain: ' + maxGain + ' • Min: ' + minVal + '</div>';
+    html += '</div></div>';
+    html += '<div class="px-3 py-1 bg-gray-800 rounded-lg">';
+    html += '<span class="text-xs text-gray-300 font-mono">' + (proposals.length ? (proposals.length + ' trades found') : 'No matches') + '</span>';
+    html += '</div></div></div>';
+
+    html += '<div class="p-4">';
+    if (!proposals.length) {
+      html += '<div class="text-center py-8"><div class="text-gray-400 text-sm">No trade scenarios found with current settings.</div>';
+      html += '<div class="text-gray-500 text-xs mt-2">Try increasing overpay tolerance or lowering minimum value.</div></div>';
+    } else {
+      html += '<div class="space-y-4">';
+      proposals.slice(0, 20).forEach(function(p) {
+        var diff = p.valueDiff || (p.outValue - p.inValue);
+        var isOverpay = diff > 0;
+        var diffLabel = isOverpay ? ('+' + Math.round(diff) + ' overpay') : (Math.round(Math.abs(diff)) + ' gain');
+        var diffCls = isOverpay ? 'text-orange-400' : 'text-green-400';
+        
+        var tradeType = p.tradeType || '1-for-1';
+        var typeCls = 'bg-gray-700/50';
+        if (tradeType === '1-for-1') typeCls = 'bg-blue-600/30 border-blue-500/30';
+        else if (tradeType.indexOf('2-for') >= 0) typeCls = 'bg-amber-600/30 border-amber-500/30';
+        else if (tradeType.indexOf('3-for') >= 0) typeCls = 'bg-purple-600/30 border-purple-500/30';
+        else if (tradeType.indexOf('-for-2') >= 0) typeCls = 'bg-teal-600/30 border-teal-500/30';
+        else if (tradeType.indexOf('-for-3') >= 0) typeCls = 'bg-pink-600/30 border-pink-500/30';
+        
+        var usesStarter = (p.outPlayers || []).some(function(pl) { return pl.isStarter; });
+        
+        // Get grade info
+        var gradeInfo = p.gradeInfo || (self.gradeTradeProposal ? self.gradeTradeProposal(p.inPlayers, p.outPlayers) : null);
+        var gradeCls = 'bg-gray-600';
+        var gradeLabel = '?';
+        if (gradeInfo) {
+          gradeLabel = gradeInfo.grade;
+          if (gradeInfo.grade === 'A') gradeCls = 'bg-green-500';
+          else if (gradeInfo.grade === 'B') gradeCls = 'bg-blue-500';
+          else if (gradeInfo.grade === 'C') gradeCls = 'bg-yellow-500';
+          else if (gradeInfo.grade === 'D') gradeCls = 'bg-orange-500';
+          else if (gradeInfo.grade === 'F') gradeCls = 'bg-red-500';
+        }
+
+        html += '<div class="bg-gray-950/60 border border-gray-800 rounded-xl overflow-hidden hover:border-accent/30 transition-colors">';
+        
+        // Trade header with grade badge
+        html += '<div class="p-3 bg-black/30 border-b border-gray-800">';
+        html += '<div class="flex flex-wrap items-center justify-between gap-2">';
+        html += '<div class="flex items-center gap-2 flex-wrap">';
+        
+        // Grade badge
+        html += '<div class="w-8 h-8 rounded-lg ' + gradeCls + ' flex items-center justify-center">';
+        html += '<span class="text-white font-bold text-sm">' + gradeLabel + '</span>';
+        html += '</div>';
+        
+        html += '<span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase border ' + typeCls + ' text-white">' + self.escapeHtml(tradeType) + '</span>';
+        html += '<span class="text-white font-bold">with</span>';
+        html += '<span class="text-accent font-bold">' + self.escapeHtml(p.partnerName) + '</span>';
+        if (usesStarter) html += '<span class="text-xs text-orange-400">⚠️ Uses starter</span>';
+        html += '</div>';
+        html += '<div class="flex items-center gap-3">';
+        html += '<div class="text-right">';
+        html += '<div class="text-xs text-gray-500">Value Δ</div>';
+        html += '<div class="text-sm font-bold ' + diffCls + '">' + diffLabel + '</div>';
+        html += '</div>';
+        html += '<div class="text-right">';
+        html += '<div class="text-xs text-gray-500">Get / Give</div>';
+        html += '<div class="text-sm font-mono text-white">' + Math.round(p.inValue) + ' / ' + Math.round(p.outValue) + '</div>';
+        html += '</div>';
+        html += '</div></div>';
+        
+        // Grade reasons (if any)
+        if (gradeInfo && gradeInfo.reasons && gradeInfo.reasons.length > 0) {
+          html += '<div class="px-3 py-2 bg-gray-900/50 border-t border-gray-800/50 flex flex-wrap gap-1">';
+          gradeInfo.reasons.forEach(function(reason) {
+            var reasonCls = 'bg-gray-700 text-gray-300';
+            if (reason.indexOf('overpay') >= 0 || reason.indexOf('Trading elite') >= 0 || reason.indexOf('Giving up') >= 0) {
+              reasonCls = 'bg-red-900/50 text-red-300';
+            } else if (reason.indexOf('great value') >= 0 || reason.indexOf('Acquiring') >= 0 || reason.indexOf('Consolidating') >= 0 || reason.indexOf('Favorable') >= 0) {
+              reasonCls = 'bg-green-900/50 text-green-300';
+            }
+            html += '<span class="px-2 py-0.5 rounded text-[10px] font-medium ' + reasonCls + '">' + self.escapeHtml(reason) + '</span>';
+          });
+          html += '</div>';
+        }
+        
+        html += '</div>';
+        
+        // Trade body - two columns
+        html += '<div class="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-gray-800">';
+        
+        // You receive
+        html += '<div class="p-4">';
+        html += '<div class="flex items-center justify-between gap-2 mb-3">';
+        html += '<div class="flex items-center gap-2">';
+        html += '<div class="w-6 h-6 rounded-full bg-green-500/20 border border-green-500/40 flex items-center justify-center">';
+        html += '<span class="text-green-400 text-xs">↓</span></div>';
+        html += '<span class="text-green-400 font-bold text-sm uppercase">You Receive</span>';
+        html += '</div>';
+        html += '<span class="text-xs text-gray-500 font-mono">' + (p.inPlayers || []).length + ' player' + ((p.inPlayers || []).length !== 1 ? 's' : '') + '</span>';
+        html += '</div>';
+        html += '<div class="space-y-2">';
+        (p.inPlayers || []).forEach(function(x) {
+          html += renderPlayerCard(x, true);
+        });
+        html += '</div></div>';
+        
+        // You send
+        html += '<div class="p-4">';
+        html += '<div class="flex items-center justify-between gap-2 mb-3">';
+        html += '<div class="flex items-center gap-2">';
+        html += '<div class="w-6 h-6 rounded-full bg-orange-500/20 border border-orange-500/40 flex items-center justify-center">';
+        html += '<span class="text-orange-400 text-xs">↑</span></div>';
+        html += '<span class="text-orange-400 font-bold text-sm uppercase">You Send</span>';
+        html += '</div>';
+        html += '<span class="text-xs text-gray-500 font-mono">' + (p.outPlayers || []).length + ' player' + ((p.outPlayers || []).length !== 1 ? 's' : '') + '</span>';
+        html += '</div>';
+        html += '<div class="space-y-2">';
+        (p.outPlayers || []).forEach(function(x) {
+          html += renderPlayerCard(x, false);
+        });
+        html += '</div></div>';
+        
+        html += '</div></div>';
+      });
+      html += '</div>';
+    }
+    html += '</div></div>';
+
+    // Free agents - styled panel
+    html += '<div class="bg-gray-900/80 border border-gray-800/50 rounded-2xl overflow-hidden shadow-xl shadow-black/20 ui2k-panel">';
+    html += '<div class="p-4 border-b border-accent/20 bg-black/40">';
+    html += '<div class="flex items-start justify-between gap-4">';
+    html += '<div class="flex items-center gap-3">';
+    html += '<div class="w-1 h-10 bg-gradient-to-b from-purple-500 to-pink-500 rounded-full"></div>';
+    html += '<div>';
+    html += '<div class="text-white font-bold uppercase tracking-wide">Free Agent Targets</div>';
+    html += '<div class="text-xs text-accent/70 font-mono">Top unrostered players for your weak positions</div>';
+    html += '</div></div>';
+    html += '<div class="px-3 py-1 bg-gray-800 rounded-lg">';
+    html += '<span class="text-xs text-gray-300 font-mono">' + self.escapeHtml(faPosUniq.join(", ") || "—") + '</span>';
+    html += '</div></div></div>';
+
+    html += '<div class="p-4">';
+    var anyFA = false;
+    faPosUniq.forEach(function(pos){ if ((faByPos[pos] || []).length) anyFA = true; });
+
+    if (!anyFA) {
+      html += '<div class="text-center py-8"><div class="text-gray-400 text-sm">No strong free-agent candidates for these positions.</div>';
+      html += '<div class="text-gray-500 text-xs mt-2">Try the Free Agents tab for a broader search.</div></div>';
+    } else {
+      html += '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">';
+      faPosUniq.forEach(function(pos) {
+        var list = faByPos[pos] || [];
+        if (!list.length) return;
+        
+        html += '<div class="bg-gray-950/60 border border-gray-800 rounded-xl overflow-hidden">';
+        html += '<div class="p-3 bg-purple-500/10 border-b border-purple-500/20">';
+        html += '<div class="text-white font-bold">' + self.escapeHtml(pos) + ' Free Agents</div>';
+        html += '</div>';
+        html += '<div class="p-3 space-y-2">';
+        
+        list.slice(0, 5).forEach(function(x, idx) {
+          var ppgRank = (self.data.playerPpgRanks && self.data.playerPpgRanks[x.pid]) ? self.data.playerPpgRanks[x.pid] : null;
+          var totalRank = (posTotalRanks && posTotalRanks[x.pid]) ? posTotalRanks[x.pid] : null;
+          var seasonTot = (self.data.seasonTotals && self.data.seasonTotals[x.pid]) ? self.data.seasonTotals[x.pid] : 0;
+          
+          html += '<div class="flex items-center gap-3 py-2 ' + (idx < list.length - 1 ? 'border-b border-gray-800' : '') + '">';
+          html += '<div class="w-6 h-6 rounded-full bg-gray-800 flex items-center justify-center text-xs text-gray-400 font-bold">' + (idx + 1) + '</div>';
+          html += '<div class="flex-1 min-w-0">';
+          html += '<div class="text-white text-sm font-medium truncate">' + self.escapeHtml((x.disp && x.disp.name) ? x.disp.name : x.pid) + '</div>';
+          html += '<div class="text-xs text-gray-500">' + self.escapeHtml((x.disp && x.disp.team) || '') + '</div>';
+          html += '</div>';
+          html += '<div class="text-right shrink-0">';
+          html += '<div class="text-accent font-bold text-sm">' + Math.round(x.valueScore || 0) + '</div>';
+          html += '<div class="text-[9px] text-gray-500">' + self._tradeFmt(seasonTot, 1) + ' pts';
+          if (ppgRank) html += ' • #' + ppgRank.rank + ' PPG';
+          html += '</div></div></div>';
+        });
+        
+        html += '</div></div>';
+      });
+      html += '</div>';
+    }
+
+    html += '</div></div>';
+
     content.innerHTML = html;
   },
 
+  // Populate the team dropdown for trades
+  _tradePopulateTeamDropdown: function() {
+    var self = this;
+    var select = this.dom.tradeTeamSelect;
+    if (!select) return;
+    
+    var rosters = this.data.rosters || [];
+    var currentRid = String(this.ui.selectedRosterId || "");
+    
+    // Only rebuild if empty or roster count changed
+    if (select.options.length === rosters.length) {
+      select.value = currentRid;
+      return;
+    }
+    
+    select.innerHTML = '';
+    rosters.forEach(function(r) {
+      var rid = String(r.roster_id);
+      var name = self._tradeRosterName(rid);
+      var opt = document.createElement("option");
+      opt.value = rid;
+      opt.textContent = name;
+      if (rid === currentRid) opt.selected = true;
+      select.appendChild(opt);
+    });
+  },
+
+  // Build position total points ranks
+  _tradeBuildPosTotalRanks: function() {
+    var self = this;
+    var totals = this.data.seasonTotals || {};
+    var byGroup = {}; // group -> [{pid, total}]
+    
+    Object.keys(totals).forEach(function(pid) {
+      var p = (self.data.playersById && self.data.playersById[pid]) ? self.data.playersById[pid] : null;
+      if (!p) return;
+      var group = self.positionGroupForPlayer(p);
+      if (!group) return;
+      if (!byGroup[group]) byGroup[group] = [];
+      byGroup[group].push({ pid: pid, total: totals[pid] || 0 });
+    });
+    
+    var ranks = {};
+    var counts = {};
+    Object.keys(byGroup).forEach(function(group) {
+      var arr = byGroup[group];
+      arr.sort(function(a, b) { return b.total - a.total; });
+      counts[group] = arr.length;
+      for (var i = 0; i < arr.length; i++) {
+        ranks[arr[i].pid] = { pos: group, rank: i + 1, total: arr[i].total };
+      }
+    });
+    
+    return { ranks: ranks, counts: counts };
+  },
+
+  // Backward compatibility: some older call sites may still use renderTrades()
+  renderTrades: function() { return this.renderTradeOptions(); },
 
   buildSeasonTotals: function() {
     var self = this;
@@ -4938,7 +6166,7 @@ renderLineupInsights: function() {
         for (var i = 0; i < entries.length; i++) {
           var pid = entries[i][0];
           var s = entries[i][1];
-          if (!s || Object.keys(s).length === 0) continue;
+          if (!self.hasPlayedStats(s)) continue;
           totals[pid] = (totals[pid] || 0) + self.scoreFromStats(s, pid);
         }
       }
@@ -4946,37 +6174,7 @@ renderLineupInsights: function() {
         totals[pid] = Math.round(totals[pid] * 100) / 100;
       });
       self.data.seasonTotals = totals;
-      self.buildPositionRanks();
     });
-  },
-
-  buildPositionRanks: function() {
-    var self = this;
-    var totals = this.data.seasonTotals || {};
-    var players = this.data.playersById || {};
-    var groups = { QB: [], RB: [], WR: [], TE: [], K: [], DEF: [], DL: [], LB: [], DB: [] };
-
-    Object.keys(totals).forEach(function(pid) {
-      var total = totals[pid];
-      if (!isFinite(total) || total <= 0) return;
-      var p = players[pid];
-      if (!p) return;
-      var group = self.positionGroupForPlayer(p);
-      if (!group || !groups[group]) return;
-      groups[group].push({ pid: pid, total: total });
-    });
-
-    var ranks = {};
-    Object.keys(groups).forEach(function(group) {
-      var arr = groups[group];
-      if (!arr || !arr.length) return;
-      arr.sort(function(a, b) { return b.total - a.total; });
-      for (var i = 0; i < arr.length; i++) {
-        ranks[arr[i].pid] = { pos: group, rank: i + 1 };
-      }
-    });
-
-    this.data.playerPosRanks = ranks;
   },
 
   // ---------- Player Value (0-1000) ----------
@@ -5009,8 +6207,11 @@ renderLineupInsights: function() {
       for (var i = 0; i < pids.length; i++) {
         var pid = String(pids[i]);
         var s = statsMap[pid];
-        if (!s || Object.keys(s).length === 0) continue;
+        if (!self.hasPlayedStats(s)) continue;
 
+        var projStats = projMap[pid] || {};
+        var proj = self.scoreFromStats(projStats, pid);
+        if (!self.hasValidProjection(projStats, pid)) continue; // exclude "No Proj" weeks
         var a = agg[pid] || (agg[pid] = initAgg());
         var act = self.scoreFromStats(s, pid);
         a.total += act;
@@ -5026,17 +6227,14 @@ renderLineupInsights: function() {
         a.mean += delta / a.games;
         a.m2 += delta * (act - a.mean);
 
-        // Boom/Bust + Delta vs projections (only when projections exist)
-        var projStats = projMap[pid] || {};
-        var proj = self.scoreFromStats(projStats, pid);
-        if (proj > 0) {
-          a.bbN += 1;
-          a.deltaSum += (act - proj);
-          a.deltaN += 1;
-          if (act >= proj * self.cfg.boomPct) a.boom += 1;
-          else if (act <= proj * self.cfg.bustPct) a.bust += 1;
-          else a.within += 1;
-        }
+        // Boom/Bust + Delta vs projections (projection is required for eligible games)
+        a.bbN += 1;
+        a.deltaSum += (act - proj);
+        a.deltaN += 1;
+        if (act >= proj * self.cfg.boomPct) a.boom += 1;
+        else if (act <= proj * self.cfg.bustPct) a.bust += 1;
+        else a.within += 1;
+
 
         // Snap % (best-effort — keys vary by data source)
         var sp = self.extractSnapPct(s);
@@ -5192,17 +6390,16 @@ self.data.playerDeltaRanks = deltaRanks;
       return out;
     };
 
-    // Position scarcity multipliers (TE/QB more valuable due to fewer elite options)
     var positionScarcity = {
-      "TE": 1.12,
-      "QB": 1.08,
-      "RB": 1.04,
-      "WR": 1.00,
-      "K": 1.00,
+      "TE": 1.00,
+      "QB": 0.99,
+      "RB": 1.01,
+      "WR": 1.02,
+      "K": 0.96,
       "DEF": 1.00,
-      "DL": 1.00,
-      "LB": 1.00,
-      "DB": 1.00
+      "DL": 1.01,
+      "LB": 1.01,
+      "DB": 1.03,
     };
 
     var values = {}; // pid -> {score, breakdown}
@@ -5233,21 +6430,24 @@ self.data.playerDeltaRanks = deltaRanks;
         var ceilP  = (pctCeil[pid]  !== undefined) ? pctCeil[pid]  : 0.5;
 
         // Weighted season value (0..1)
-        // Emphasizes: PPG, total points, availability, floor/ceiling, consistency, and boom/bust balance.
-        // De-emphasizes: recent games (L4) and small age nudges.
+        // IMPROVED: More heavily weight actual production (total points, PPG) 
+        // to better correlate with half-PPR scoring values.
+        // Also factors in: availability, floor/ceiling, consistency, and boom/bust balance.
         var scarcityAdj = 0.02 * self.clamp01((scarcityMult - 1.0) / 0.12);
+        
+        // Production-weighted formula for better half-PPR correlation
         var raw =
-          0.22 * ppgP +
-          0.18 * totalP +
-          0.12 * availP +
-          0.12 * m3.consistency +
-          0.10 * floorP +
-          0.08 * ceilP +
-          0.06 * m3.bbAdj +
-          0.05 * dltP +
-          0.03 * m3.snapAdj +
-          0.02 * l4P +
-          0.02 * m3.ageAdj +
+          0.28 * ppgP +         // PPG is primary driver (increased from 0.22)
+          0.22 * totalP +       // Total points - season production (increased from 0.18)
+          0.10 * availP +       // Availability - games played (slightly reduced)
+          0.10 * m3.consistency + // Consistency (slightly reduced)
+          0.08 * floorP +       // Floor (reduced from 0.10)
+          0.06 * ceilP +        // Ceiling (reduced from 0.08)
+          0.05 * m3.bbAdj +     // Boom/bust balance (reduced from 0.06)
+          0.04 * dltP +         // Outperformance vs projections (reduced from 0.05)
+          0.03 * l4P +          // Recent performance L4 games (increased from 0.02)
+          0.02 * m3.snapAdj +   // Snap percentage (reduced from 0.03)
+          0.02 * m3.ageAdj +    // Age curve
           scarcityAdj;
 
         raw = self.clamp01(raw);
@@ -5322,6 +6522,54 @@ self.data.playerDeltaRanks = deltaRanks;
     return null;
   },
 
+  // Determine if a stats payload represents a *played* game.
+  // We need this because some sources return placeholder objects (e.g., {gp:0, team:"KC"})
+  // that should NOT count toward games played / PPG / deltas.
+  hasPlayedStats: function(statObj) {
+    if (!statObj || typeof statObj !== "object") return false;
+    var keys = Object.keys(statObj);
+    if (!keys.length) return false;
+
+    // If a "games played" flag exists, trust it.
+    var gp = (statObj.gp !== undefined) ? statObj.gp
+          : (statObj.games_played !== undefined) ? statObj.games_played
+          : (statObj.g !== undefined) ? statObj.g
+          : null;
+    var gpN = (gp === null || gp === undefined) ? NaN : Number(gp);
+    if (isFinite(gpN)) return gpN > 0;
+
+    // Snap-based participation (best-effort).
+    var snapKeys = ["snap_pct","snap_percent","snap_percentage","snap","snaps","snap_count","def_snap_pct","off_snap_pct"];
+    for (var i = 0; i < snapKeys.length; i++) {
+      var k = snapKeys[i];
+      if (statObj[k] !== undefined && statObj[k] !== null) {
+        var v = Number(statObj[k]);
+        if (isFinite(v) && v > 0) return true;
+      }
+    }
+
+    // Otherwise, treat as played if it has any non-meta stat keys.
+    var META = {
+      player_id:1, playerId:1, id:1,
+      week:1, season:1, season_type:1, seasonType:1,
+      team:1, opponent:1, opp:1, game_id:1, gameId:1,
+      position:1, pos:1
+    };
+    for (var j = 0; j < keys.length; j++) {
+      if (!META[keys[j]]) return true;
+    }
+    return false;
+  },
+
+
+  // Determine if a projection payload represents a valid projection for a given week.
+  // We treat proj<=0 or non-finite as "No Proj" and exclude those games from PPG-style averages/ranks.
+  hasValidProjection: function(projObj, pid) {
+    if (!projObj || typeof projObj !== "object") return false;
+    var p = this.scoreFromStats(projObj, pid);
+    return (isFinite(p) && p > 0);
+  },
+
   // Age adjustment by position group (0..1). Small influence only.
   ageAdjForGroup: function(group, ageYears) {
     if (!isFinite(ageYears)) return 0.5;
@@ -5379,7 +6627,7 @@ getPlayerDeltaRank: function(pid) {
       pid = String(pid);
       var s = statsMap[pid] || {};
       var p = projMap[pid] || {};
-      var hasPlayed = Object.keys(s).length > 0;
+      var hasPlayed = self.hasPlayedStats(s);
       var act = hasPlayed ? self.scoreFromStats(s, pid) : null;
       var proj = self.scoreFromStats(p, pid);
       return { hasPlayed: hasPlayed, act: act, proj: proj, show: hasPlayed ? act : proj };
@@ -5455,11 +6703,52 @@ getPlayerDeltaRank: function(pid) {
   },
 
   positionRank: function(playerId) {
-    var pid = String(playerId);
-    if (!this.data.playerPosRanks || !Object.keys(this.data.playerPosRanks).length) {
-      if (this.data.seasonTotals && this.data.playersById) this.buildPositionRanks();
-    }
-    return (this.data.playerPosRanks && this.data.playerPosRanks[pid]) ? this.data.playerPosRanks[pid] : null;
+    var p = this.data.playersById[playerId];
+    if (!p || !p.position) return null;
+    var self = this;
+    var totals = this.data.seasonTotals || {};
+
+    // Map specific positions to general categories for ranking
+    var positionGroups = {
+      "QB": ["QB"],
+      "RB": ["RB"],
+      "WR": ["WR"],
+      "TE": ["TE"],
+      "K": ["K"],
+      "DEF": ["DEF"],
+      "DL": ["DL", "DE", "DT", "NT"],
+      "LB": ["LB", "ILB", "OLB", "MLB"],
+      "DB": ["DB", "CB", "S", "SS", "FS"]
+    };
+
+    // Find which group this player belongs to
+    var playerGroup = null;
+    var groupName = null;
+    Object.keys(positionGroups).forEach(function(group) {
+      if (positionGroups[group].indexOf(p.position) >= 0) {
+        playerGroup = positionGroups[group];
+        groupName = group;
+      }
+    });
+
+    if (!playerGroup) return null;
+
+    // Get all players in this position group with season totals, sorted by custom score
+    var pool = Object.values(this.data.playersById)
+      .filter(function(x) { 
+        if (!x || !x.position) return false;
+        var inGroup = playerGroup.indexOf(x.position) >= 0;
+        var hasStats = totals[String(x.player_id)] > 0;
+        return inGroup && hasStats;
+      })
+      .sort(function(a, b) { 
+        var ta = totals[String(a.player_id)] || 0;
+        var tb = totals[String(b.player_id)] || 0;
+        return tb - ta; // Higher score = better rank
+      });
+
+    var idx = pool.findIndex(function(x) { return String(x.player_id) === String(playerId); });
+    return idx < 0 ? null : { pos: groupName, rank: idx + 1 };
   },
 
   // Switch to a different season/league without page reload (Google Apps Script compatible)
@@ -5497,12 +6786,10 @@ getPlayerDeltaRank: function(pid) {
       rosters: [],
       matchups: [],
       weekMatchups: {},
-      weekMatchupsByRoster: {},
       weekTrans: {},
       teamWeekScores: {},
       leagueMetrics: null,
       playersById: {},
-      playerDisplayCache: {},
       weekStats: {},
       weekProj: {},
       weekLoadPromises: {},
@@ -5512,7 +6799,6 @@ getPlayerDeltaRank: function(pid) {
       pfrDefenseStats: null,
       nflSchedule: null,
       playerDeltaRanks: {},
-      playerPosRanks: {},
       defRoleMetrics: null,
       playerValueIndex: null
     };
@@ -5703,12 +6989,10 @@ getPlayerDeltaRank: function(pid) {
           return (p && typeof p.catch === 'function') ? p.catch(function(e) {
             console.warn("Season totals build failed (non-critical):", e);
             self.data.seasonTotals = {};
-            self.data.playerPosRanks = {};
           }) : Promise.resolve();
         } catch(e) {
           console.warn("Season totals build failed (non-critical):", e);
           self.data.seasonTotals = {};
-          self.data.playerPosRanks = {};
           return Promise.resolve();
         }
       })
@@ -5894,7 +7178,6 @@ getPlayerDeltaRank: function(pid) {
     ]).then(function(results) {
       // Store matchups by week to avoid overwriting current week's data
       self.data.weekMatchups[String(week)] = results[0] || [];
-      self.buildWeekMatchupIndex(String(week), self.data.weekMatchups[String(week)]);
       // Also update main matchups if this is the selected week
       if (week === self.ui.selectedWeek) {
         self.data.matchups = results[0] || [];
@@ -5994,18 +7277,56 @@ getPlayerDeltaRank: function(pid) {
     // Trades controls
     if (this.dom.tradeSearch) {
       var debouncedTradeSearch = self.debounce(function() {
-        if (self.ui.currentView === "trades") self.renderTrades();
+        if (self.ui.currentView === "trades") self.renderTradeOptions();
       }, 250);
       this.dom.tradeSearch.oninput = function() { debouncedTradeSearch(); };
     }
-    if (this.dom.tradeType) {
-      this.dom.tradeType.onchange = function() { if (self.ui.currentView === "trades") self.renderTrades(); };
+    if (this.dom.tradePosition) {
+      this.dom.tradePosition.onchange = function() {
+        if (self.ui.currentView === "trades") self.renderTradeOptions();
+      };
+    }
+    if (this.dom.tradeOverpay) {
+      this.dom.tradeOverpay.oninput = function() {
+        var val = Number(this.value) || 0;
+        if (self.dom.tradeOverpayLabel) {
+          self.dom.tradeOverpayLabel.textContent = "+" + val;
+        }
+      };
+      var debouncedOverpay = self.debounce(function() {
+        if (self.ui.currentView === "trades") self.renderTradeOptions();
+      }, 300);
+      this.dom.tradeOverpay.onchange = function() { debouncedOverpay(); };
+    }
+    if (this.dom.tradeMinValue) {
+      this.dom.tradeMinValue.onchange = function() { 
+        if (self.ui.currentView === "trades") self.renderTradeOptions(); 
+      };
+    }
+    if (this.dom.tradeTeamSelect) {
+      this.dom.tradeTeamSelect.onchange = function() {
+        var newRid = this.value;
+        if (newRid) {
+          self.ui.selectedRosterId = newRid;
+          self.renderTeamTabs();
+          if (self.ui.currentView === "trades") self.renderTradeOptions();
+        }
+      };
     }
     if (this.dom.btnTradeRefresh) {
       this.dom.btnTradeRefresh.onclick = function() {
-        var wk = self.ui.selectedWeek;
-        if (self.dom.tradeContent) self.dom.tradeContent.innerHTML = '<div class="text-gray-400 text-sm">Refreshing transactions…</div>';
-        self.refreshTransactions(wk).then(function() { self.renderTrades(); });
+        if (self.ui.currentView === "trades") {
+          // Show loading state
+          if (self.dom.tradeContent) {
+            self.dom.tradeContent.innerHTML = '<div class="flex items-center justify-center py-12"><div class="text-accent text-sm animate-pulse">Rebuilding player values and trade scenarios...</div></div>';
+          }
+          // Force rebuild of all data
+          setTimeout(function() {
+            self.buildPlayerValueIndex();
+            self._tradeCache = null; // Clear trade cache
+            self.renderTradeOptions(true);
+          }, 50);
+        }
       };
     }
 
@@ -6085,11 +7406,11 @@ getPlayerDeltaRank: function(pid) {
     if (this.dom.historyHeaderTitle) {
       if (this.ui.currentView === "optimal") {
         this.dom.historyHeaderTitle.textContent = "OPTIMAL LINEUPS";
-        if (this.dom.historyHeaderSubtitle) this.dom.historyHeaderSubtitle.textContent = "Weighted lineup suggestions by week";
+        if (this.dom.historyHeaderSubtitle) this.dom.historyHeaderSubtitle.textContent = "WEIGHTED LINEUP SUGGESTIONS BY WEEK";
         this.ui.historyMode = "best";
       } else if (this.ui.currentView === "history") {
         this.dom.historyHeaderTitle.textContent = "HISTORICAL ROSTERS";
-        if (this.dom.historyHeaderSubtitle) this.dom.historyHeaderSubtitle.textContent = "Weekly lineup snapshots";
+        if (this.dom.historyHeaderSubtitle) this.dom.historyHeaderSubtitle.textContent = "WEEKLY LINEUP SNAPSHOTS";
         this.ui.historyMode = "roster";
       }
     }
@@ -6128,7 +7449,7 @@ getPlayerDeltaRank: function(pid) {
     } else if (this.ui.currentView === "def") {
       this.renderDefenses();
     } else if (this.ui.currentView === "trades") {
-      this.renderTrades();
+      this.renderTradeOptions();
     } else if (this.ui.currentView === "insights") {
       this.renderLeagueInsights();
       this.renderLineupInsights();
@@ -6239,7 +7560,7 @@ var benchPlayers = Object.keys(benchByPid).map(function(pid) {
       var actStats = statsMap[pid] || {};
       var proj = self.scoreFromStats(projStats, pid);
       var act = self.scoreFromStats(actStats, pid);
-      var hasPlayed = Object.keys(actStats).length > 0;
+      var hasPlayed = self.hasPlayedStats(actStats);
       var opp = self.getOpponent(actStats, projStats, p, self.ui.selectedWeek);
       var enhancedMU = self.getEnhancedMatchupInfo(pid, opp);
       var status = self.boomBustStatus(proj, act, hasPlayed, (enhancedMU && enhancedMU.matchScore !== undefined) ? enhancedMU.matchScore : null);
@@ -6599,23 +7920,39 @@ var benchPlayers = Object.keys(benchByPid).map(function(pid) {
       var totals = self.data.seasonTotals || {};
       var recentTotal = 0;
       var recentGames = 0;
-      var seasonTotal = totals[playerId] || 0;
-      
-      // Get last 3 weeks of data
+
+      // Count only eligible games: played AND has a valid projection (i.e., not "No Proj")
+      var seasonTotalEligible = 0;
+      var seasonGames = 0;
+
+      // Season-to-date (for a stable baseline)
+      for (var w0 = 1; w0 < weekNum; w0++) {
+        var sm0 = self.data.weekStats[String(w0)] || {};
+        var pm0 = self.data.weekProj[String(w0)] || {};
+        var st0 = sm0[playerId];
+        if (!st0 || !self.hasPlayedStats(st0)) continue;
+        var pr0 = pm0[playerId] || {};
+        if (!self.hasValidProjection(pr0, playerId)) continue;
+        seasonTotalEligible += self.scoreFromStats(st0, playerId);
+        seasonGames++;
+      }
+
+      // Last 3 weeks (trend)
       for (var w = Math.max(1, weekNum - 3); w < weekNum; w++) {
         var statsMap = self.data.weekStats[String(w)] || {};
+        var projMapW = self.data.weekProj[String(w)] || {};
         var stats = statsMap[playerId];
-        if (stats && Object.keys(stats).length > 0) {
-          recentTotal += self.scoreFromStats(stats, playerId);
-          recentGames++;
-        }
+        if (!stats || !self.hasPlayedStats(stats)) continue;
+        var prW = projMapW[playerId] || {};
+        if (!self.hasValidProjection(prW, playerId)) continue;
+        recentTotal += self.scoreFromStats(stats, playerId);
+        recentGames++;
       }
-      
+
       if (recentGames < 2) return null;
-      
+
       var recentAvg = recentTotal / recentGames;
-      var seasonGames = weekNum - 1;
-      var seasonAvg = seasonGames > 0 ? seasonTotal / seasonGames : 0;
+      var seasonAvg = seasonGames > 0 ? (seasonTotalEligible / seasonGames) : 0;
       
       if (seasonAvg === 0) return null;
       
@@ -6778,7 +8115,7 @@ var benchPlayers = Object.keys(benchByPid).map(function(pid) {
         if (!p) return;
         if (isInjuredOut(p)) return;
         var stats = statsMap[id] || {};
-        if (!stats || Object.keys(stats).length === 0) return;
+        if (!self.hasPlayedStats(stats)) return;
         var mappedPos = positionMap[p.position];
         if (!mappedPos || !posTotals.hasOwnProperty(mappedPos)) return;
         posTotals[mappedPos] += self.scoreFromStats(stats, id);
@@ -7147,7 +8484,7 @@ renderFA: function() {
         var actStats = statsMap[pid] || {};
         var proj = self.scoreFromStats(projStats, pid);
         var act = self.scoreFromStats(actStats, pid);
-        var hasPlayed = Object.keys(actStats).length > 0;
+        var hasPlayed = self.hasPlayedStats(actStats);
         var opp = self.getOpponent(actStats, projStats, p, self.ui.selectedWeek);
         var enhancedMU = self.getEnhancedMatchupInfo(pid, opp);
         var muScore = (enhancedMU && enhancedMU.matchScore !== undefined) ? enhancedMU.matchScore : null;
@@ -7297,11 +8634,6 @@ renderFA: function() {
         if (!isFinite(n)) return null;
         return n.toFixed(digits || 0);
       };
-      var fmtPct = function(v, digits) {
-        var n = Number(v);
-        if (!isFinite(n)) return null;
-        return (n * 100).toFixed(digits || 0) + "%";
-      };
 
       if (valObj && valMetrics && valMetrics.games > 0) {
         var availabilityPct = fmtNum((valMetrics.availability || 0) * 100, 0);
@@ -7310,15 +8642,11 @@ renderFA: function() {
         valHtml += this.effMetricCard('Value Score', String(valObj.score || 0), 'text-accent');
         valHtml += this.effMetricCard('Availability', (availabilityPct !== null ? availabilityPct + '%' : '—'), 'text-white');
         valHtml += this.effMetricCard('PPG', fmtNum(valMetrics.ppg, 1) || '—', 'text-gray-200');
-        valHtml += this.effMetricCard('L4 Avg', fmtNum(valMetrics.l4, 1) || '—', 'text-sky-300');
         valHtml += this.effMetricCard('Total', fmtNum(valMetrics.total, 1) || '—', 'text-gray-200');
         valHtml += this.effMetricCard('Floor (P25)', fmtNum(valMetrics.floor, 1) || '—', 'text-yellow-400');
         valHtml += this.effMetricCard('Ceiling (P85)', fmtNum(valMetrics.ceiling, 1) || '—', 'text-green-400');
         valHtml += this.effMetricCard('Consistency', (consistencyPct !== null ? consistencyPct + '%' : '—'), 'text-accent');
         valHtml += this.effMetricCard('Δ vs Proj', fmtNum(valMetrics.deltaAvg, 2) || '—', 'text-emerald-300');
-        valHtml += this.effMetricCard('Boom %', fmtPct(valMetrics.boomRate, 0) || '—', 'text-green-400');
-        valHtml += this.effMetricCard('Bust %', fmtPct(valMetrics.bustRate, 0) || '—', 'text-red-400');
-        valHtml += this.effMetricCard('Snap %', (valMetrics.snap != null ? fmtNum(valMetrics.snap, 0) + '%' : '—'), 'text-blue-300');
       } else {
         valHtml = '<div class="col-span-full text-gray-500 text-sm">No season value profile available</div>';
       }
@@ -7453,7 +8781,7 @@ renderFA: function() {
         var actStats = statsMap[pid] || {};
         var proj = self.scoreFromStats(projStats, pid);
         var act = self.scoreFromStats(actStats, pid);
-        var played = Object.keys(actStats).length > 0;
+        var played = self.hasPlayedStats(actStats);
         var opp = self.getOpponent(actStats, projStats, p, w);
         var effectiveWeek = Number((self.data && self.data.maxWeek) || currentNflWeek || 1);
         var isFutureWeek = w > effectiveWeek;
@@ -8110,7 +9438,7 @@ renderFA: function() {
       var disp = self.playerDisplay(p);
       var proj = self.scoreFromStats(projMap[pid] || {}, pid);
       var actual = self.scoreFromStats(statsMap[pid] || {}, pid);
-      var hasPlayed = Object.keys(statsMap[pid] || {}).length > 0;
+      var hasPlayed = self.hasPlayedStats(statsMap[pid] || {});
       var opp = self.getOpponent(statsMap[pid] || {}, projMap[pid] || {}, p, week);
       var enh = self.getEnhancedMatchupInfo(pid, opp);
       var muScore = (enh && enh.matchScore !== undefined) ? enh.matchScore : null;
@@ -8225,7 +9553,7 @@ renderFA: function() {
         var disp = self.playerDisplay(p);
         var proj = self.scoreFromStats(projMap[pid] || {}, pid);
         var actual = self.scoreFromStats(statsMap[pid] || {}, pid);
-        var hasPlayed = Object.keys(statsMap[pid] || {}).length > 0;
+        var hasPlayed = self.hasPlayedStats(statsMap[pid] || {});
         var opp = self.getOpponent(statsMap[pid] || {}, projMap[pid] || {}, p, week);
         var enh = self.getEnhancedMatchupInfo(pid, opp);
         var muScore = (enh && enh.matchScore !== undefined) ? enh.matchScore : null;
@@ -8317,7 +9645,7 @@ renderFA: function() {
         if (useActual) {
           if (isInjuredOut(p)) return;
           var stats = scoreMap[id] || {};
-          if (!stats || Object.keys(stats).length === 0) return;
+          if (!self.hasPlayedStats(stats)) return;
         }
         var mappedPos = positionMap[p.position];
         if (!mappedPos || !posTotals.hasOwnProperty(mappedPos)) return;
@@ -8531,7 +9859,7 @@ var wrap = document.createElement("div");
 
       var proj = self.scoreFromStats(projStats, pid);
       var act = self.scoreFromStats(actStats, pid);
-      var hasPlayed = Object.keys(actStats || {}).length > 0;
+      var hasPlayed = self.hasPlayedStats(actStats);
 
       // If projections are missing but the week is completed, fall back to actual so the tab still works
       if ((!isFinite(proj) || proj === 0) && hasPlayed && isFinite(act)) proj = act;
@@ -9546,13 +10874,31 @@ var fmtPid = function(pid) {
   };
 
 
+/**
+ * Initialize application when DOM is ready
+ * Registers service worker for offline support and starts the app
+ */
 document.addEventListener("DOMContentLoaded", function() {
+  // Register service worker for offline/caching support
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("./service-worker.js").catch(function(err) {
+      // Service worker registration is optional - log but don't block app
       console.warn("Service worker registration failed:", err);
     });
   }
-  APP.init();
+  
+  // Initialize the application
+  try {
+    APP.init();
+  } catch (err) {
+    console.error("Failed to initialize application:", err);
+    // Attempt to show error to user
+    var status = document.getElementById("hdrStatus");
+    if (status) {
+      status.textContent = "Error loading - please refresh";
+      status.style.color = "#ef4444";
+    }
+  }
 });
 </script>
 </body>
