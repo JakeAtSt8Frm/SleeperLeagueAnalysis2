@@ -7872,6 +7872,17 @@ var benchPlayers = Object.keys(benchByPid).map(function(pid) {
     };
 
 
+    var matchups = this.data.weekMatchups[String(week)] || this.data.matchups || [];
+    var rosterMatchupData = {};
+    matchups.forEach(function(m) {
+      if (m && m.roster_id != null) {
+        rosterMatchupData[String(m.roster_id)] = {
+          starters: m.starters || [],
+          players: m.players || []
+        };
+      }
+    });
+
     var selected = this.data.rosters.find(function(r) { return String(r.roster_id) === String(self.ui.selectedRosterId); });
     if (!selected) return;
 
@@ -7880,16 +7891,18 @@ var benchPlayers = Object.keys(benchByPid).map(function(pid) {
       var subtitle = opts.subtitle;
       var selectorFn = opts.selectorFn;
       
-      var selectedS = selectorFn(selected);
+      var selectedMatchData = rosterMatchupData[String(selected.roster_id)] || {};
+      var selectedS = selectorFn(selected, selectedMatchData);
       var selUser = self.data.usersById[selected.owner_id];
       var selName = (selUser && selUser.display_name) || ("Team " + selected.roster_id);
 
       var allTeams = self.data.rosters.map(function(r) {
         var u = self.data.usersById[r.owner_id];
+        var md = rosterMatchupData[String(r.roster_id)] || {};
         return { 
           roster: r, 
           name: (u && u.display_name) || ("Team " + r.roster_id), 
-          s: selectorFn(r), 
+          s: selectorFn(r, md), 
           isSelected: String(r.roster_id) === String(selected.roster_id) 
         };
       });
@@ -7971,26 +7984,34 @@ var wrap = document.createElement("div");
     box.appendChild(mkHeatmapTable({
       title: "Team Score Projected",
       subtitle: "",
-      selectorFn: function(roster) { return summarizePlayers((roster && roster.players) || []); }
+      selectorFn: function(roster, matchData) { 
+        return summarizePlayers((matchData.players && matchData.players.length) ? matchData.players : ((roster && roster.players) || [])); 
+      }
     }));
 
     box.appendChild(mkHeatmapTable({
       title: "Team Score Actual",
       subtitle: "Totals are sum of custom-scored actual points for the selected week (0 for players who have not played).",
-      selectorFn: function(roster) { return summarizeActualPlayers((roster && roster.players) || []); }
+      selectorFn: function(roster, matchData) { 
+        return summarizeActualPlayers((matchData.players && matchData.players.length) ? matchData.players : ((roster && roster.players) || [])); 
+      }
     }));
 
     box.appendChild(mkHeatmapTable({
       title: "Starters Score Projected",
       subtitle: "Totals include only players currently in starting slots.",
-      selectorFn: function(roster) { return summarizePlayers((roster && roster.starters) || []); }
+      selectorFn: function(roster, matchData) { 
+        return summarizePlayers((matchData.starters && matchData.starters.length) ? matchData.starters : ((roster && roster.starters) || [])); 
+      }
     }));
 
 
     box.appendChild(mkHeatmapTable({
       title: "Starters Scores Actual",
       subtitle: "Actual points for starters only this week.",
-      selectorFn: function(roster) { return summarizeActualPlayers((roster && roster.starters) || []); }
+      selectorFn: function(roster, matchData) { 
+        return summarizeActualPlayers((matchData.starters && matchData.starters.length) ? matchData.starters : ((roster && roster.starters) || [])); 
+      }
     }));
 
   },
