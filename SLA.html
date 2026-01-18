@@ -7291,12 +7291,6 @@ var benchPlayers = Object.keys(benchByPid).map(function(pid) {
 
 
     // Helper to check if player is IR/Out
-    var isInjuredOut = function(p) {
-      var status = ((p && (p.injury_status || p.status)) || "").toString().trim().toUpperCase();
-      var outStatuses = ["OUT", "IR", "PUP", "NFI", "SUSP", "SUSPENDED", "COVID", "INACTIVE", "DNR"];
-      return outStatuses.indexOf(status) >= 0;
-    };
-
     // Build enriched player data
     var enrichPlayer = function(item) {
       var pid = item.pid;
@@ -9399,7 +9393,6 @@ renderFA: function() {
         var p = self.data.playersById[id];
         if (!p) return;
         if (useActual) {
-          if (isInjuredOut(p)) return;
           var stats = scoreMap[id] || {};
           if (!self.hasPlayedStats(stats)) return;
         }
